@@ -3,7 +3,10 @@ import { Alert, StyleSheet, View, AppState, Image } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button, Input } from '@rneui/themed';
 import { LinearGradient } from 'expo-linear-gradient';
-
+// Tells Supabase Auth to continuously refresh the session automatically if
+// the app is in the foreground. When this is added, you will continue to receive
+// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
+// if the user's session is terminated. This should only be registered once.
 const colors = {
   primaryGreen: '#4CAF50',
   backgroundGrayStart: '#F0F4F8', // Light gray start
@@ -22,23 +25,25 @@ AppState.addEventListener('change', (state) => {
 });
 
 export default function Auth() {
+  // State variables for managing user input and loading status
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
+// Function to handle user sign-in with email and password
   async function signInWithEmail() {
-    setLoading(true);
+    setLoading(true);// Attempt to sign in the user with Supabase
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) Alert.alert(error.message);
-    setLoading(false);
+    if (error) Alert.alert(error.message); // If an error occurs, show an alert with the error message
+    setLoading(false); // Hide loading indicator after processing
   }
-
-  async function signUpWithEmail() {
+// Function to handle user sign-up with email and password
+  async function signUpWithEmail() {  // Show loading indicator while processing
+    // Attempt to sign up the user with Supabase
     setLoading(true);
     const { data: { session }, error } = await supabase.auth.signUp({ email, password });
-    if (error) Alert.alert(error.message);
-    if (!session) Alert.alert('Please check your inbox for email verification!');
-    setLoading(false);
+    if (error) Alert.alert(error.message);   // Show an alert with the error message if sign-up fails
+    if (!session) Alert.alert('Please check your inbox for email verification!'); // If no session is returned, notify user to verify email
+    setLoading(false);  // Hide loading indicator after processing
   }
 
   return (
