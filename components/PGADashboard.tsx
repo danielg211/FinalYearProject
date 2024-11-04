@@ -5,165 +5,176 @@ import { supabase, supabaseAdmin } from '../lib/supabase';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App'; 
-// Define the Golfer type based on the table structure
+
+//References
+// This component references concepts and patterns demonstrated in the Supabase CRUD tutorial on fetching, creating, modifying, and deleting data
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
+
+
+// Define the Golfer type to match the structure of a golfer record in the database
 type Golfer = {
-  GolferID: string; // UUID type, so we use string in TypeScript
-  created_at: string;
-  handicap: number;
-  progress: string;
-  name: string;
+  GolferID: string; // Unique identifier for the golfer
+  created_at: string; // Date when the golfer was added
+  handicap: number; // Golfer's handicap
+  progress: string; // Progress notes for the golfer
+  name: string; // Golfer's name
 };
 
+// Define the navigation type to navigate between screens in the app
 type PGADashboardNavigationProp = StackNavigationProp<RootStackParamList, 'PGADashboard'>; 
 
+// The main component for managing golfers
 export default function PGADashboard() {
-
   const navigation = useNavigation<PGADashboardNavigationProp>();
 
-  // State variables for golfer data and form inputs
-  const [golfers, setGolfers] = useState<Golfer[]>([]);
-  const [name, setName] = useState<string>('');
-  const [handicap, setHandicap] = useState<string>('');
-  const [progress, setProgress] = useState<string>('');
-  const [email, setEmail] = useState<string>(''); // Email input for golfer account
-  const [password, setPassword] = useState<string>(''); // Password input for golfer account
-  const [selectedGolfer, setSelectedGolfer] = useState<Golfer | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  // State variables to store golfer data and input values
+  const [golfers, setGolfers] = useState<Golfer[]>([]); // List of golfers
+  const [name, setName] = useState<string>(''); // Input for golfer's name
+  const [handicap, setHandicap] = useState<string>(''); // Input for golfer's handicap
+  const [progress, setProgress] = useState<string>(''); // Input for golfer's progress
+  const [email, setEmail] = useState<string>(''); // Input for golfer's email (account creation)
+  const [password, setPassword] = useState<string>(''); // Input for golfer's password (account creation)
+  const [selectedGolfer, setSelectedGolfer] = useState<Golfer | null>(null); // Selected golfer for editing
+  const [loading, setLoading] = useState<boolean>(false); // Loading state to show when a process is happening
 
+  // Load the golfers when the component first appears on the screen
   useEffect(() => {
     fetchGolfers();
   }, []);
 
-  // Fetch golfers from Supabase
+  // Fetch all golfers from the database
   async function fetchGolfers() {
-    setLoading(true);
+    setLoading(true); // Show loading indicator
     try {
       const { data, error } = await supabase
         .from('golfers')
         .select('GolferID, name, handicap, progress, created_at')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }); // Get golfers ordered by most recent
 
-      if (error) throw error;
+      if (error) throw error; // If there's an error, stop and handle it
 
-      setGolfers(data as Golfer[]);
+      setGolfers(data as Golfer[]); // Set the retrieved golfers to the golfers state
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Error fetching golfers', error.message);
-        console.error('Error fetching golfers:', error.message);
+        Alert.alert('Error fetching golfers', error.message); // Show an alert if an error occurs
+        console.error('Error fetching golfers:', error.message); // Log the error
       } else {
         console.error('Unexpected error:', error);
       }
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading indicator
     }
   }
 
-  // Add a new golfer to the database and create an auth user
+  // Function to add a new golfer to the database
   async function addGolfer() {
+    // Check if all required fields are filled
     if (!name || !handicap || !progress || !email || !password) {
       Alert.alert('Error', 'Please fill in all fields: Name, Handicap, Progress, Email, and Password.');
-      return;
+      return; // Stop the function if any field is missing
     }
 
-    setLoading(true);
+    setLoading(true); // Show loading indicator
 
     try {
-      // Step 1: Create a new user in the Supabase Auth system
+      // Step 1: Create a new user in Supabase's authentication system
       const { data: userData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
-        email_confirm: true,
+        email_confirm: true, // Automatically confirm the email
       });
 
-      if (authError) throw authError;
+      if (authError) throw authError; // Handle error if user creation fails
 
-      // Step 2: Insert golfer-specific data into the `golfers` table
-      const golferID = userData.user?.id;
+      // Step 2: Add the golfer's information to the 'golfers' table
+      const golferID = userData.user?.id; // Get the unique ID for the new user
       const { error: insertError } = await supabase
         .from('golfers')
-        .insert([{ GolferID: golferID, name, handicap: parseInt(handicap), progress }]);
+        .insert([{ GolferID: golferID, name, handicap: parseInt(handicap), progress }]); // Insert new golfer record
 
-      if (insertError) throw insertError;
+      if (insertError) throw insertError; // Handle error if insertion fails
 
-      // Update local state with the new golfer
+      // Update the local state to include the new golfer in the list
       setGolfers([{ GolferID: golferID, name, handicap: parseInt(handicap), progress, created_at: new Date().toISOString() }, ...golfers]);
       
-      // Clear input fields
+      // Clear the input fields after adding the golfer
       setName('');
       setHandicap('');
       setProgress('');
       setEmail('');
       setPassword('');
 
-      Alert.alert('Success', 'Golfer account created successfully');
+      Alert.alert('Success', 'Golfer account created successfully'); // Show success message
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Error adding golfer', error.message);
+        Alert.alert('Error adding golfer', error.message); // Show error message if addition fails
         console.error('Error adding golfer:', error.message);
       } else {
         console.error('Unexpected error:', error);
       }
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading indicator
     }
   }
 
-  // Update golfer information in the database
+  // Function to update an existing golfer's information
   async function updateGolfer() {
+    // Check if a golfer is selected and all fields are filled
     if (!selectedGolfer || !name || !handicap || !progress) {
       Alert.alert('Error', 'Please select a golfer and fill in all fields: Name, Handicap, and Progress.');
       return;
     }
 
-    setLoading(true);
+    setLoading(true); // Show loading indicator
 
     try {
+      // Update golfer's data in the database
       const { error } = await supabase
         .from('golfers')
         .update({ name, handicap: parseInt(handicap), progress })
-        .eq('GolferID', selectedGolfer.GolferID);
+        .eq('GolferID', selectedGolfer.GolferID); // Match the golfer ID to update the correct golfer
 
-      if (error) throw error;
+      if (error) throw error; // Handle error if update fails
 
-      // Update local state
+      // Update the golfer data locally in the state
       setGolfers((prevGolfers) =>
         prevGolfers.map((g) =>
           g.GolferID === selectedGolfer.GolferID ? { ...g, name, handicap: parseInt(handicap), progress } : g
         )
       );
 
-      // Reset selected golfer and input fields
+      // Clear the selected golfer and input fields after updating
       setSelectedGolfer(null);
       setName('');
       setHandicap('');
       setProgress('');
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Error updating golfer', error.message);
+        Alert.alert('Error updating golfer', error.message); // Show error message if update fails
         console.error('Error updating golfer:', error.message);
       } else {
         console.error('Unexpected error:', error);
       }
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading indicator
     }
   }
 
-  // Delete a golfer from the database
+  // Function to delete a golfer from the database
   async function deleteGolfer(golferID: string) {
     try {
       const { error } = await supabase
         .from('golfers')
         .delete()
-        .eq('GolferID', golferID);
+        .eq('GolferID', golferID); // Match the golfer ID to delete the correct golfer
 
-      if (error) throw error;
+      if (error) throw error; // Handle error if deletion fails
 
-      // Update local state to remove deleted golfer
+      // Remove the deleted golfer from the local state
       setGolfers(golfers.filter((g) => g.GolferID !== golferID));
     } catch (error) {
       if (error instanceof Error) {
-        Alert.alert('Error deleting golfer', error.message);
+        Alert.alert('Error deleting golfer', error.message); // Show error message if deletion fails
         console.error('Error deleting golfer:', error.message);
       } else {
         console.error('Unexpected error:', error);
@@ -171,15 +182,15 @@ export default function PGADashboard() {
     }
   }
 
-  // Select a golfer for editing
+  // Function to select a golfer from the list for editing
   function selectGolfer(golfer: Golfer) {
-    setSelectedGolfer(golfer);
-    setName(golfer.name);
-    setHandicap(golfer.handicap.toString());
-    setProgress(golfer.progress);
+    setSelectedGolfer(golfer); // Set the selected golfer
+    setName(golfer.name); // Set the name input to the selected golfer's name
+    setHandicap(golfer.handicap.toString()); // Set handicap input
+    setProgress(golfer.progress); // Set progress input
   }
 
-  // Render golfer items in the list
+  // Function to render each golfer in the list
   const renderGolfer = ({ item }: { item: Golfer }) => (
     <ListItem bottomDivider onPress={() => selectGolfer(item)}>
       <ListItem.Content>
@@ -196,22 +207,26 @@ export default function PGADashboard() {
     <View style={styles.container}>
       <Text style={styles.title}>PGA Dashboard - Golfer Management</Text>
       
+      {/* Input fields for golfer details */}
       <Input label="Name" value={name} onChangeText={setName} placeholder="Enter Name" />
       <Input label="Handicap" value={handicap} keyboardType="numeric" onChangeText={setHandicap} placeholder="Enter Handicap" />
       <Input label="Progress" value={progress} onChangeText={setProgress} placeholder="Enter Progress" />
       <Input label="Email" value={email} onChangeText={setEmail} placeholder="Enter Golfer's Email" />
       <Input label="Password" value={password} secureTextEntry onChangeText={setPassword} placeholder="Enter Golfer's Password" />
 
+      {/* Button to add or update golfer */}
       <Button title={selectedGolfer ? 'Update Golfer' : 'Add Golfer'} onPress={addGolfer} loading={loading} containerStyle={styles.button} />
-      <Button title="Log a Lesson" onPress={() => navigation.navigate('LogLesson')}
-/>
 
+      {/* Button to navigate to the lesson logging screen */}
+      <Button title="Log a Lesson" onPress={() => navigation.navigate('LogLesson')} />
+
+      {/* List of golfers */}
       <FlatList data={golfers} keyExtractor={(item) => item.GolferID} renderItem={renderGolfer} />
     </View>
   );
 }
 
-// Styles
+// Styles for layout and spacing
 const styles = StyleSheet.create({
   container: {
     flex: 1,

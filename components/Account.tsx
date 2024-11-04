@@ -15,10 +15,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 // on React Native Database & User Authentication available on their YouTube channel.
 // Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
 
-// Define color constants for the theme. Colors taken from https://htmlcolorcodes.com/color-names/
+// 2.How to use React Navigation with Typescript . React Native Tutorial. #3 https://www.youtube.com/watch?v=MVKkMr7FSPA
+// I used this video to learn how to able to navigate between screens (RootStackParamList)
 
 //Supabases code included website input which is not applicable to my project.
 //I inputted a radio button where users select their role instead
+
+// Define color constants for the theme. Colors taken from https://htmlcolorcodes.com/color-names/
 const colors = {
   primaryGreen: '#4CAF50',
   backgroundGrayStart: '#F0F4F8',
