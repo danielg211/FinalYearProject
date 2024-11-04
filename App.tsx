@@ -5,6 +5,7 @@ import Auth from './components/Auth';
 import Account from './components/Account';
 import GolferDashboard from './components/GolferDashboard';
 import PGADashboard from './components/PGADashboard'; // This assumes PGADashboard.tsx exists in the components folder.
+import LogLesson from './components/LogLesson';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   GolferDashboard: undefined;
   PGADashboard: undefined;
   Auth: undefined;  // Add the Auth screen here
+  LogLesson: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -63,6 +65,8 @@ export default function App() {
             
             <Stack.Screen name="GolferDashboard" component={GolferDashboard} />
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
+            <Stack.Screen name="LogLesson" component={LogLesson} />
+
           </>
         )}
       </Stack.Navigator>

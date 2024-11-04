@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Alert, View, FlatList, StyleSheet, Text } from 'react-native';
 import { Button, Input, ListItem } from '@rneui/themed';
 import { supabase, supabaseAdmin } from '../lib/supabase';
-
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../App'; 
 // Define the Golfer type based on the table structure
 type Golfer = {
   GolferID: string; // UUID type, so we use string in TypeScript
@@ -12,7 +14,12 @@ type Golfer = {
   name: string;
 };
 
+type PGADashboardNavigationProp = StackNavigationProp<RootStackParamList, 'PGADashboard'>; 
+
 export default function PGADashboard() {
+
+  const navigation = useNavigation<PGADashboardNavigationProp>();
+
   // State variables for golfer data and form inputs
   const [golfers, setGolfers] = useState<Golfer[]>([]);
   const [name, setName] = useState<string>('');
@@ -196,6 +203,8 @@ export default function PGADashboard() {
       <Input label="Password" value={password} secureTextEntry onChangeText={setPassword} placeholder="Enter Golfer's Password" />
 
       <Button title={selectedGolfer ? 'Update Golfer' : 'Add Golfer'} onPress={addGolfer} loading={loading} containerStyle={styles.button} />
+      <Button title="Log a Lesson" onPress={() => navigation.navigate('LogLesson')}
+/>
 
       <FlatList data={golfers} keyExtractor={(item) => item.GolferID} renderItem={renderGolfer} />
     </View>
