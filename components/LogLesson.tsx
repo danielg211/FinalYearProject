@@ -1,42 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { supabase } from '../lib/supabase';
+
+interface Golfer {
+  GolferID: string;
+  name: string;
+}
 
 export default function LogLesson() {
   const [feedback, setFeedback] = useState('');
   const [drillsAssigned, setDrillsAssigned] = useState('');
   const [golferId, setGolferId] = useState('');
   const [userId, setUserId] = useState('');
+  const [golfers, setGolfers] = useState<Golfer[]>([]); // Specify the type as Golfer array
 
-  // Fetch the logged-in user's ID from profiles table on component mount
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error) {
         console.error('Error fetching user:', error.message);
       } else if (user) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('id', user.id)
-          .single();
-
-        if (profileError) {
-          console.error('Error fetching profile:', profileError.message);
-        } else if (profileData) {
-          setUserId(profileData.id); // Set PGAID to the profile's ID
-        }
+        setUserId(user.id);
       }
     };
     fetchUser();
+
+    const fetchGolfers = async () => {
+      const { data, error } = await supabase.from('golfers').select('GolferID, name');
+      if (error) {
+        console.error('Error fetching golfers:', error.message);
+      } else {
+        setGolfers(data as Golfer[]); // Typecast data to Golfer array
+      }
+    };
+    fetchGolfers();
   }, []);
 
-  // Function to handle logging a lesson
   async function logLesson() {
     console.log('Feedback:', feedback);
     console.log('Drills Assigned:', drillsAssigned);
     console.log('Golfer ID:', golferId);
-    console.log('PGA ID (User ID from profiles):', userId);
+    console.log('PGA ID (User ID):', userId);
 
     try {
       const { data, error } = await supabase.from('Lesson').insert([
@@ -44,15 +49,15 @@ export default function LogLesson() {
           feedback: feedback,
           drillsAssigned: drillsAssigned,
           GolferID: golferId,
-          PGAID: userId, // Use the fetched PGA Pro's ID from profiles
+          PGAID: userId,
         }
       ]);
 
       if (error) {
-        console.error('Error logging lesson:', error.message); // Detailed error logging
+        console.error('Error logging lesson:', error.message);
         throw error;
       }
-      console.log('Insert result:', data); // Log result of insert operation
+      console.log('Insert result:', data);
       Alert.alert('Lesson logged successfully!');
     } catch (error) {
       if (error instanceof Error) {
@@ -81,13 +86,17 @@ export default function LogLesson() {
         style={{ borderWidth: 1, padding: 8, marginVertical: 10 }}
       />
 
-      <Text>Golfer ID:</Text>
-      <TextInput
-        placeholder="Enter Golfer ID"
-        value={golferId}
-        onChangeText={setGolferId}
-        style={{ borderWidth: 1, padding: 8, marginVertical: 10 }}
-      />
+      <Text>Select Golfer:</Text>
+      <Picker
+        selectedValue={golferId}
+        onValueChange={(itemValue, itemIndex) => setGolferId(itemValue)}
+        style={{ borderWidth: 1, marginVertical: 10 }}
+      >
+        <Picker.Item label="Select Golfer" value="" />
+        {golfers.map((golfer) => (
+          <Picker.Item key={golfer.GolferID} label={golfer.name} value={golfer.GolferID} />
+        ))}
+      </Picker>
 
       <Button title="Log Lesson" onPress={logLesson} />
     </View>
