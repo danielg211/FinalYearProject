@@ -3,6 +3,10 @@ import { supabase } from '../lib/supabase'
 import { StyleSheet, View, Alert, Image, Button } from 'react-native' 
 import * as ImagePicker from 'expo-image-picker'
 
+// References:
+// 1.This code references concepts and patterns demonstrated in Supabase's tutorial 
+// on React Native Database & User Authentication available on their YouTube channel.
+// Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
 interface Props {
   size: number
   url: string | null
