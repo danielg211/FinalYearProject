@@ -1,10 +1,10 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 
-// HomeScreen component serves as the welcome screen for the app
+// HomeScreen component serves as the welcome screen for the app. 
 // This code is adapted from Zero Degree Coder's video on creating a Signup, Login, and Welcome Screen in React Native
 // Video reference: Zero Degree Coder. "Signup, Login, Welcome Screen React Native." YouTube, https://www.youtube.com/watch?v=eu-8OlWbwjA
-
+// This is not needed as part of iteration 1 but was necessary to do to be able to learn the styling of react native
 const HomeScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>

@@ -2,25 +2,18 @@ import React, { useState } from 'react';
 import { Alert, StyleSheet, View, AppState, Image } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button, Input } from '@rneui/themed';
-import { LinearGradient } from 'expo-linear-gradient';  //https://docs.expo.dev/versions/latest/sdk/linear-gradient/
+// Import for background gradient effects
+// ChatGPT recommended using LinearGradient from Expo to enhance UI design with gradient backgrounds.
+// ChatGPT prompt: "How to optimize background in React Native using Expo?"
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors } from '../colors'; // Import shared colors
 
-//References
+// References:
 // Auth Screen Implementation with Supabase and React Native
 // This code references concepts and patterns demonstrated in Supabase's tutorial 
 // on React Native Database & User Authentication available on their YouTube channel.
 // Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
 // Adapted with UI design.
-
-
-// Define color constants for the app theme. Colors taken from https://htmlcolorcodes.com/color-names/
-const colors = {
-  primaryGreen: '#4CAF50',
-  backgroundGrayStart: '#F0F4F8', // Light gray start for gradient background
-  backgroundGrayEnd: '#CFD8DC',   // Slightly darker gray end for gradient background
-  textGreen: '#2E7D32',
-  borderGray: '#CCCCCC',
-  buttonGray: '#E0E0E0',
-};
 
 // Set up event listener to refresh Supabase session automatically
 // when the app is in the foreground and stop when it goes to the background.
@@ -67,16 +60,10 @@ export default function Auth() {
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
           label="Email"
-          labelStyle={{ color: colors.textGreen, fontSize: 16 }}
+          labelStyle={styles.labelStyle}
           leftIcon={{ type: 'font-awesome', name: 'envelope', color: colors.textGreen }}
-          inputStyle={{ color: colors.textGreen }}
-          inputContainerStyle={{
-            backgroundColor: '#FFFFFF',
-            borderRadius: 8,
-            borderColor: colors.borderGray,
-            borderWidth: 1,
-            paddingHorizontal: 8,
-          }}
+          inputStyle={styles.inputStyle}
+          inputContainerStyle={styles.inputContainerStyle}
           onChangeText={(text) => setEmail(text)}
           value={email}
           placeholder="email@address.com"
@@ -89,19 +76,13 @@ export default function Auth() {
       <View style={styles.verticallySpaced}>
         <Input
           label="Password"
-          labelStyle={{ color: colors.textGreen, fontSize: 16 }}
+          labelStyle={styles.labelStyle}
           leftIcon={{ type: 'font-awesome', name: 'lock', color: colors.textGreen }}
-          inputStyle={{ color: colors.textGreen }}
-          inputContainerStyle={{
-            backgroundColor: '#FFFFFF',
-            borderRadius: 8,
-            borderColor: colors.borderGray,
-            borderWidth: 1,
-            paddingHorizontal: 8,
-          }}
+          inputStyle={styles.inputStyle}
+          inputContainerStyle={styles.inputContainerStyle}
           onChangeText={(text) => setPassword(text)}
           value={password}
-          secureTextEntry={true}
+          secureTextEntry
           placeholder="Password"
           placeholderTextColor={colors.borderGray}
           autoCapitalize="none"
@@ -113,14 +94,7 @@ export default function Auth() {
         <Button
           title="Sign in"
           disabled={loading} // Disable button while loading
-          buttonStyle={{
-            backgroundColor: colors.primaryGreen,
-            borderRadius: 8,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-          }}
+          buttonStyle={styles.signInButton}
           onPress={() => signInWithEmail()}
         />
       </View>
@@ -130,15 +104,8 @@ export default function Auth() {
         <Button
           title="Sign up"
           disabled={loading} // Disable button while loading
-          buttonStyle={{
-            backgroundColor: colors.buttonGray,
-            borderRadius: 8,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.3,
-            shadowRadius: 4,
-          }}
-          titleStyle={{ color: colors.textGreen }}
+          buttonStyle={styles.signUpButton}
+          titleStyle={styles.signUpTitle}
           onPress={() => signUpWithEmail()}
         />
       </View>
@@ -147,6 +114,9 @@ export default function Auth() {
 }
 
 // Styles for layout and design elements
+//https://reactnative.dev/docs/style
+// ChatGPT was used to optimize the styling approach, including adjustments to shadow properties and layout alignments for UI consistency.
+// ChatGPT prompts: "Optimize React Native styling for button shadows and container layouts", "Create consistent styling for labels and input fields in React Native".
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -163,6 +133,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
+    // ChatGPT recommended shadow settings to enhance the logo's appearance, adding depth for a more polished UI.
   },
   verticallySpaced: {
     paddingTop: 4,
@@ -172,5 +143,41 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  labelStyle: {
+    color: colors.textGreen,
+    fontSize: 16,
+  },
+  inputStyle: {
+    color: colors.textGreen,
+  },
+  inputContainerStyle: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderColor: colors.borderGray,
+    borderWidth: 1,
+    paddingHorizontal: 8,
+     // ChatGPT suggested optimizations for input container styling, including border radius and padding to enhance usability and consistency.
+  },
+  signInButton: {
+    backgroundColor: colors.primaryGreen,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    // ChatGPT was used to refine button shadow properties, enhancing button depth and making it visually consistent with the app's design.
+  },
+  signUpButton: {
+    backgroundColor: colors.buttonGray,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+     // ChatGPT provided recommendations for shadow settings to maintain consistency across all buttons.
+  },
+  signUpTitle: {
+    color: colors.textGreen,
   },
 });
