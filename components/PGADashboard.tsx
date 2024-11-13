@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, View, FlatList, StyleSheet, Text, ScrollView } from 'react-native';
 import { Button, Input, ListItem } from '@rneui/themed';
-//Import for background gradient effects
+// Import for background gradient effects
 // ChatGPT recommended using LinearGradient from Expo to enhance UI design with gradient backgrounds.
 // ChatGPT prompt: "How to optimize background in React Native using Expo?"
 import { LinearGradient } from 'expo-linear-gradient'; 
