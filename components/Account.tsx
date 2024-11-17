@@ -104,7 +104,7 @@ export default function Account() {
 
       // Navigate to different dashboards based on the user's role
       if (role === 'PGAProfessional') {
-        navigation.navigate('PGADashboard');
+        navigation.navigate('PGAHome');
       } else if (role === 'Golfer') {
         navigation.navigate('GolferDashboard');
       }

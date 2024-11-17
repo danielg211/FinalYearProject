@@ -5,10 +5,13 @@ import Auth from './components/Auth';
 import Account from './components/Account';
 import GolferDashboard from './components/GolferDashboard';
 import PGADashboard from './components/PGADashboard'; 
-
+import PGAHome from './components/PGAHome';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Session } from '@supabase/supabase-js';
+import ViewLessonsPGA from './components/ViewLessonsPGA';
+import LogLesson from './components/LogLesson';
+import CreateDrills from './components/CreateDrills';
 
 // App.tsx Screen Implementation with Supabase and React Native
 // This code references concepts and patterns demonstrated in Supabase's tutorial 
@@ -24,6 +27,9 @@ export type RootStackParamList = {
   PGADashboard: undefined;
   Auth: undefined;  
   LogLesson: undefined;
+  PGAHome: undefined;
+  ViewLessonsPGA: undefined;
+  CreateDrills: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -59,11 +65,12 @@ export default function App() {
             initialParams={{ session: session || undefined }}  
           />
 
-            
+            <Stack.Screen name="PGAHome" component= {PGAHome} />
             <Stack.Screen name="GolferDashboard" component={GolferDashboard} />
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
-            
-
+            <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} />
+            <Stack.Screen name="LogLesson" component={LogLesson} />
+            <Stack.Screen name="CreateDrills" component={CreateDrills} />
           </>
         )}
       </Stack.Navigator>
