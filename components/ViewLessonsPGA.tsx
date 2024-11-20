@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 import { supabase } from '../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
@@ -10,7 +11,6 @@ import { colors } from '../colors';
 // Uses Read logic from PGA Dashboard
 
 
-// Define the structure of a Lesson object with properties matching your updated database schema
 interface Lesson {
   feedback: string;
   drillsAssigned: string;
@@ -20,22 +20,37 @@ interface Lesson {
   competency: string;
   confidence: number;
   focusPoints: string;
-  beforeImage: string | null; // Image URLs can be null if not provided
+  beforeImage: string | null;
   afterImage: string | null;
   created_at: string;
 }
 
-// Component to view lessons
-export default function ViewLessonsPGA() {
-  const [lessons, setLessons] = useState<Lesson[]>([]); // State to store the lessons
-  const [loading, setLoading] = useState(true); // State to indicate loading
+interface Golfer {
+  GolferID: string;
+  name: string;
+}
 
-  // Function to fetch lessons from the database
-  const fetchLessons = async () => {
+export default function ViewLessonsPGA() {
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [golfers, setGolfers] = useState<Golfer[]>([]);
+  const [selectedGolfer, setSelectedGolfer] = useState<string>(''); // State to track selected golfer
+  const [loading, setLoading] = useState(true);
+
+  // Fetch lessons from the database
+  const fetchLessons = async (golferId: string | null = null) => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('Lesson')
-        .select('*'); 
+        .select(`
+          feedback, drillsAssigned, GolferID, PGAID, area, competency, confidence, focusPoints, beforeImage, afterImage, created_at
+        `)
+        .order('created_at', { ascending: false });
+
+      if (golferId) {
+        query = query.eq('GolferID', golferId); // Filter by selected golfer
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching lessons:', error.message);
@@ -43,22 +58,43 @@ export default function ViewLessonsPGA() {
         return;
       }
 
-      console.log('Fetched lessons:', data); // Debugging log to verify fetched data
-      setLessons(data as Lesson[]); // Set lessons to state
+      setLessons(data as Lesson[]);
     } catch (error) {
       console.error('Unexpected error fetching lessons:', error);
       Alert.alert('Error', 'Unexpected error fetching lessons');
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 
-  // useEffect to fetch lessons when component mounts
+  // Fetch golfers from the database
+  const fetchGolfers = async () => {
+    try {
+      const { data, error } = await supabase.from('golfers').select('GolferID, name');
+
+      if (error) {
+        console.error('Error fetching golfers:', error.message);
+        Alert.alert('Error fetching golfers', error.message);
+        return;
+      }
+
+      setGolfers(data || []);
+    } catch (error) {
+      console.error('Unexpected error fetching golfers:', error);
+      Alert.alert('Error', 'Unexpected error fetching golfers');
+    }
+  };
+
   useEffect(() => {
-    fetchLessons();
+    fetchGolfers(); // Fetch golfers when the component mounts
+    fetchLessons(); // Fetch all lessons when the component mounts
   }, []);
 
-  // Function to render each lesson in the list
+  useEffect(() => {
+    // Fetch lessons for the selected golfer whenever it changes
+    fetchLessons(selectedGolfer || null);
+  }, [selectedGolfer]);
+
   const renderLesson = ({ item }: { item: Lesson }) => (
     <View style={styles.lessonCard}>
       <Text style={styles.lessonText}>Feedback: {item.feedback}</Text>
@@ -67,43 +103,40 @@ export default function ViewLessonsPGA() {
       <Text style={styles.lessonText}>Competency Level: {item.competency}</Text>
       <Text style={styles.lessonText}>Confidence Level: {item.confidence}</Text>
       <Text style={styles.lessonText}>Focus Points: {item.focusPoints}</Text>
-      <Text style={styles.lessonText}>Golfer ID: {item.GolferID}</Text>
       <Text style={styles.lessonText}>Date: {new Date(item.created_at).toLocaleDateString()}</Text>
-
-      {/* Display Before and After images if available */}
-      {item.beforeImage && (
-        <View style={styles.imageContainer}>
-          <Text style={styles.imageLabel}>Before Picture:</Text>
-          <Image source={{ uri: item.beforeImage }} style={styles.image} />
-        </View>
-      )}
-      {item.afterImage && (
-        <View style={styles.imageContainer}>
-          <Text style={styles.imageLabel}>After Picture:</Text>
-          <Image source={{ uri: item.afterImage }} style={styles.image} />
-        </View>
-      )}
     </View>
   );
 
   return (
     <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
       <Text style={styles.header}>View Lessons</Text>
+
+      {/* Golfer Picker */}
+      <RNPickerSelect
+        onValueChange={(value) => setSelectedGolfer(value)}
+        items={golfers.map((golfer) => ({
+          label: golfer.name,
+          value: golfer.GolferID,
+        }))}
+        placeholder={{ label: 'Select Golfer', value: '' }}
+        style={pickerSelectStyles}
+        value={selectedGolfer}
+      />
+
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
           data={lessons}
-          keyExtractor={(item) => item.GolferID + item.created_at} // Unique key for each item
+          keyExtractor={(item) => item.GolferID + item.created_at}
           renderItem={renderLesson}
-          ListEmptyComponent={<Text style={styles.emptyMessage}>No lessons found.</Text>} // Message when list is empty
+          ListEmptyComponent={<Text style={styles.emptyMessage}>No lessons found.</Text>}
         />
       )}
     </LinearGradient>
   );
 }
 
-// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -134,20 +167,29 @@ const styles = StyleSheet.create({
     color: colors.borderGray,
     marginTop: 20,
   },
-  imageContainer: {
-    marginTop: 10,
-    alignItems: 'center',
-  },
-  imageLabel: {
-    fontSize: 14,
-    color: colors.textGreen,
-    marginBottom: 5,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    borderColor: colors.borderGray,
-    borderWidth: 1,
-  },
 });
+
+const pickerSelectStyles = {
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+    borderRadius: 8,
+    color: colors.textGreen,
+    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+    borderRadius: 8,
+    color: colors.textGreen,
+    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+  },
+};
