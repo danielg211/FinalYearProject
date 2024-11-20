@@ -6,6 +6,23 @@ import RNPickerSelect from 'react-native-picker-select';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 
+// React-Native-Picker-Select reference: 
+// Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
+// Image Picker reference:
+// How to use an image picker | Universal App tutorial #4 expo, https://www.youtube.com/watch?v=iEQZU58naS8
+// Expo ImagePicker documentation: https://docs.expo.dev/versions/latest/sdk/imagepicker/
+// This component is based on the same CRUD Logic as PGA Dashboard
+
+// React Native CheckBox reference:
+// React Native Tutorial 57 - CheckBox | React Native Elements Programming Knowledge
+// https://www.youtube.com/watch?v=R_Clppr0FaQ
+
+// Slider reference:
+// React Native Tutorial 53 - React Native Slider Example
+// https://www.youtube.com/watch?v=BR2rrnTavmY&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=53
+// By Programming Knowledge
+
+
 // Define color constants
 const colors = {
   primaryGreen: '#4CAF50',
@@ -15,7 +32,7 @@ const colors = {
   borderGray: '#CCCCCC',
 };
 
-// Define interfaces
+// Define interfaces for Drills and Golfers
 interface Drill {
   drill_id: string;
   name: string;
@@ -29,6 +46,7 @@ interface Golfer {
 }
 
 export default function LogLesson() {
+   // State variables to manage form inputs and data
   const [feedback, setFeedback] = useState('');
   const [area, setArea] = useState('');
   const [competency, setCompetency] = useState('');
@@ -44,6 +62,7 @@ export default function LogLesson() {
   const [selectedDrills, setSelectedDrills] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('');
 
+  // Drill categories for the dropdown
   const drillCategories = [
     { label: 'Driving', value: 'Driving' },
     { label: 'Putting', value: 'Putting' },
@@ -57,16 +76,19 @@ export default function LogLesson() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch user details from Supabase
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
         setUserId(user?.id || '');
 
+         // Fetch golfers managed by the PGA professional
         const { data: golfersData, error: golfersError } = await supabase
           .from('golfers')
           .select('GolferID, name');
         if (golfersError) throw golfersError;
         setGolfers(golfersData || []);
 
+        // Fetch all available drills
         const { data: drillsData, error: drillsError } = await supabase
           .from('drills')
           .select('drill_id, name, description, category');

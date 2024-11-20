@@ -4,6 +4,12 @@ import { supabase } from '../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
 
+// FlatList reference:
+// React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
+
+// Uses Read logic from PGA Dashboard
+
+
 // Define the structure of a Lesson object with properties matching your updated database schema
 interface Lesson {
   feedback: string;
@@ -29,7 +35,7 @@ export default function ViewLessonsPGA() {
     try {
       const { data, error } = await supabase
         .from('Lesson')
-        .select('*'); // Adjust fields as necessary
+        .select('*'); 
 
       if (error) {
         console.error('Error fetching lessons:', error.message);

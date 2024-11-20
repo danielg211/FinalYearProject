@@ -3,21 +3,29 @@ import { View, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 
+//Same logic as PGA Dashboard
+
+
+
 export default function CreateDrills() {
+  // State variables to manage the form inputs
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
 
   const createDrill = async () => {
+    // Validate input fields
     if (!name || !description || !category) {
       Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
 
     try {
+       // Insert the new drill into the database
       const { error } = await supabase.from('drills').insert([{ name, description, category }]);
       if (error) throw error;
 
+      // Show success message and reset form fields
       Alert.alert('Success', 'Drill created successfully!');
       setName('');
       setDescription('');

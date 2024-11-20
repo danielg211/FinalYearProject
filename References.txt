@@ -1,0 +1,16 @@
+Iteration 1 References
+
+1) Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
+2) https://reactnative.dev/docs/style
+3) https://www.geeksforgeeks.org/how-to-implement-radio-button-in-react-native/
+4) Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,https://www.youtube.com/watch?v=4yVSwHO5QHU
+5) Zero Degree Coder. "Signup, Login, Welcome Screen React Native." YouTube, https://www.youtube.com/watch?v=eu-8OlWbwjA
+
+Iteration 2 References
+
+1) Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
+2) How to use an image picker | Universal App tutorial #4 expo, https://www.youtube.com/watch?v=iEQZU58naS8
+3) Expo ImagePicker documentation: https://docs.expo.dev/versions/latest/sdk/imagepicker/
+4) React Native Tutorial 57 - CheckBox | React Native Elements by Programming Knowledge. https://www.youtube.com/watch?v=R_Clppr0FaQ
+5) React Native Tutorial 53 - React Native Slider Example https://www.youtube.com/watch?v=BR2rrnTavmY&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=53 By Programming Knowledge
+6) React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
