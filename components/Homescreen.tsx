@@ -1,5 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
+import GolferLogin from "./GolferLogin";
 
 // HomeScreen component serves as the welcome screen for the app. 
 // This code is adapted from Zero Degree Coder's video on creating a Signup, Login, and Welcome Screen in React Native
@@ -19,7 +20,7 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
         {/* Button to navigate to the PGA Pro authentication screen */}
         <TouchableOpacity
           style={[styles.buttonWrapper, styles.PGAButtonWrapper]}
-          onPress={() => navigation.navigate("Auth", { userType: "PGA" })}
+          onPress={() => navigation.navigate("Auth")}
         >
           <Text style={styles.buttonText}>PGA Pro</Text>
         </TouchableOpacity>
@@ -27,7 +28,7 @@ const HomeScreen = ({ navigation }: { navigation: any }) => {
         {/* Button to navigate to the Golfer authentication screen */}
         <TouchableOpacity
           style={[styles.buttonWrapper, styles.GolferButtonWrapper]}
-          onPress={() => navigation.navigate("GolferAuth")}
+          onPress={() => navigation.navigate("GolferLogin")}
         >
           <Text style={styles.buttonText}>Golfer</Text>
         </TouchableOpacity>

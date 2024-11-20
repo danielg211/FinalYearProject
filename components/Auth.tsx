@@ -109,6 +109,8 @@ export default function Auth() {
           onPress={() => signUpWithEmail()}
         />
       </View>
+
+      
     </LinearGradient>
   );
 }
