@@ -10,7 +10,7 @@ import { Session } from '@supabase/supabase-js';
 import { RootStackParamList } from '../App';
 // Import for background gradient effects
 // ChatGPT recommended using LinearGradient from Expo to enhance UI design with gradient backgrounds.
-// ChatGPT prompt: "How to optimize background in React Native using Expo?"
+
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors'; // Import shared colors
 
@@ -187,7 +187,7 @@ export default function Account() {
 // https://reactnative.dev/docs/style
 // This was done for account, auth and Pga dashboard
 // ChatGPT was used to optimize the styling approach, including color choices, layout alignments, and button shadows.
-// ChatGPT prompts: "Optimize React Native styling for containers and buttons", "Create consistent styling for labels and input fields in React Native".
+
 
 const styles = StyleSheet.create({
   container: {

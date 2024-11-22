@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
-import GolferLogin from "./GolferLogin";
+
 
 // HomeScreen component serves as the welcome screen for the app. 
 // This code is adapted from Zero Degree Coder's video on creating a Signup, Login, and Welcome Screen in React Native

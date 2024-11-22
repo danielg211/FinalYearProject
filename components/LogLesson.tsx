@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 // React-Native-Picker-Select reference: 
 // Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
+
 // Image Picker reference:
 // How to use an image picker | Universal App tutorial #4 expo, https://www.youtube.com/watch?v=iEQZU58naS8
 // Expo ImagePicker documentation: https://docs.expo.dev/versions/latest/sdk/imagepicker/
@@ -21,6 +22,14 @@ import * as ImagePicker from 'expo-image-picker';
 // React Native Tutorial 53 - React Native Slider Example
 // https://www.youtube.com/watch?v=BR2rrnTavmY&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=53
 // By Programming Knowledge
+
+// CRUD Reference
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,
+// https://www.youtube.com/watch?v=4yVSwHO5QHU
+
+// Category Selection
+// Filter Product List by Category using React Native Dropdown Picker
+// https://www.youtube.com/watch?v=AWB_x9Fb3vM
 
 // Define color constants
 const colors = {
@@ -75,6 +84,9 @@ export default function LogLesson() {
   const [filteredDrills, setFilteredDrills] = useState<Drill[]>([]);
   const [selectedDrills, setSelectedDrills] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [beforeVideo, setBeforeVideo] = useState<string | null>(null);
+  const [afterVideo, setAfterVideo] = useState<string | null>(null);
+
 
   // Fetch initial data
   useEffect(() => {
@@ -106,6 +118,24 @@ export default function LogLesson() {
       selectedCategory ? availableDrills.filter((drill) => drill.category === selectedCategory) : []
     );
   }, [selectedCategory, availableDrills]);
+
+  //Video Option
+  const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | null>>) => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Videos, // Allow video selection
+        allowsEditing: true,
+        quality: 1,
+      });
+      if (!result.canceled && result.assets && result.assets[0].uri) {
+        setVideo(result.assets[0].uri); // Set the selected video URI
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to pick video.');
+      console.error('Error picking video:', error);
+    }
+  };
+  
 
   // Select images
   const pickImage = async (setImage: React.Dispatch<React.SetStateAction<string | null>>) => {
@@ -147,6 +177,8 @@ export default function LogLesson() {
         focusPoints,
         beforeImage,
         afterImage,
+        beforeVideo, 
+        afterVideo,  
         GolferID: golferId,
       }]).select();
 
@@ -162,7 +194,7 @@ export default function LogLesson() {
         const { error: drillError } = await supabase.from('AssignedDrills').insert(drillAssignments);
         if (drillError) throw drillError;
       }
-      console.log('Lesson ID:', lessonid); // Ensure this is not undefined
+      console.log('Lesson ID:', lessonid); 
 
       Alert.alert('Success', 'Lesson logged successfully!');
       resetForm();
@@ -184,6 +216,8 @@ export default function LogLesson() {
     setGolferId('');
     setSelectedDrills([]);
     setSelectedCategory('');
+    setBeforeVideo(null);
+    setAfterVideo(null);
   };
 
   return (
@@ -240,6 +274,15 @@ export default function LogLesson() {
         <Button title="Select After Picture" onPress={() => pickImage(setAfterImage)} />
         {afterImage && <Text style={styles.imageText}>Image selected</Text>}
 
+        <Text style={styles.label}>Before Video:</Text>
+        <Button title="Select Before Video" onPress={() => pickVideo(setBeforeVideo)} />
+       
+
+        <Text style={styles.label}>After Video:</Text>
+        <Button title="Select After Video" onPress={() => pickVideo(setAfterVideo)} />
+        
+
+
         <Text style={styles.label}>Drill Category:</Text>
         <RNPickerSelect
           onValueChange={(value) => setSelectedCategory(value)}
@@ -269,6 +312,7 @@ export default function LogLesson() {
   );
 }
 
+//chatgpt for styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -322,6 +366,12 @@ const styles = StyleSheet.create({
     color: colors.borderGray,
     marginVertical: 8,
   },
+  videoText: {
+    textAlign: 'center',
+    color: 'green', 
+    marginVertical: 8,
+  },
+  
 });
 
 const pickerSelectStyles = {

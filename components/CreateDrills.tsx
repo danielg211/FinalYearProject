@@ -3,8 +3,11 @@ import { View, Text, StyleSheet, TextInput, Alert } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 
-//Same logic as PGA Dashboard
-
+// Same logic as PGA Dashboard
+// Uses same video as PGA Dashboard 
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,
+// https://www.youtube.com/watch?v=4yVSwHO5QHU
+// Create logic
 
 
 export default function CreateDrills() {
@@ -75,6 +78,7 @@ export default function CreateDrills() {
   );
 }
 
+//chatgpt for styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,

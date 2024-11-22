@@ -4,11 +4,26 @@ import RNPickerSelect from 'react-native-picker-select';
 import { supabase } from '../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
+import { Image } from 'react-native';
+import { Video, ResizeMode } from 'expo-av';
+
 
 // FlatList reference:
 // React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
+// CRUD Reference
 
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,
+// https://www.youtube.com/watch?v=4yVSwHO5QHU
 // Uses Read logic from PGA Dashboard
+
+// SupaBase Docs on Javascript https://supabase.com/docs/reference/javascript/select
+
+// Expo Docs Video Player https://docs.expo.dev/versions/latest/sdk/video-av/
+
+// React Native Docs Display Image https://reactnative.dev/docs/image
+
+// Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
+
 
 
 interface Lesson {
@@ -22,6 +37,8 @@ interface Lesson {
   focusPoints: string;
   beforeImage: string | null;
   afterImage: string | null;
+  beforeVideo: string | null;
+  afterVideo: string | null;
   created_at: string;
 }
 
@@ -36,13 +53,13 @@ export default function ViewLessonsPGA() {
   const [selectedGolfer, setSelectedGolfer] = useState<string>(''); // State to track selected golfer
   const [loading, setLoading] = useState(true);
 
-  // Fetch lessons from the database
+  // Fetch lessons from the database // used chatgpt to help filter by constraint selected golferid
   const fetchLessons = async (golferId: string | null = null) => {
     try {
       let query = supabase
         .from('Lesson')
         .select(`
-          feedback, drillsAssigned, GolferID, PGAID, area, competency, confidence, focusPoints, beforeImage, afterImage, created_at
+          feedback, drillsAssigned, GolferID, PGAID, area, competency, confidence, focusPoints, beforeImage, afterImage, beforeVideo, afterVideo, created_at
         `)
         .order('created_at', { ascending: false });
 
@@ -95,17 +112,61 @@ export default function ViewLessonsPGA() {
     fetchLessons(selectedGolfer || null);
   }, [selectedGolfer]);
 
-  const renderLesson = ({ item }: { item: Lesson }) => (
-    <View style={styles.lessonCard}>
-      <Text style={styles.lessonText}>Feedback: {item.feedback}</Text>
-      <Text style={styles.lessonText}>Drills Assigned: {item.drillsAssigned}</Text>
-      <Text style={styles.lessonText}>Area of Game: {item.area}</Text>
-      <Text style={styles.lessonText}>Competency Level: {item.competency}</Text>
-      <Text style={styles.lessonText}>Confidence Level: {item.confidence}</Text>
-      <Text style={styles.lessonText}>Focus Points: {item.focusPoints}</Text>
-      <Text style={styles.lessonText}>Date: {new Date(item.created_at).toLocaleDateString()}</Text>
-    </View>
-  );
+  const renderLesson = ({ item }: { item: Lesson }) => {
+    return (
+      <View style={styles.lessonCard}>
+        <Text style={styles.lessonText}>Feedback: {item.feedback}</Text>
+        <Text style={styles.lessonText}>Drills Assigned: {item.drillsAssigned}</Text>
+        <Text style={styles.lessonText}>Area of Game: {item.area}</Text>
+        <Text style={styles.lessonText}>Competency Level: {item.competency}</Text>
+        <Text style={styles.lessonText}>Confidence Level: {item.confidence}</Text>
+        <Text style={styles.lessonText}>Date: {new Date(item.created_at).toLocaleDateString()}</Text>
+  
+        {/* Display Before Image if available */}
+        {item.beforeImage && (
+          <View style={styles.mediaContainer}>
+            <Text style={styles.mediaLabel}>Before Image:</Text>
+            <Image source={{ uri: item.beforeImage }} style={styles.image} />
+          </View>
+        )}
+  
+        {/* Display After Image if available */}
+        {item.afterImage && (
+          <View style={styles.mediaContainer}>
+            <Text style={styles.mediaLabel}>After Image:</Text>
+            <Image source={{ uri: item.afterImage }} style={styles.image} />
+          </View>
+        )}
+  
+        {/* Display Before Video if available */}
+        {item.beforeVideo && (
+          <View style={styles.mediaContainer}>
+            <Text style={styles.mediaLabel}>Before Video:</Text>
+            <Video
+              source={{ uri: item.beforeVideo }}
+              style={styles.video}
+              useNativeControls
+              resizeMode={ResizeMode.CONTAIN}
+            />
+          </View>
+        )}
+  
+        {/* Display After Video if available */}
+        {item.afterVideo && (
+          <View style={styles.mediaContainer}>
+            <Text style={styles.mediaLabel}>After Video:</Text>
+            <Video
+              source={{ uri: item.afterVideo }}
+              style={styles.video}
+              useNativeControls
+              resizeMode={ResizeMode.CONTAIN}
+            />
+          </View>
+        )}
+      </View>
+    );
+  };
+  
 
   return (
     <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
@@ -137,6 +198,7 @@ export default function ViewLessonsPGA() {
   );
 }
 
+//chat gpt styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -167,6 +229,35 @@ const styles = StyleSheet.create({
     color: colors.borderGray,
     marginTop: 20,
   },
+  mediaContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  
+  mediaLabel: {
+    fontSize: 14,
+    color: colors.textGreen,
+    marginBottom: 5,
+  },
+  
+  image: {
+    width: 120,
+    height: 120,
+    borderRadius: 8,
+    borderColor: colors.borderGray,
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  
+  video: {
+    width: 200,
+    height: 150,
+    borderRadius: 8,
+    borderColor: colors.borderGray,
+    borderWidth: 1,
+    marginBottom: 10,
+  },
+  
 });
 
 const pickerSelectStyles = {

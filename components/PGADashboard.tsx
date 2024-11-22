@@ -233,7 +233,7 @@ export default function PGADashboard() {
 // Styles for layout and design elements
 //https://reactnative.dev/docs/style
 // ChatGPT was used to optimize styling choices for buttons, list items, and input containers for visual consistency and improved UI aesthetics.
-// ChatGPT prompts: "Optimize button styling for a React Native app", "Create styling for list items with consistent background and padding in React Native".
+
 //This was done for account, auth and Pga dashboard
 const styles = StyleSheet.create({
   container: {

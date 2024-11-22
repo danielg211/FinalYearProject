@@ -5,6 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
 
+// This code is adapted from Zero Degree Coder's video on creating a Signup, Login, and Welcome Screen in React Native
+// Video reference: Zero Degree Coder. "Signup, Login, Welcome Screen React Native." YouTube, https://www.youtube.com/watch?v=eu-8OlWbwjA
+// Utilizes navigation functionalities and styles
+
 // Define the navigation type for MainDashboard
 type PGAHomeNavigationProp = StackNavigationProp<RootStackParamList, 'PGAHome'>;
 
@@ -51,7 +55,7 @@ export default function PGAHome() {
   );
 }
 
-// Styles for the PGAHome component
+// Styles for the PGAHome component Chatgpt
 const styles = StyleSheet.create({
   container: {
     flex: 1,
