@@ -1,34 +1,37 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 
-
-// HomeScreen component serves as the welcome screen for the app. 
-// This code is adapted from Zero Degree Coder's video on creating a Signup, Login, and Welcome Screen in React Native
-// Video reference: Zero Degree Coder. "Signup, Login, Welcome Screen React Native." YouTube, https://www.youtube.com/watch?v=eu-8OlWbwjA
-// This is not needed as part of iteration 1 but was necessary to do to be able to learn the styling of react native
+// HomeScreen component serves as the welcome screen for the app.
 const HomeScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       {/* Display the app logo */}
       <Image source={require("../assets/Logo.png")} style={styles.logo} />
-      
+
       {/* Title text to welcome the user */}
       <Text style={styles.title}>Elevate Your Game</Text>
-      
+
+      {/* Subtitle to provide further context */}
+      <Text style={styles.subtitle}>Choose your role to log in</Text>
+
       {/* Container for the user type buttons (PGA Pro and Golfer) */}
       <View style={styles.buttonContainer}>
         {/* Button to navigate to the PGA Pro authentication screen */}
         <TouchableOpacity
           style={[styles.buttonWrapper, styles.PGAButtonWrapper]}
-          onPress={() => navigation.navigate("Auth")}
+          onPress={() => navigation.navigate("PGALogin")}
+          accessibilityLabel="PGA Professional Login"
+          accessibilityRole="button"
         >
-          <Text style={styles.buttonText}>PGA Pro</Text>
+          <Text style={styles.buttonText}>PGA Professional</Text>
         </TouchableOpacity>
 
         {/* Button to navigate to the Golfer authentication screen */}
         <TouchableOpacity
           style={[styles.buttonWrapper, styles.GolferButtonWrapper]}
           onPress={() => navigation.navigate("GolferLogin")}
+          accessibilityLabel="Golfer Login"
+          accessibilityRole="button"
         >
           <Text style={styles.buttonText}>Golfer</Text>
         </TouchableOpacity>
@@ -43,47 +46,54 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5', // Light background color for the screen
+    backgroundColor: '#f5f5f5', // Light background color
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
+    paddingTop: 40, // Adjust for devices with notches
   },
   logo: {
-    height: 60, // Height of the logo image
-    width: 180, // Width of the logo image
-    marginVertical: 20, // Vertical margin around the logo
+    height: 80, // Larger logo
+    width: 200,
+    marginBottom: 20,
+    resizeMode: "contain",
   },
   title: {
-    fontSize: 28, // Large font size for the title text
-    fontWeight: 'bold', // Bold text style
-    textAlign: 'center', // Center align the text
-    color: '#333333', // Dark gray color for the title
-    marginBottom: 30, // Margin below the title
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#333333",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: "#555555",
+    textAlign: "center",
+    marginBottom: 30,
   },
   buttonContainer: {
-    flexDirection: "row", // Arrange buttons in a row
-    width: "100%", // Full width of the container
-    justifyContent: "space-between", // Space out buttons evenly
-    marginTop: 20, // Margin above the button container
+    flexDirection: "column", // Buttons now stack vertically
+    width: "100%",
+    alignItems: "center",
   },
   buttonWrapper: {
-    flex: 1, // Each button takes equal space
-    justifyContent: "center", // Center text vertically within button
-    alignItems: "center", // Center text horizontally within button
-    paddingVertical: 15, // Padding around the button text
-    marginHorizontal: 5, // Horizontal margin between buttons
-    borderRadius: 10, // Rounded corners for the buttons
+    width: "80%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 15,
+    borderRadius: 10,
+    marginVertical: 10, // Add spacing between buttons
   },
   PGAButtonWrapper: {
-    backgroundColor: '#007f00', // Green color for PGA Pro button
+    backgroundColor: "#007f00", // Green for PGA Pro button
   },
   GolferButtonWrapper: {
-    backgroundColor: '#004d00', // Darker green color for Golfer button
+    backgroundColor: "#004d00", // Darker green for Golfer button
   },
   buttonText: {
-    color: '#FFFFFF', // White text color for button text
-    fontSize: 18, // Font size for button text
-    fontWeight: 'bold', // Bold text style
-    textTransform: 'uppercase', // Convert text to uppercase
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
 });

@@ -40,7 +40,7 @@ export default function PGADashboard() {
   const [handicap, setHandicap] = useState<string>(''); // Handicap input for adding/updating a golfer
   const [progress, setProgress] = useState<string>(''); // Progress input for adding/updating a golfer
   const [email, setEmail] = useState<string>(''); // Email input for creating a golfer account
-  const [password, setPassword] = useState<string>(''); // Password input for creating a golfer account
+  
   const [selectedGolfer, setSelectedGolfer] = useState<Golfer | null>(null); // Selected golfer for editing
   const [loading, setLoading] = useState<boolean>(false); // Loading indicator for async actions
 
@@ -54,7 +54,7 @@ export default function PGADashboard() {
     setLoading(true); // Set loading state to true
     try {
       const { data, error } = await supabase
-        .from('golfers')
+        .from('golfers1')
         .select('GolferID, name, handicap, progress, created_at')
         .order('created_at', { ascending: false }); // Order by most recent
 
@@ -72,40 +72,39 @@ export default function PGADashboard() {
 
   // Function to add a new golfer to the database
   async function addGolfer() {
-    if (!name || !handicap || !progress || !email || !password) {
-      Alert.alert('Error', 'Please fill in all fields: Name, Handicap, Progress, Email, and Password.');
+    if (!name || !handicap || !progress || !email) {
+      Alert.alert('Error', 'Please fill in all fields: Name, Handicap, Progress, and Email.');
       return; // Exit if any field is missing
     }
-
+  
     setLoading(true); // Set loading state to true
-
+  
     try {
-      // Create a new Supabase user with email and password
+      // Create a new Supabase user with email and the default password "Golf1234"
       const { data: userData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email,
-        password,
+        password: "Golf1234", // Default password
         email_confirm: true, // Automatically confirm email
       });
-
+  
       if (authError) throw authError; // Handle authentication error
-
+  
       const golferID = userData.user?.id; // Retrieve the user ID from the created user
       const { error: insertError } = await supabase
-        .from('golfers')
+        .from('golfers1')
         .insert([{ GolferID: golferID, name, handicap: parseInt(handicap), progress }]);
-
+  
       if (insertError) throw insertError; // Handle error if insertion fails
-
+  
       // Update golfers list with the newly added golfer
       setGolfers([{ GolferID: golferID, name, handicap: parseInt(handicap), progress, created_at: new Date().toISOString() }, ...golfers]);
-
+  
       // Reset form inputs
       setName('');
       setHandicap('');
       setProgress('');
       setEmail('');
-      setPassword('');
-
+  
       Alert.alert('Success', 'Golfer account created successfully'); // Show success message
     } catch (error) {
       if (error instanceof Error) {
@@ -115,6 +114,7 @@ export default function PGADashboard() {
       setLoading(false); // Set loading state to false
     }
   }
+  
 
   // Function to update an existing golfer's details
   async function updateGolfer() {
@@ -127,7 +127,7 @@ export default function PGADashboard() {
 
     try {
       const { error } = await supabase
-        .from('golfers')
+        .from('golfers1')
         .update({ name, handicap: parseInt(handicap), progress })
         .eq('GolferID', selectedGolfer.GolferID); // Match GolferID to update the correct golfer
 
@@ -158,7 +158,7 @@ export default function PGADashboard() {
   async function deleteGolfer(golferID: string) {
     try {
       const { error } = await supabase
-        .from('golfers')
+        .from('golfers1')
         .delete()
         .eq('GolferID', golferID); // Match GolferID to delete the correct golfer
 
@@ -205,7 +205,7 @@ export default function PGADashboard() {
         <Input label="Handicap" value={handicap} keyboardType="numeric" onChangeText={setHandicap} placeholder="Enter Handicap" containerStyle={styles.inputContainer} />
         <Input label="Progress" value={progress} onChangeText={setProgress} placeholder="Enter Progress" containerStyle={styles.inputContainer} />
         <Input label="Email" value={email} onChangeText={setEmail} placeholder="Enter Golfer's Email" containerStyle={styles.inputContainer} />
-        <Input label="Password" value={password} secureTextEntry onChangeText={setPassword} placeholder="Enter Golfer's Password" containerStyle={styles.inputContainer} />
+       
 
         {/* Button to add or update golfer */}
         <Button
