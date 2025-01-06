@@ -75,7 +75,7 @@ export default function LogLesson() {
   const [area, setArea] = useState('');
   const [competency, setCompetency] = useState('');
   const [confidence, setConfidence] = useState(5);
-  const [focusPoints, setFocusPoints] = useState('');
+  //const [focusPoints, setFocusPoints] = useState('');
   const [beforeImage, setBeforeImage] = useState<string | null>(null);
   const [afterImage, setAfterImage] = useState<string | null>(null);
   const [golferId, setGolferId] = useState('');
@@ -86,6 +86,8 @@ export default function LogLesson() {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [beforeVideo, setBeforeVideo] = useState<string | null>(null);
   const [afterVideo, setAfterVideo] = useState<string | null>(null);
+  const [pgaId, setPgaId] = useState('');
+
 
 
   // Fetch initial data
@@ -95,8 +97,23 @@ export default function LogLesson() {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
 
-        const { data: golfersData, error: golfersError } = await supabase.from('golfers').select('GolferID, name');
+        const { data: golfersData, error: golfersError } = await supabase.from('golfers1').select('GolferID, name');
         if (golfersError) throw golfersError;
+
+         // Check if user is null
+        if (!user) {
+          throw new Error("User not found. Please log in again.");
+        }
+
+        const { data: pgaData, error: pgaError } = await supabase
+        .from('PGAProfessional')
+        .select('PGAID')
+        .eq('PGAID', user.id)
+        .single();
+
+      if (pgaError) throw pgaError;
+
+      setPgaId(pgaData.PGAID); // Set the PGAID
 
         const { data: drillsData, error: drillsError } = await supabase.from('drills').select('drill_id, name, category');
         if (drillsError) throw drillsError;
@@ -163,23 +180,24 @@ export default function LogLesson() {
 
   // Log lesson
   const logLesson = async () => {
-    if (!golferId || !feedback || !area || !competency) {
+    if (!golferId || !feedback || !area || !competency || !pgaId) {
       Alert.alert('Error', 'Please fill in all required fields.');
       return;
     }
 
     try {
-      const { data: lessonData, error: lessonError } = await supabase.from('Lesson').insert([{
+      const { data: lessonData, error: lessonError } = await supabase.from('Lesson1').insert([{
         feedback,
         area,
         competency,
         confidence,
-        focusPoints,
+       // focusPoints,
         beforeImage,
         afterImage,
         beforeVideo, 
         afterVideo,  
         GolferID: golferId,
+        PGAID: pgaId, 
       }]).select();
 
       if (lessonError) throw lessonError;
@@ -190,9 +208,15 @@ export default function LogLesson() {
           GolferID: golferId,
           drill_id: drillId,
           Lessonid: lessonid,
+          PGAID: pgaId,
         }));
         const { error: drillError } = await supabase.from('AssignedDrills').insert(drillAssignments);
         if (drillError) throw drillError;
+      }
+
+      if (!pgaId) {
+        Alert.alert('Error', 'PGA Professional ID not found. Please try again.');
+        return;
       }
       console.log('Lesson ID:', lessonid); 
 
@@ -210,7 +234,7 @@ export default function LogLesson() {
     setArea('');
     setCompetency('');
     setConfidence(5);
-    setFocusPoints('');
+    //setFocusPoints('');
     setBeforeImage(null);
     setAfterImage(null);
     setGolferId('');

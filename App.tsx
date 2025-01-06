@@ -11,10 +11,13 @@ import PGAHome from './components/PGAHome';
 import ViewLessonsPGA from './components/ViewLessonsPGA';
 import LogLesson from './components/LogLesson';
 import CreateDrills from './components/CreateDrills';
-
+import ViewLessonsGolfer from './components/ViewLessonsGolfer';
+import LessonDetailsGolfer from './components/LessonDetailsGolfer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Session } from '@supabase/supabase-js';
+import UploadDrillResult from './components/UploadDrillResult';
+import ViewDrillResults from './components/ViewDrillResults';
 
 // Define route param list for navigation
 export type RootStackParamList = {
@@ -22,6 +25,8 @@ export type RootStackParamList = {
   PGALogin: undefined;
   GolferLogin: undefined;
   GolferDashboard: undefined;
+  ViewLessonsGolfer: undefined;
+  LessonDetailsGolfer: { lessonId: string };
   PGADashboard: undefined;
   PGAHome: undefined;
   PGAAccount: {session: Session }; 
@@ -29,6 +34,8 @@ export type RootStackParamList = {
   ViewLessonsPGA: undefined;
   LogLesson: undefined;
   CreateDrills: undefined;
+  UploadDrillResult: undefined;
+  ViewDrillResults: undefined;
 };
 
 // Create the Stack Navigator
@@ -80,13 +87,19 @@ export default function App() {
           <>
             <Stack.Screen name="PGAAccount" component={PGAAccount} initialParams={{ session }} />
             <Stack.Screen name="GolferAccount" component={GolferAccount} initialParams={{ session }} />
+
             <Stack.Screen name="GolferDashboard" component={GolferDashboard} />
+            <Stack.Screen name="ViewLessonsGolfer" component={ViewLessonsGolfer} />
+            <Stack.Screen name="LessonDetailsGolfer" component={LessonDetailsGolfer} />
+            <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} />
+           
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
             <Stack.Screen name="PGAHome" component={PGAHome} />
             
             <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} />
             <Stack.Screen name="LogLesson" component={LogLesson} />
             <Stack.Screen name="CreateDrills" component={CreateDrills} />
+            <Stack.Screen name="ViewDrillResults" component={ViewDrillResults} />
           </>
         )}
       </Stack.Navigator>

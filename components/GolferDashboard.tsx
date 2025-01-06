@@ -64,12 +64,17 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
         <Button
           title="View Lesson History"
           buttonStyle={styles.button}
-          onPress={() => navigation.navigate('ViewLessonHistory')}
+          onPress={() => navigation.navigate('ViewLessonsGolfer')}
         />
         <Button
           title="Update Profile"
           buttonStyle={styles.button}
           onPress={() => navigation.navigate('GolferAccount')}
+        />
+        <Button
+          title="Upload Drill Result"
+          buttonStyle={styles.button}
+          onPress={() => navigation.navigate('UploadDrillResult')}
         />
         <Button
           title="Sign Out"

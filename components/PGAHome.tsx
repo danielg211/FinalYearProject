@@ -51,6 +51,13 @@ export default function PGAHome() {
         onPress={() => navigation.navigate('CreateDrills')}
         containerStyle={styles.buttonContainer}
       />
+      {/* Navigate to View Drill Result */}
+      <Button
+        title="View Drill Results"
+        buttonStyle={styles.primaryButton}
+        onPress={() => navigation.navigate('ViewDrillResults')}
+        containerStyle={styles.buttonContainer}
+      />
     </View>
   );
 }

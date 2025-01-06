@@ -74,7 +74,7 @@ export default function PGALogin() {
 
       // Step 3: Redirect to PGADashboard
       Alert.alert('Success', 'Signed in successfully!');
-      navigation.navigate('PGADashboard');
+      navigation.navigate('PGAHome');
     } catch (error) {
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to sign in');
     } finally {
