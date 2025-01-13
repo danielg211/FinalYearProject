@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { supabase } from '../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
 import { Image } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
-
+import jsPDF from 'jspdf';
+import * as FileSystem from 'expo-file-system';
 
 // FlatList reference:
 // React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
@@ -28,13 +29,11 @@ import { Video, ResizeMode } from 'expo-av';
 
 interface Lesson {
   feedback: string;
-  drillsAssigned: string;
   GolferID: string;
   PGAID: string;
   area: string;
   competency: string;
   confidence: number;
-  focusPoints: string;
   beforeImage: string | null;
   afterImage: string | null;
   beforeVideo: string | null;
@@ -53,13 +52,13 @@ export default function ViewLessonsPGA() {
   const [selectedGolfer, setSelectedGolfer] = useState<string>(''); // State to track selected golfer
   const [loading, setLoading] = useState(true);
 
-  // Fetch lessons from the database // used chatgpt to help filter by constraint selected golferid
+  /* Fetch lessons from the database // used chatgpt to help filter by constraint selected golferid
   const fetchLessons = async (golferId: string | null = null) => {
     try {
       let query = supabase
-        .from('Lesson')
+        .from('Lesson1')
         .select(`
-          feedback, drillsAssigned, GolferID, PGAID, area, competency, confidence, focusPoints, beforeImage, afterImage, beforeVideo, afterVideo, created_at
+          feedback, GolferID, PGAID, area, competency, confidence, beforeImage, afterImage, beforeVideo, afterVideo, created_at
         `)
         .order('created_at', { ascending: false });
 
@@ -83,11 +82,53 @@ export default function ViewLessonsPGA() {
       setLoading(false);
     }
   };
+  */
+ // Fetch lessons from the database
+const fetchLessons = async (golferId: string | null = null) => {
+  try {
+    // Fetch logged-in PGA Professional's ID
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+
+    const loggedInPGAProID = sessionData?.session?.user?.id;
+    if (!loggedInPGAProID) {
+      throw new Error('Unable to fetch logged-in PGA Professional ID.');
+    }
+
+    // Query lessons for the logged-in PGA Pro
+    let query = supabase
+      .from('Lesson1')
+      .select(`
+        feedback, GolferID, PGAID, area, competency, confidence, beforeImage, afterImage, beforeVideo, afterVideo, created_at
+      `)
+      .eq('PGAID', loggedInPGAProID) // Filter by logged-in PGA Pro
+      .order('created_at', { ascending: false });
+
+    if (golferId) {
+      query = query.eq('GolferID', golferId); // Add golfer filter if selected
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Error fetching lessons:', error.message);
+      Alert.alert('Error fetching lessons', error.message);
+      return;
+    }
+
+    setLessons(data as Lesson[]);
+  } catch (error) {
+    console.error('Unexpected error fetching lessons:', error);
+    Alert.alert('Error', 'Unexpected error fetching lessons');
+  } finally {
+    setLoading(false);
+  }
+};
 
   // Fetch golfers from the database
   const fetchGolfers = async () => {
     try {
-      const { data, error } = await supabase.from('golfers').select('GolferID, name');
+      const { data, error } = await supabase.from('golfers1').select('GolferID, name');
 
       if (error) {
         console.error('Error fetching golfers:', error.message);
@@ -112,16 +153,51 @@ export default function ViewLessonsPGA() {
     fetchLessons(selectedGolfer || null);
   }, [selectedGolfer]);
 
+
+ 
+
+
+  //PDF Creation
+  const generatePDF = async (lesson: Lesson) => {
+    const doc = new jsPDF();
+  
+    // Add the logo
+    //doc.addImage(require('../assets/Logo.png'), 'PNG', 10, 10, 40, 20);
+  
+    doc.setFontSize(16);
+    doc.text('Post-Lesson Report', 10, 40);
+  
+    doc.setFontSize(12);
+    doc.text(`Date: ${new Date(lesson.created_at).toLocaleDateString()}`, 10, 50);
+    doc.text(`Golfer ID: ${lesson.GolferID}`, 10, 60);
+    doc.text(`Area of Game: ${lesson.area}`, 10, 70);
+    doc.text(`Competency: ${lesson.competency}`, 10, 80);
+    doc.text(`Confidence: ${lesson.confidence}`, 10, 90);
+    doc.text('Feedback:', 10, 100);
+    doc.text(lesson.feedback, 10, 110, { maxWidth: 180 });
+  
+    // Skip images for now
+    doc.text('Drills Assigned:', 10, 120);
+    
+  
+    doc.save(`Lesson_Report_${lesson.GolferID}.pdf`);
+  };
   const renderLesson = ({ item }: { item: Lesson }) => {
     return (
       <View style={styles.lessonCard}>
         <Text style={styles.lessonText}>Feedback: {item.feedback}</Text>
-        <Text style={styles.lessonText}>Drills Assigned: {item.drillsAssigned}</Text>
         <Text style={styles.lessonText}>Area of Game: {item.area}</Text>
         <Text style={styles.lessonText}>Competency Level: {item.competency}</Text>
         <Text style={styles.lessonText}>Confidence Level: {item.confidence}</Text>
         <Text style={styles.lessonText}>Date: {new Date(item.created_at).toLocaleDateString()}</Text>
-  
+        
+        <TouchableOpacity
+        style={styles.pdfButton}
+        onPress={() => generatePDF(item)}
+      >
+        <Text style={styles.pdfButtonText}>Create PDF</Text>
+      </TouchableOpacity>
+
         {/* Display Before Image if available */}
         {item.beforeImage && (
           <View style={styles.mediaContainer}>
@@ -164,6 +240,7 @@ export default function ViewLessonsPGA() {
           </View>
         )}
       </View>
+      
     );
   };
   
@@ -256,6 +333,17 @@ const styles = StyleSheet.create({
     borderColor: colors.borderGray,
     borderWidth: 1,
     marginBottom: 10,
+  },
+  pdfButton: {
+    backgroundColor: colors.textGreen,
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  pdfButtonText: {
+    color: '#FFF',
+    fontSize: 16,
   },
   
 });

@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View, Alert, TouchableOpacity } from 'react-native';
 import { supabase } from '../lib/supabase';
+import jsPDF from 'jspdf';
 
 type Lesson = {
   Lessonid: string;
   created_at: string;
   feedback: string;
-  drills: string[]; // Array of drill names
+  drills: string[];
   area: string;
 };
 
-export default function ViewLessonsGolfer({ navigation }: { navigation: any }) {
+export default function ViewLessonsGolfer() {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,16 +32,14 @@ export default function ViewLessonsGolfer({ navigation }: { navigation: any }) {
           throw new Error('User not authenticated');
         }
 
-        // Fetch lessons and associated drill names
         const { data: lessonsData, error: lessonsError } = await supabase
           .from('Lesson1')
-          .select('Lessonid, created_at, feedback,area, drills:AssignedDrills(drill_id)')
+          .select('Lessonid, created_at, feedback, area, drills:AssignedDrills(drill_id)')
           .eq('GolferID', golferId)
           .order('created_at', { ascending: false });
 
         if (lessonsError) throw lessonsError;
 
-        // Map lessons to include drill names
         const mappedLessons = await Promise.all(
           lessonsData.map(async (lesson: any) => {
             const drillIds = lesson.drills.map((d: any) => d.drill_id);
@@ -54,7 +53,7 @@ export default function ViewLessonsGolfer({ navigation }: { navigation: any }) {
 
             return {
               ...lesson,
-              drills: drillNames.map((d: any) => d.name), // Extract drill names
+              drills: drillNames.map((d: any) => d.name),
             };
           })
         );
@@ -70,31 +69,36 @@ export default function ViewLessonsGolfer({ navigation }: { navigation: any }) {
     fetchLessons();
   }, []);
 
+  // PDF Generation
+  const generatePDF = (lesson: Lesson) => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Lesson Report', 10, 10);
+    doc.setFontSize(12);
+    doc.text(`Date: ${new Date(lesson.created_at).toLocaleDateString()}`, 10, 20);
+    doc.text(`Feedback: ${lesson.feedback}`, 10, 30, { maxWidth: 180 });
+    doc.text(`Drills: ${lesson.drills.length > 0 ? lesson.drills.join(', ') : 'None'}`, 10, 40);
+    doc.text(`Area: ${lesson.area}`, 10, 50);
+
+    doc.save(`Lesson_${lesson.Lessonid}.pdf`);
+  };
+
   const renderLesson = ({ item }: { item: Lesson }) => (
     <View style={styles.lessonCard}>
-      <View style={styles.header}>
-        <Text style={styles.area}>{item.area}</Text> {/* Add area here */}
-        <Text style={styles.date}>{new Date(item.created_at).toLocaleDateString()}</Text>
-      </View>
+      <Text style={styles.area}>Area: {item.area}</Text>
+      <Text style={styles.date}>Date: {new Date(item.created_at).toLocaleDateString()}</Text>
       <Text style={styles.feedback}>Feedback: {item.feedback}</Text>
       <Text style={styles.drills}>
-        Drills Assigned: {item.drills.length > 0 ? item.drills.join(', ') : 'None'}
+        Drills: {item.drills.length > 0 ? item.drills.join(', ') : 'None'}
       </Text>
       <TouchableOpacity
-      style={styles.button}
-      onPress={() => navigation.navigate('LessonDetailsGolfer', { lessonId: item.Lessonid })}
-    >
-      <Text style={styles.buttonText}>View Full Lesson</Text>
-    </TouchableOpacity>
-      <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('ViewDrill', { lessonId: item.Lessonid })}
+        onPress={() => generatePDF(item)}
       >
-        <Text style={styles.buttonText}>View Drills</Text>
+        <Text style={styles.buttonText}>Download PDF</Text>
       </TouchableOpacity>
     </View>
   );
-  
 
   return (
     <View style={styles.container}>
@@ -103,7 +107,7 @@ export default function ViewLessonsGolfer({ navigation }: { navigation: any }) {
       ) : (
         <FlatList
           data={lessons}
-          keyExtractor={(item, index) => `${item.Lessonid}-${index}`}
+          keyExtractor={(item) => item.Lessonid}
           renderItem={renderLesson}
           contentContainerStyle={styles.listContainer}
         />
@@ -130,11 +134,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', // Align area and date on opposite ends
-    marginBottom: 8,
   },
   area: {
     fontSize: 16,
