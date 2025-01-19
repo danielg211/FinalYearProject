@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Alert,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, StyleSheet, Alert, FlatList,} from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 
@@ -14,10 +7,12 @@ interface DrillResult {
   drill_result_id: number;
   GolferID: string;
   drill_id: string;
-  LessonID: string | null;
   result: string;
   media_url: string | null;
   created_at: string;
+  golferName: string;
+  drillName: string;
+  Lesson1: { area: string };
 }
 
 export default function ViewDrillResults({ navigation }: any) {
@@ -29,36 +24,43 @@ export default function ViewDrillResults({ navigation }: any) {
       setLoading(true);
       try {
         console.log('Fetching session...');
-        const { data, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
 
-        const session = data.session;
-        const pgaId = session?.user?.id;
-        if (!pgaId) throw new Error('User not authenticated');
+        const pgaId = sessionData?.session?.user?.id;
+        if (!pgaId) {
+          throw new Error('User not authenticated');
+        }
         console.log('PGA ID:', pgaId);
 
-        console.log('Fetching drill results...');
         const { data: resultsData, error: resultsError } = await supabase
           .from('DrillResults')
-          .select('*') // Fetch all fields temporarily
+          .select(`
+            drill_result_id,
+            result,
+            created_at,
+            media_url,
+            Lesson1(area),
+            golfers1(name), 
+            drills(name)    
+          `)
           .eq('PGAID', pgaId)
           .order('created_at', { ascending: false });
 
         if (resultsError) throw resultsError;
 
         console.log('Raw drill results data:', resultsData);
-        if (resultsData && resultsData.length > 0) {
-          setDrillResults(resultsData);
-        } else {
-          console.log('No drill results found.');
-          setDrillResults([]);
-        }
+
+        const mappedResults = resultsData.map((result: any) => ({
+          ...result,
+          golferName: result.golfers1.name,
+          drillName: result.drills.name,
+        }));
+
+        setDrillResults(mappedResults);
       } catch (error: any) {
         console.error('Error fetching drill results:', error.message || error);
-        Alert.alert(
-          'Error fetching drill results',
-          error.message || 'An error occurred'
-        );
+        Alert.alert('Error fetching drill results', error.message || 'An error occurred');
       } finally {
         setLoading(false);
       }
@@ -70,21 +72,20 @@ export default function ViewDrillResults({ navigation }: any) {
   const renderDrillResult = ({ item }: { item: DrillResult }) => (
     <View style={styles.resultCard}>
       <Text style={styles.resultText}>
-        <Text style={styles.label}>Golfer ID:</Text> {item.GolferID}
+        <Text style={styles.label}>Golfer Name:</Text> {item.golferName}
       </Text>
       <Text style={styles.resultText}>
-        <Text style={styles.label}>Drill ID:</Text> {item.drill_id}
+        <Text style={styles.label}>Drill Name:</Text> {item.drillName}
       </Text>
       <Text style={styles.resultText}>
         <Text style={styles.label}>Result:</Text> {item.result}
       </Text>
       <Text style={styles.resultText}>
-        <Text style={styles.label}>Uploaded At:</Text>{' '}
-        {new Date(item.created_at).toLocaleString()}
+        <Text style={styles.label}>Uploaded At:</Text> {new Date(item.created_at).toLocaleString()}
       </Text>
-      {item.LessonID && (
+      {item.Lesson1 && (
         <Text style={styles.resultText}>
-          <Text style={styles.label}>Lesson ID:</Text> {item.LessonID}
+          <Text style={styles.label}>Lesson Area:</Text> {item.Lesson1.area}
         </Text>
       )}
       {item.media_url && (

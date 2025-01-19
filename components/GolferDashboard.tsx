@@ -77,6 +77,11 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
           onPress={() => navigation.navigate('UploadDrillResult')}
         />
         <Button
+          title="Change Password"
+          buttonStyle={styles.button}
+          onPress={() => navigation.navigate('ChangePasswordGolfer')}
+        />
+        <Button
           title="Sign Out"
           buttonStyle={[styles.button, styles.signOutButton]}
           onPress={handleSignOut}

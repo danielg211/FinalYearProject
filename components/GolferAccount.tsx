@@ -27,7 +27,7 @@ export default function GolferAccount({ route }: Props) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [handicap, setHandicap] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
+ // const [avatarUrl, setAvatarUrl] = useState('');
 
   // Fetch Golfer Profile
   useEffect(() => {
@@ -39,7 +39,7 @@ export default function GolferAccount({ route }: Props) {
       setLoading(true);
       const { data, error } = await supabase
         .from('golfers1')
-        .select('name, email, handicap, avatar_url')
+        .select('name, email, handicap')
         .eq('GolferID', session.user.id)
         .single();
 
@@ -48,7 +48,7 @@ export default function GolferAccount({ route }: Props) {
       setName(data.name || '');
       setEmail(data.email || '');
       setHandicap(data.handicap || '');
-      setAvatarUrl(data.avatar_url || '');
+      //setAvatarUrl(data.avatar_url || '');
     } catch (error) {
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to fetch profile');
     } finally {
@@ -64,7 +64,7 @@ export default function GolferAccount({ route }: Props) {
         id: session.user.id,
         name,
         handicap,
-        avatar_url: avatarUrl,
+       // avatar_url: avatarUrl,
       };
 
       const { error } = await supabase.from('golfers1').upsert(updates);
@@ -83,12 +83,7 @@ export default function GolferAccount({ route }: Props) {
   return (
     <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        {/* Avatar Upload */}
-        <Avatar
-          size={200}
-          url={avatarUrl}
-          onUpload={(url) => setAvatarUrl(url)}
-        />
+        
 
         {/* Name Input */}
         <Input

@@ -18,6 +18,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Session } from '@supabase/supabase-js';
 import UploadDrillResult from './components/UploadDrillResult';
 import ViewDrillResults from './components/ViewDrillResults';
+import ChangePasswordGolfer from './components/ChangePasswordGolfer';
 
 // Define route param list for navigation
 export type RootStackParamList = {
@@ -36,6 +37,7 @@ export type RootStackParamList = {
   CreateDrills: undefined;
   UploadDrillResult: undefined;
   ViewDrillResults: undefined;
+  ChangePasswordGolfer: {session: Session }; 
 };
 
 // Create the Stack Navigator
@@ -74,31 +76,38 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator 
+        screenOptions={{
+          headerShown: true, // Enable headers globally
+          headerStyle: { backgroundColor: '#4CAF50' }, // Header background color
+          headerTintColor: '#FFF', // Back button and title color
+          headerTitleStyle: { fontWeight: 'bold' }, // Title font style
+         }}>
         {!session ? (
           // Start at the Homescreen where the user selects login
           <>
-            <Stack.Screen name="Homescreen" component={Homescreen} />
-            <Stack.Screen name="PGALogin" component={PGALogin} />
-            <Stack.Screen name="GolferLogin" component={GolferLogin} />
+            <Stack.Screen name="Homescreen" component={Homescreen} options={{ title: 'Welcome' }} />
+            <Stack.Screen name="PGALogin" component={PGALogin} options={{ title: 'PGA Login' }} />
+            <Stack.Screen name="GolferLogin" component={GolferLogin} options={{ title: 'Golfer Login' }} />
           </>
         ) : (
           // Authenticated users go to their respective account and dashboards
           <>
             <Stack.Screen name="PGAAccount" component={PGAAccount} initialParams={{ session }} />
             <Stack.Screen name="GolferAccount" component={GolferAccount} initialParams={{ session }} />
+            <Stack.Screen name="ChangePasswordGolfer" component={ChangePasswordGolfer} initialParams={{ session }} />
 
-            <Stack.Screen name="GolferDashboard" component={GolferDashboard} />
-            <Stack.Screen name="ViewLessonsGolfer" component={ViewLessonsGolfer} />
-            <Stack.Screen name="LessonDetailsGolfer" component={LessonDetailsGolfer} />
-            <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} />
+            <Stack.Screen name="GolferDashboard" component={GolferDashboard} options={{ title: 'Golfer Dashboard' }} />
+            <Stack.Screen name="ViewLessonsGolfer" component={ViewLessonsGolfer}  options={{ title: 'Your Lessons' }}/>
+            <Stack.Screen name="LessonDetailsGolfer" component={LessonDetailsGolfer} options={{ title: 'Lesson Details' }} />
+            <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} options={{ title: 'Upload Drill Result' }} />
            
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
-            <Stack.Screen name="PGAHome" component={PGAHome} />
+            <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Dashboard', headerLeft: () => null }}/>
             
-            <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} />
-            <Stack.Screen name="LogLesson" component={LogLesson} />
-            <Stack.Screen name="CreateDrills" component={CreateDrills} />
+            <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} options={{ title: 'View Lessons' }}/>
+            <Stack.Screen name="LogLesson" component={LogLesson} options={{ title: 'Log Lesson' }}/>
+            <Stack.Screen name="CreateDrills" component={CreateDrills} options={{ title: 'Create Drills' }}/>
             <Stack.Screen name="ViewDrillResults" component={ViewDrillResults} />
           </>
         )}
