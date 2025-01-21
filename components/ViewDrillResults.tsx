@@ -3,6 +3,13 @@ import {View, Text, StyleSheet, Alert, FlatList,} from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,
+// https://www.youtube.com/watch?v=4yVSwHO5QHU 
+
+// React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
+
+// React Native Docs Display Image https://reactnative.dev/docs/image
+
 interface DrillResult {
   drill_result_id: number;
   GolferID: string;

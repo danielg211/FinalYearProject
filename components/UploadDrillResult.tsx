@@ -4,6 +4,11 @@ import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 import * as ImagePicker from 'expo-image-picker';
 
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,
+// https://www.youtube.com/watch?v=4yVSwHO5QHU 
+
+// React Native Tutorial 10 - FlatList https:www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
+// How to use an image picker | Universal App tutorial #4 expo, https://www.youtube.com/watch?v=iEQZU58naS8
 interface Drill {
   label: string;
   value: string;

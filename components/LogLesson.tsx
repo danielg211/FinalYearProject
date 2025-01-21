@@ -75,7 +75,6 @@ export default function LogLesson() {
   const [area, setArea] = useState('');
   const [competency, setCompetency] = useState('');
   const [confidence, setConfidence] = useState(5);
-  //const [focusPoints, setFocusPoints] = useState('');
   const [beforeImage, setBeforeImage] = useState<string | null>(null);
   const [afterImage, setAfterImage] = useState<string | null>(null);
   const [golferId, setGolferId] = useState('');

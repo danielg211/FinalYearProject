@@ -8,6 +8,17 @@ import { RootStackParamList } from '../App';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'PGALogin'>;
 
+// Import for background gradient effects
+// ChatGPT recommended using LinearGradient from Expo to enhance UI design with gradient backgrounds.
+
+
+// References:
+// Auth Screen Implementation with Supabase and React Native
+// This code references concepts and patterns demonstrated in Supabase's tutorial 
+// on React Native Database & User Authentication available on their YouTube channel.
+// Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
+// Adapted with UI design.
+
 export default function PGALogin() {
   const navigation = useNavigation<NavigationProp>();
 
@@ -129,7 +140,9 @@ export default function PGALogin() {
     </View>
   );
 }
-
+// Styles for layout and design elements
+//https://reactnative.dev/docs/style
+// ChatGPT was used to optimize the styling approach, including adjustments to shadow properties and layout alignments for UI consistency.
 const styles = StyleSheet.create({
   container: {
     flex: 1,

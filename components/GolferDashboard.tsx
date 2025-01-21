@@ -5,6 +5,10 @@ import { supabase } from '../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
 
+// This code is adapted from Zero Degree Coder's video on creating a Signup, Login, and Welcome Screen in React Native
+// Video reference: Zero Degree Coder. "Signup, Login, Welcome Screen React Native." YouTube, https://www.youtube.com/watch?v=eu-8OlWbwjA
+// Utilizes navigation functionalities and styles
+
 export default function GolferDashboard({ navigation }: { navigation: any }) {
   const [golferName, setGolferName] = useState<string>('');
   const [loading, setLoading] = useState(true);

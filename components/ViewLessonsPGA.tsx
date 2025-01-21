@@ -25,6 +25,8 @@ import * as FileSystem from 'expo-file-system';
 
 // Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
 
+// "Generating PDF Files with jsPDF Library in JavaScript: Quick Start Guide" by Code with Yousef, available on YouTube.
+// YouTube Video: https://www.youtube.com/watch?v=i7EOZB3a1Vs
 
 
 interface Lesson {
@@ -52,37 +54,6 @@ export default function ViewLessonsPGA() {
   const [selectedGolfer, setSelectedGolfer] = useState<string>(''); // State to track selected golfer
   const [loading, setLoading] = useState(true);
 
-  /* Fetch lessons from the database // used chatgpt to help filter by constraint selected golferid
-  const fetchLessons = async (golferId: string | null = null) => {
-    try {
-      let query = supabase
-        .from('Lesson1')
-        .select(`
-          feedback, GolferID, PGAID, area, competency, confidence, beforeImage, afterImage, beforeVideo, afterVideo, created_at
-        `)
-        .order('created_at', { ascending: false });
-
-      if (golferId) {
-        query = query.eq('GolferID', golferId); // Filter by selected golfer
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error('Error fetching lessons:', error.message);
-        Alert.alert('Error fetching lessons', error.message);
-        return;
-      }
-
-      setLessons(data as Lesson[]);
-    } catch (error) {
-      console.error('Unexpected error fetching lessons:', error);
-      Alert.alert('Error', 'Unexpected error fetching lessons');
-    } finally {
-      setLoading(false);
-    }
-  };
-  */
  // Fetch lessons from the database
 const fetchLessons = async (golferId: string | null = null) => {
   try {
@@ -226,13 +197,6 @@ const fetchLessons = async (golferId: string | null = null) => {
     }
   };
   
-  
-  
-  
-  
-  
-
-
   const renderLesson = ({ item }: { item: Lesson }) => {
     return (
       <View style={styles.lessonCard}>

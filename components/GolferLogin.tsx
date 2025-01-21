@@ -8,6 +8,20 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
 
+// Import for background gradient effects
+// ChatGPT recommended using LinearGradient from Expo to enhance UI design with gradient backgrounds.
+
+
+// References:
+// Auth Screen Implementation with Supabase and React Native
+// This code references concepts and patterns demonstrated in Supabase's tutorial 
+// on React Native Database & User Authentication available on their YouTube channel.
+// Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
+// Adapted with UI design.
+
+// Set up event listener to refresh Supabase session automatically
+// when the app is in the foreground and stop when it goes to the background.
+
 type GolferLoginNavigationProp = StackNavigationProp<RootStackParamList, 'GolferLogin'>;
 
 AppState.addEventListener('change', (state) => {
@@ -98,7 +112,9 @@ export default function GolferLogin() {
     </LinearGradient>
   );
 }
-
+// Styles for layout and design elements
+//https://reactnative.dev/docs/style
+// ChatGPT was used to optimize the styling approach, including adjustments to shadow properties and layout alignments for UI consistency.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
