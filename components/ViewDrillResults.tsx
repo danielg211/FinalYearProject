@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text, StyleSheet, Alert, FlatList,} from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 
@@ -10,11 +10,13 @@ import { Button } from '@rneui/themed';
 
 // React Native Docs Display Image https://reactnative.dev/docs/image
 
+// How to CONDITIONAL RENDER in React" by brocode, YouTube https://www.youtube.com/watch?v=XvURBpFxdGw
+
 interface DrillResult {
   drill_result_id: number;
   GolferID: string;
   drill_id: string;
-  result: string;
+  result: number;
   media_url: string | null;
   created_at: string;
   golferName: string;
@@ -41,7 +43,7 @@ export default function ViewDrillResults({ navigation }: any) {
         console.log('PGA ID:', pgaId);
 
         const { data: resultsData, error: resultsError } = await supabase
-          .from('DrillResults')
+          .from('DrillResults1')
           .select(`
             drill_result_id,
             result,
@@ -95,11 +97,21 @@ export default function ViewDrillResults({ navigation }: any) {
           <Text style={styles.label}>Lesson Area:</Text> {item.Lesson1.area}
         </Text>
       )}
-      {item.media_url && (
-        <Text style={styles.resultText}>
-          <Text style={styles.label}>Media URL:</Text> {item.media_url}
-        </Text>
+      {item.media_url && (item.media_url.endsWith('.jpg') || item.media_url.endsWith('.png')) && (
+        <Image source={{ uri: item.media_url }} style={styles.image} />
       )}
+      {/* Commented out video parts */}
+      {/* 
+      {item.media_url && item.media_url.endsWith('.mp4') && (
+        <Video
+          source={{ uri: item.media_url }}
+          style={styles.video}
+          useNativeControls
+          resizeMode="contain"
+        />
+      )}
+      */}
+      {!item.media_url && <Text>Unsupported Media Type</Text>}
     </View>
   );
 
@@ -166,6 +178,14 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+  },
+  image: {
+    width: 200,
+    height: 150,
+    marginTop: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
   },
   backButton: {
     backgroundColor: '#D32F2F',

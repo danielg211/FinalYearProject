@@ -19,6 +19,7 @@ import { Session } from '@supabase/supabase-js';
 import UploadDrillResult from './components/UploadDrillResult';
 import ViewDrillResults from './components/ViewDrillResults';
 import ChangePasswordGolfer from './components/ChangePasswordGolfer';
+import ViewProgressionPGA from './components/ViewProgressionPGA';
 
 // Define route param list for navigation
 export type RootStackParamList = {
@@ -38,6 +39,7 @@ export type RootStackParamList = {
   UploadDrillResult: undefined;
   ViewDrillResults: undefined;
   ChangePasswordGolfer: {session: Session }; 
+  ViewProgressionPGA: undefined;
 };
 
 // Create the Stack Navigator
@@ -109,6 +111,7 @@ export default function App() {
             <Stack.Screen name="LogLesson" component={LogLesson} options={{ title: 'Log Lesson' }}/>
             <Stack.Screen name="CreateDrills" component={CreateDrills} options={{ title: 'Create Drills' }}/>
             <Stack.Screen name="ViewDrillResults" component={ViewDrillResults} />
+            <Stack.Screen name="ViewProgressionPGA" component={ViewProgressionPGA} />
           </>
         )}
       </Stack.Navigator>

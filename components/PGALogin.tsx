@@ -26,14 +26,14 @@ export default function PGALogin() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false); // Toggle for sign-up/sign-in
+  const [isSignUp, setIsSignUp] = useState(false); 
 
   // Function to handle sign-up
   async function signUpWithEmail() {
     setLoading(true);
 
     try {
-      // Step 1: Sign up the user
+      // Sign up the user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -43,7 +43,7 @@ export default function PGALogin() {
 
       const userId = authData.user?.id;
 
-      // Step 2: Insert into PGAProfessional table
+      //Insert into PGAProfessional table
       if (userId) {
         const { error: insertError } = await supabase
           .from('PGAProfessional')
@@ -52,7 +52,7 @@ export default function PGALogin() {
         if (insertError) throw insertError;
 
         Alert.alert('Success', 'Account created successfully!');
-        navigation.navigate('PGAHome'); // Navigate to PGA Dashboard
+        navigation.navigate('PGAHome'); 
       }
     } catch (error) {
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to sign up');
@@ -66,13 +66,13 @@ export default function PGALogin() {
     setLoading(true);
 
     try {
-      // Step 1: Authenticate the user
+      //  Authenticate the user
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
       const userId = data.user?.id;
 
-      // Step 2: Verify the user exists in PGAProfessional table
+      //  Verify the user exists in PGAProfessional table
       const { data: pgaData, error: pgaError } = await supabase
         .from('PGAProfessional')
         .select('*')

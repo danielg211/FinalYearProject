@@ -32,7 +32,7 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
       const { data, error: fetchError } = await supabase
         .from('golfers1')
         .select('name')
-        .eq('GolferID', session.user.id) // Use session.user.id to match the user
+        .eq('GolferID', session.user.id) 
         .single();
   
       if (fetchError) throw fetchError;

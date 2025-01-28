@@ -28,7 +28,6 @@ import * as FileSystem from 'expo-file-system';
 // "Generating PDF Files with jsPDF Library in JavaScript: Quick Start Guide" by Code with Yousef, available on YouTube.
 // YouTube Video: https://www.youtube.com/watch?v=i7EOZB3a1Vs
 
-
 interface Lesson {
   feedback: string;
   GolferID: string;
@@ -76,7 +75,7 @@ const fetchLessons = async (golferId: string | null = null) => {
       .order('created_at', { ascending: false });
 
     if (golferId) {
-      query = query.eq('GolferID', golferId); // Add golfer filter if selected
+      query = query.eq('GolferID', golferId); 
     }
 
     const { data, error } = await query;
@@ -124,10 +123,6 @@ const fetchLessons = async (golferId: string | null = null) => {
     fetchLessons(selectedGolfer || null);
   }, [selectedGolfer]);
 
-
- 
-
-
   //PDF Creation
   const generatePDF = async (lesson: Lesson) => {
     try {
@@ -154,7 +149,7 @@ const fetchLessons = async (golferId: string | null = null) => {
       const doc = new jsPDF();
   
       // Add Title
-      doc.setFillColor(76, 175, 80); // Green header
+      doc.setFillColor(76, 175, 80); 
       doc.rect(0, 0, 210, 20, 'F');
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(16);

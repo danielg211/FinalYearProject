@@ -9,6 +9,15 @@ import * as ImagePicker from 'expo-image-picker';
 
 // React Native Tutorial 10 - FlatList https:www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
 // How to use an image picker | Universal App tutorial #4 expo, https://www.youtube.com/watch?v=iEQZU58naS8
+
+// SupabaseTips "How to Configure Access Control on Your Supabase Storage Buckets." YouTube,
+// https://www.youtube.com/watch?v=4ERX__Y908k
+
+// Supabase Docs on Storage Buckets Fundamentals https://supabase.com/docs/guides/storage/buckets/fundamentals
+
+// Expo Docs for Image Picker https://docs.expo.dev/versions/latest/sdk/imagepicker/
+
+// Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
 interface Drill {
   label: string;
   value: string;
@@ -116,7 +125,7 @@ export default function UploadDrillResult({ navigation }: any) {
       const golferId = session?.user?.id;
       if (!golferId) throw new Error('User not authenticated');
 
-      const { error: insertError } = await supabase.from('DrillResults').insert({
+      const { error: insertError } = await supabase.from('DrillResults1').insert({
         GolferID: golferId,
         PGAID: selectedDrill.pgaId,
         LessonID: selectedDrill.lessonId,

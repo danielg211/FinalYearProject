@@ -22,6 +22,8 @@ type LessonDetailsProps = {
 
 // Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
 
+// Kelvin Sowah: React Navigation Tutorial for Beginners - How to Pass Params (Expo) https://www.youtube.com/watch?v=6ghojgApo7A
+
 export default function LessonDetailsGolfer({ route }: LessonDetailsProps) {
   const { lessonId } = route.params;
   const [lesson, setLesson] = useState<any>(null);

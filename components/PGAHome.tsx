@@ -122,6 +122,12 @@ export default function PGAHome() {
         onPress={() => navigation.navigate('ViewDrillResults')}
         containerStyle={styles.buttonContainer}
       />
+      <Button
+        title="View Progression"
+        buttonStyle={styles.primaryButton}
+        onPress={() => navigation.navigate('ViewProgressionPGA')}
+        containerStyle={styles.buttonContainer}
+      />
     </View>
   );
 }

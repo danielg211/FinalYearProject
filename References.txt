@@ -21,3 +21,20 @@ Iteration 2 References
 11) Expo Docs Video Player https://docs.expo.dev/versions/latest/sdk/video-av/
 12) Zero Degree Coder. "Signup, Login, Welcome Screen React Native." YouTube, https://www.youtube.com/watch?v=eu-8OlWbwjA
 13) Supabase Table Management https://supabase.com/docs/guides/database/tables?queryGroups=database-method&database-method=dashboard&queryGroups=language&language=sql
+
+Iteration 3 References
+
+1) Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
+2) Zero Degree Coder. "Signup, Login, Welcome Screen React Native." YouTube, https://www.youtube.com/watch?v=eu-8OlWbwjA
+3) Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU 
+4) React Native Tutorial 10 - FlatList https:www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
+5) How to use an image picker | Universal App tutorial #4 expo, https://www.youtube.com/watch?v=iEQZU58naS8
+6) SupabaseTips "How to Configure Access Control on Your Supabase Storage Buckets." YouTube,https://www.youtube.com/watch?v=4ERX__Y908k
+7) Supabase Docs on Storage Buckets Fundamentals https://supabase.com/docs/guides/storage/buckets/fundamentals
+8) Expo Docs for Image Picker https://docs.expo.dev/versions/latest/sdk/imagepicker/
+9) Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
+10) How to CONDITIONAL RENDER in React" by brocode, YouTube https://www.youtube.com/watch?v=XvURBpFxdGw
+11) Generating PDF Files with jsPDF Library in JavaScript: Quick Start Guide" by Code with Yousef, YouTube Video: https://www.youtube.com/watch?v=i7EOZB3a1Vs
+12) Supabase Password Documentation https://supabase.com/docs/guides/auth/passwords 
+13) Kelvin Sowah: React Navigation Tutorial for Beginners - How to Pass Params (Expo) https://www.youtube.com/watch?v=6ghojgApo7A
+14) Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni

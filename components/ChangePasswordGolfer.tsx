@@ -8,6 +8,8 @@ import { useNavigation, RouteProp } from '@react-navigation/native';
 import { colors } from '../colors';
 import { RootStackParamList } from '../App';
 
+// Supabase Password Documentation https://supabase.com/docs/guides/auth/passwords           
+
 // Navigation and Route types
 type NavigationProp = StackNavigationProp<RootStackParamList, 'ChangePasswordGolfer'>;
 type RouteProps = RouteProp<RootStackParamList, 'ChangePasswordGolfer'>;

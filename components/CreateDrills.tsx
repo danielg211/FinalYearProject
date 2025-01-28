@@ -5,7 +5,11 @@ import { Button } from '@rneui/themed';
 import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
 
-
+// Same logic as PGA Dashboard
+// Uses same video as PGA Dashboard 
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,
+// https://www.youtube.com/watch?v=4yVSwHO5QHU
+// Create logic
 
 
 export default function CreateDrills() {

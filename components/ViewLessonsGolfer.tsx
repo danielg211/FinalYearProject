@@ -13,11 +13,7 @@ import jsPDF from 'jspdf';
 
 // SupaBase Docs on Javascript https://supabase.com/docs/reference/javascript/select
 
-// Expo Docs Video Player https://docs.expo.dev/versions/latest/sdk/video-av/
-
 // React Native Docs Display Image https://reactnative.dev/docs/image
-
-// Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
 
 // "Generating PDF Files with jsPDF Library in JavaScript: Quick Start Guide" by Code with Yousef, 
 // YouTube Video: https://www.youtube.com/watch?v=i7EOZB3a1Vs
