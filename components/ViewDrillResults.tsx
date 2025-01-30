@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
-
-// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube,
-// https://www.youtube.com/watch?v=4yVSwHO5QHU 
-
-// React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
-
-// React Native Docs Display Image https://reactnative.dev/docs/image
-
-// How to CONDITIONAL RENDER in React" by brocode, YouTube https://www.youtube.com/watch?v=XvURBpFxdGw
+import RNPickerSelect from 'react-native-picker-select';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface DrillResult {
   drill_result_id: number;
@@ -23,60 +16,108 @@ interface DrillResult {
   drillName: string;
   Lesson1: { area: string };
 }
+interface Golfer {
+  id: string;
+  name: string;
+}
+
+
 
 export default function ViewDrillResults({ navigation }: any) {
   const [drillResults, setDrillResults] = useState<DrillResult[]>([]);
+  const [filteredResults, setFilteredResults] = useState<DrillResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedGolfer, setSelectedGolfer] = useState('');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [golfers, setGolfers] = useState<Golfer[]>([]);
 
   useEffect(() => {
-    const fetchDrillResults = async () => {
-      setLoading(true);
-      try {
-        console.log('Fetching session...');
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) throw sessionError;
-
-        const pgaId = sessionData?.session?.user?.id;
-        if (!pgaId) {
-          throw new Error('User not authenticated');
-        }
-        console.log('PGA ID:', pgaId);
-
-        const { data: resultsData, error: resultsError } = await supabase
-          .from('DrillResults1')
-          .select(`
-            drill_result_id,
-            result,
-            created_at,
-            media_url,
-            Lesson1(area),
-            golfers1(name), 
-            drills(name)    
-          `)
-          .eq('PGAID', pgaId)
-          .order('created_at', { ascending: false });
-
-        if (resultsError) throw resultsError;
-
-        console.log('Raw drill results data:', resultsData);
-
-        const mappedResults = resultsData.map((result: any) => ({
-          ...result,
-          golferName: result.golfers1.name,
-          drillName: result.drills.name,
-        }));
-
-        setDrillResults(mappedResults);
-      } catch (error: any) {
-        console.error('Error fetching drill results:', error.message || error);
-        Alert.alert('Error fetching drill results', error.message || 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchDrillResults();
+    fetchGolfers();
   }, []);
+
+  const fetchDrillResults = async () => {
+    setLoading(true);
+    try {
+      console.log('Fetching session...');
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+
+      const pgaId = sessionData?.session?.user?.id;
+      if (!pgaId) throw new Error('User not authenticated');
+      console.log('PGA ID:', pgaId);
+
+      const { data: resultsData, error: resultsError } = await supabase
+        .from('DrillResults1')
+        .select(`
+          drill_result_id,
+          result,
+          created_at,
+          media_url,
+          Lesson1(area),
+          golfers1(name), 
+          drills(name)    
+        `)
+        .eq('PGAID', pgaId)
+        .order('created_at', { ascending: false });
+
+      if (resultsError) throw resultsError;
+
+      console.log('Raw drill results data:', resultsData);
+
+      const mappedResults = resultsData.map((result: any) => ({
+        ...result,
+        golferName: result.golfers1.name,
+        drillName: result.drills.name,
+      }));
+
+      setDrillResults(mappedResults);
+      setFilteredResults(mappedResults);
+    } catch (error: any) {
+      console.error('Error fetching drill results:', error.message || error);
+      Alert.alert('Error fetching drill results', error.message || 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchGolfers = async () => {
+    const { data, error } = await supabase.from('golfers1').select('GolferID, name');
+    if (error) {
+      console.error('Error fetching golfers:', error);
+    } else {
+      if (data) {
+      setGolfers(data.map((golfer: any) => ({ id: golfer.GolferID, name: golfer.name })));
+      }
+
+    }
+  };
+
+  const filterResultsByDate = (days: number) => {
+    const now = new Date();
+    const pastDate = new Date();
+    pastDate.setDate(now.getDate() - days); // Subtract days
+  
+    const filtered = drillResults.filter((result) => {
+      const resultDate = new Date(result.created_at);
+      return resultDate >= pastDate;
+    });
+  
+    setFilteredResults(filtered);
+  };
+  
+
+
+  const filterResults = () => {
+    const formattedDate = selectedDate.toISOString().split('T')[0]; // Extract YYYY-MM-DD
+    const filtered = drillResults.filter(
+      (result) =>
+        (!selectedGolfer || result.golferName === selectedGolfer) &&
+        result.created_at.startsWith(formattedDate)
+    );
+    setFilteredResults(filtered);
+  };
 
   const renderDrillResult = ({ item }: { item: DrillResult }) => (
     <View style={styles.resultCard}>
@@ -100,17 +141,6 @@ export default function ViewDrillResults({ navigation }: any) {
       {item.media_url && (item.media_url.endsWith('.jpg') || item.media_url.endsWith('.png')) && (
         <Image source={{ uri: item.media_url }} style={styles.image} />
       )}
-      {/* Commented out video parts */}
-      {/* 
-      {item.media_url && item.media_url.endsWith('.mp4') && (
-        <Video
-          source={{ uri: item.media_url }}
-          style={styles.video}
-          useNativeControls
-          resizeMode="contain"
-        />
-      )}
-      */}
       {!item.media_url && <Text>Unsupported Media Type</Text>}
     </View>
   );
@@ -118,77 +148,104 @@ export default function ViewDrillResults({ navigation }: any) {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Drill Results</Text>
+
+      {/* Golfer Picker */}
+      <Text style={styles.label}>Filter by Golfer</Text>
+      <RNPickerSelect
+        onValueChange={(value) => setSelectedGolfer(value)}
+        items={golfers.map((golfer) => ({ label: golfer.name, value: golfer.name }))}
+        placeholder={{ label: "Select a Golfer...", value: null }}
+        style={pickerSelectStyles}
+      />
+      
+      {/* Date Picker */}
+      <Text style={styles.label}>Filter by Date</Text>
+      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
+        <Text style={styles.dateText}>{selectedDate.toDateString()}</Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate}
+          mode="date"
+          display="default"
+          onChange={(event: any, date?: Date | undefined) => {
+          setShowDatePicker(false);
+          if (date) setSelectedDate(date);
+        }}
+
+        />
+      )}
+      {/* Filter Buttons for Last 7 Days & Last Month */}
+        <View style={styles.buttonContainer}>
+          <Button title="Last 7 Days" onPress={() => filterResultsByDate(7)} buttonStyle={styles.filterButton} />
+          <Button title="Last Month" onPress={() => filterResultsByDate(30)} buttonStyle={styles.filterButton} />
+        </View>
+
+      <Button title="Apply Filters" onPress={filterResults} buttonStyle={styles.button} />
+
       {loading ? (
         <Text style={styles.loadingText}>Loading...</Text>
-      ) : drillResults.length > 0 ? (
-        <FlatList
-          data={drillResults}
-          keyExtractor={(item) => item.drill_result_id.toString()}
-          renderItem={renderDrillResult}
-        />
+      ) : filteredResults.length > 0 ? (
+        <FlatList data={filteredResults} keyExtractor={(item) => item.drill_result_id.toString()} renderItem={renderDrillResult} />
       ) : (
-        <Text style={styles.noDataText}>
-          No drill results available. Please check again later.
-        </Text>
+        <Text style={styles.noDataText}>No drill results available.</Text>
       )}
-      <Button
-        title="Back to Dashboard"
-        onPress={() => navigation.navigate('PGADashboard')}
-        buttonStyle={styles.backButton}
-      />
+
+      <Button title="Back to Dashboard" onPress={() => navigation.navigate('PGADashboard')} buttonStyle={styles.backButton} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  header: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  loadingText: {
-    textAlign: 'center',
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
     fontSize: 16,
-    color: '#666',
-  },
-  noDataText: {
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#666',
-    marginTop: 20,
-  },
-  resultCard: {
-    padding: 16,
-    backgroundColor: '#FFFFFF',
+    paddingVertical: 12,
+    paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: '#CCCCCC',
-    borderRadius: 8,
-    marginBottom: 10,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: 'white',
   },
-  resultText: {
+  inputAndroid: {
     fontSize: 16,
-    marginBottom: 5,
-  },
-  label: {
-    fontWeight: 'bold',
-  },
-  image: {
-    width: 200,
-    height: 150,
-    marginTop: 10,
-    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#CCCCCC',
-  },
-  backButton: {
-    backgroundColor: '#D32F2F',
-    marginTop: 20,
+    borderColor: 'gray',
+    borderRadius: 8,
+    color: 'black',
+    backgroundColor: 'white',
   },
 });
+
+
+
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, backgroundColor: '#f9f9f9' },
+  header: { fontSize: 24, fontWeight: 'bold', color: '#4CAF50', marginBottom: 20, textAlign: 'center' },
+  loadingText: { textAlign: 'center', fontSize: 16, color: '#666' },
+  noDataText: { textAlign: 'center', fontSize: 16, color: '#666', marginTop: 20 },
+  label: { fontWeight: 'bold', marginBottom: 5 },
+  datePickerButton: { padding: 10, borderWidth: 1, borderRadius: 8, borderColor: '#ccc', alignItems: 'center', marginBottom: 10 },
+  dateText: { fontSize: 16 },
+  button: { backgroundColor: '#4CAF50', borderRadius: 8, paddingVertical: 12, marginBottom: 15 },
+  backButton: { backgroundColor: '#D32F2F', marginTop: 20 },
+  resultCard: { padding: 16, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#CCCCCC', borderRadius: 8, marginBottom: 10 },
+  resultText: { fontSize: 16, marginBottom: 5 },
+  image: { width: 200, height: 150, marginTop: 10, borderRadius: 8, borderWidth: 1, borderColor: '#CCCCCC' },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  filterButton: {
+    backgroundColor: '#2196F3',
+    borderRadius: 8,
+    paddingVertical: 10,
+  },
+});
+
+

@@ -25,9 +25,9 @@ interface ProgressionData {
   dates: string[];
 }
 
-export default function ViewProgressionPGA() {
+export default function ViewProgressionGolfer() {
   const [golfers, setGolfers] = useState<Golfer[]>([]);
-  const [selectedGolfer, setSelectedGolfer] = useState<string | null>(null);
+  //const [selectedGolfer, setSelectedGolfer] = useState<string | null>(null);
   const [drillAreas, setDrillAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [drills, setDrills] = useState<Drill[]>([]);
@@ -42,24 +42,25 @@ export default function ViewProgressionPGA() {
   const [averageScore, setAverageScore] = useState<number | null>(null);
   const [scoreDeviation, setScoreDeviation] = useState<number | null>(null);
   const [scoreDistribution, setScoreDistribution] = useState<Record<string, number>>({});
-
+  const [golferID, setGolferID] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchGolfers = async () => {
+    const fetchGolferID = async () => {
       try {
-        console.log('Fetching golfers...');
-        const { data, error } = await supabase.from('golfers1').select('GolferID, name');
-        if (error) throw error;
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
 
-        console.log('Golfers fetched:', data);
-        setGolfers(data.map((golfer: any) => ({ label: golfer.name, value: golfer.GolferID })));
+        const golferID = sessionData?.session?.user?.id;
+        if (!golferID) throw new Error("User not authenticated");
+
+        setGolferID(golferID);
       } catch (error: any) {
-        console.error('Error fetching golfers:', error.message || error);
-        Alert.alert('Error fetching golfers', error.message || 'An unknown error occurred');
+        console.error('Error fetching golfer ID:', error.message || error);
+        Alert.alert('Error', error.message || 'An unknown error occurred');
       }
     };
 
-    fetchGolfers();
+    fetchGolferID();
   }, []);
 
   useEffect(() => {
@@ -72,14 +73,14 @@ export default function ViewProgressionPGA() {
   }, [performanceTrend]);
   
   const fetchDrillAreas = async () => {
-    if (!selectedGolfer) {
-      Alert.alert('Error', 'Please select a golfer first.');
+    if (!golferID) {
+      Alert.alert('Error', '.');
       return;
     }
 
     try {
-      console.log('Fetching drill areas for golfer:', selectedGolfer);
-      const { data, error } = await supabase.from('Lesson1').select('area').eq('GolferID', selectedGolfer);
+      console.log('Fetching drill areas for golfer:', golferID);
+      const { data, error } = await supabase.from('Lesson1').select('area').eq('GolferID', golferID);
       if (error) throw error;
 
       const uniqueAreas = Array.from(new Set(data.map((lesson: any) => lesson.area)));
@@ -92,7 +93,7 @@ export default function ViewProgressionPGA() {
   };
 
   const fetchDrills = async () => {
-    if (!selectedGolfer || !selectedArea) {
+    if (!golferID || !selectedArea) {
       Alert.alert('Error', 'Please select a golfer and drill area first.');
       return;
     }
@@ -101,7 +102,7 @@ export default function ViewProgressionPGA() {
       console.log('Fetching drills for area:', selectedArea);
       const { data, error } = await supabase.from('DrillResults1')
         .select('drill_id, drills!inner(name)')
-        .eq('GolferID', selectedGolfer);
+        .eq('GolferID', golferID);
   
       if (error) throw error;
   
@@ -122,7 +123,7 @@ export default function ViewProgressionPGA() {
   
 //Fetch Progression
 const fetchProgressionData = async () => {
-  if (!selectedGolfer || selectedDrill.length === 0) {
+  if (!golferID || selectedDrill.length === 0) {
     Alert.alert('Error', 'Please select a golfer and at least one drill.');
     return;
   }
@@ -139,7 +140,7 @@ const fetchProgressionData = async () => {
       const { data, error } = await supabase
         .from('DrillResults1')
         .select('created_at, result')
-        .eq('GolferID', selectedGolfer)
+        .eq('GolferID', golferID)
         .eq('drill_id', drillId);
 
       if (error) throw error;
@@ -235,17 +236,9 @@ const fetchProgressionData = async () => {
 return (
 <ScrollView keyboardShouldPersistTaps="handled">
   <View style={styles.container}>
-    <Text style={styles.header}>View Golfer Progression</Text>
+    <Text style={styles.header}>View Your Progression</Text>
 
-    {/* Golfer Selection */}
-    <Picker selectedValue={selectedGolfer} onValueChange={(value) => setSelectedGolfer(value)} style={styles.picker}>
-      <Picker.Item label="Select Golfer" value={null} />
-      {golfers.map((golfer) => (
-        <Picker.Item key={golfer.value} label={golfer.label} value={golfer.value} />
-      ))}
-    </Picker>
-
-    <Button title="Fetch Drill Areas" onPress={fetchDrillAreas} disabled={!selectedGolfer} buttonStyle={styles.button} />
+    <Button title="Fetch Drill Areas" onPress={fetchDrillAreas} disabled={!golferID} buttonStyle={styles.button} />
 
     {drillAreas.length > 0 && (
       <Picker selectedValue={selectedArea} onValueChange={(value) => setSelectedArea(value)} style={styles.picker}>

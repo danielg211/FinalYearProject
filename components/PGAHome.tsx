@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { Button } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -80,6 +80,7 @@ export default function PGAHome() {
   }, []);
 
   return (
+  <ScrollView keyboardShouldPersistTaps="handled">
     <View style={styles.container}>
       {/* Header Section */}
       <Text style={styles.title}>Welcome, {proName}</Text>
@@ -129,6 +130,7 @@ export default function PGAHome() {
         containerStyle={styles.buttonContainer}
       />
     </View>
+  </ScrollView>
   );
 }
 

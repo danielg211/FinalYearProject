@@ -20,6 +20,7 @@ import UploadDrillResult from './components/UploadDrillResult';
 import ViewDrillResults from './components/ViewDrillResults';
 import ChangePasswordGolfer from './components/ChangePasswordGolfer';
 import ViewProgressionPGA from './components/ViewProgressionPGA';
+import ViewProgressionGolfer from './components/ViewProgressionGolfer';
 
 // Define route param list for navigation
 export type RootStackParamList = {
@@ -40,6 +41,7 @@ export type RootStackParamList = {
   ViewDrillResults: undefined;
   ChangePasswordGolfer: {session: Session }; 
   ViewProgressionPGA: undefined;
+  ViewProgressionGolfer: undefined;
 };
 
 // Create the Stack Navigator
@@ -103,6 +105,7 @@ export default function App() {
             <Stack.Screen name="ViewLessonsGolfer" component={ViewLessonsGolfer}  options={{ title: 'Your Lessons' }}/>
             <Stack.Screen name="LessonDetailsGolfer" component={LessonDetailsGolfer} options={{ title: 'Lesson Details' }} />
             <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} options={{ title: 'Upload Drill Result' }} />
+            <Stack.Screen name="ViewProgressionGolfer" component={ViewProgressionGolfer} options={{ title: 'View Progression Golfer' }} />
            
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
             <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Dashboard', headerLeft: () => null }}/>
