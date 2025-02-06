@@ -21,6 +21,8 @@ import ViewDrillResults from './components/ViewDrillResults';
 import ChangePasswordGolfer from './components/ChangePasswordGolfer';
 import ViewProgressionPGA from './components/ViewProgressionPGA';
 import ViewProgressionGolfer from './components/ViewProgressionGolfer';
+import ProgressionHomePGA from './components/ProgressionHomePGA';
+import LessonImprovementPGA from './components/LessonImprovementPGA';
 
 // Define route param list for navigation
 export type RootStackParamList = {
@@ -42,6 +44,8 @@ export type RootStackParamList = {
   ChangePasswordGolfer: {session: Session }; 
   ViewProgressionPGA: undefined;
   ViewProgressionGolfer: undefined;
+  ProgressionHomePGA: undefined;
+  LessonImprovementPGA: undefined;
 };
 
 // Create the Stack Navigator
@@ -115,6 +119,9 @@ export default function App() {
             <Stack.Screen name="CreateDrills" component={CreateDrills} options={{ title: 'Create Drills' }}/>
             <Stack.Screen name="ViewDrillResults" component={ViewDrillResults} />
             <Stack.Screen name="ViewProgressionPGA" component={ViewProgressionPGA} />
+            <Stack.Screen name="ProgressionHomePGA" component={ProgressionHomePGA} />
+            <Stack.Screen name="LessonImprovementPGA" component={LessonImprovementPGA} />
+
           </>
         )}
       </Stack.Navigator>

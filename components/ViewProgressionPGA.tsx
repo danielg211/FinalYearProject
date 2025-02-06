@@ -7,6 +7,15 @@ import { LineChart } from 'react-native-chart-kit';
 import MultiSelect from 'react-native-multiple-select';
 import { BarChart } from 'react-native-chart-kit';
 
+// References
+// Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
+// React Native Picker Tutorial: Create Dropdown Menus with Ease - The Don Hub https://www.youtube.com/watch?v=Lzhraj1EYz8
+// React Native Chart Kit - Data Visualization for React Native Apps https://www.npmjs.com/package/react-native-chart-kit
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
+// React Native Multiple Select - Multi-Select Dropdown for React Native Apps. npm, https://www.npmjs.com/package/react-native-multiple-select. Accessed [Date].
+// Abirhup Datta, "Line Chart, Stacked Bar Chart  - React Native Chart Kit Library." YouTube, https://www.youtube.com/watch?v=C6a6pmX4aLI. 
+// 7.	Lirs Tech Tips, "React Native: Multiple Select (Using library react-native-multiple-select)." YouTube https://www.youtube.com/watch?v=hVUIAOs_7Pc
+
 const screenWidth = Dimensions.get('window').width;
 
 // Interfaces
@@ -120,7 +129,12 @@ export default function ViewProgressionPGA() {
     }
   };
   
-//Fetch Progression
+//Fetch Progression  ChatGPt formulas
+// ChatGPT was utilized to formulate and optimize the statistical models 
+// for performance trend analysis, and score distribution mapping. 
+// The suggested mathematical models were then converted 
+// into JavaScript functions to ensure correct implementation in the React Native codebase
+
 const fetchProgressionData = async () => {
   if (!selectedGolfer || selectedDrill.length === 0) {
     Alert.alert('Error', 'Please select a golfer and at least one drill.');
@@ -160,7 +174,7 @@ const fetchProgressionData = async () => {
 
     setProgressionData(newProgressionData);
 
-    // ✅ Extract all results across all selected drills
+    // Extract all results across all selected drills
     console.log("New Progression Data:", newProgressionData);
 
     const allResults = Object.values(newProgressionData)
@@ -170,17 +184,17 @@ const fetchProgressionData = async () => {
       setBestScore(Math.max(...allResults));
       setWorstScore(Math.min(...allResults));
 
-      // ✅ Compute Average Score
+      //  Compute Average Score
       const total = allResults.reduce((sum, score) => sum + score, 0);
       setAverageScore(parseFloat((total / allResults.length).toFixed(2))); // Ensure numeric format
 
-      // ✅ Compute Standard Deviation
+      //  Compute Standard Deviation
       const mean = total / allResults.length;
       const squaredDiffs = allResults.map(score => (score - mean) ** 2);
       const variance = squaredDiffs.reduce((sum, diff) => sum + diff, 0) / allResults.length;
       setScoreDeviation(parseFloat(Math.sqrt(variance).toFixed(2))); // Ensure numeric format
 
-      // ✅ Compute Score Distribution (grouping into 10-point ranges)
+      //  Compute Score Distribution (grouping into 10-point ranges)
       const distribution: Record<string, number> = {};
       allResults.forEach(score => {
         const range = `${Math.floor(score / 10) * 10}-${Math.floor(score / 10) * 10 + 9}`;
@@ -188,7 +202,7 @@ const fetchProgressionData = async () => {
       });
       setScoreDistribution(distribution);
 
-      // ✅ Determine overall trend
+      //  Determine overall trend
       const firstResult = allResults[0];
       const lastResult = allResults[allResults.length - 1];
 
@@ -205,7 +219,7 @@ const fetchProgressionData = async () => {
       setOverallTrend("Not enough data");
     }
 
-    // ✅ Calculate overall performance trend across all selected drills
+    //  Calculate overall performance trend across all selected drills
     if (latestResults.length > 0 && prevResults.length > 0) {
       const totalLatest = latestResults.reduce((acc, val) => acc + val, 0) / latestResults.length;
       const totalPrev = prevResults.reduce((acc, val) => acc + val, 0) / prevResults.length;
@@ -283,7 +297,7 @@ return (
 
     {performanceTrend && <Text style={styles.performanceText}>{performanceTrend}</Text>}
 
-    {/* Enhanced Summary Section */}
+    {/* Summary Section */}
     <View style={styles.summaryContainer}>
       <Text style={styles.summaryText}>🏆 Best Score: {bestScore ?? 'N/A'}</Text>
       <Text style={styles.summaryText}>📉 Worst Score: {worstScore ?? 'N/A'}</Text>
@@ -299,7 +313,7 @@ return (
           labels: Object.values(progressionData)[0]?.dates || [],
           datasets: Object.entries(progressionData).map(([drillId, data]) => ({
             data: data.results,
-            label: drillId, // Optional, can be replaced with drill name
+            label: drillId, 
           })),
         }}
         width={screenWidth - 32}

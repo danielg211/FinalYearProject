@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
 import { supabase } from '../lib/supabase';
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
 // Define the navigation type for MainDashboard
 type PGAHomeNavigationProp = StackNavigationProp<RootStackParamList, 'PGAHome'>;
@@ -12,7 +13,7 @@ type PGAHomeNavigationProp = StackNavigationProp<RootStackParamList, 'PGAHome'>;
 // PGAHome component
 export default function PGAHome() {
   const navigation = useNavigation<PGAHomeNavigationProp>();
-  const [proName, setProName] = useState<string>('');
+  const [proName, setProName] = useState<string>('PGA Professional');
   const [clientCount, setClientCount] = useState<number>(0);
   const [lessonsCompleted, setLessonsCompleted] = useState<number>(0);
   const [drillsAssigned, setDrillsAssigned] = useState<number>(0);
@@ -80,74 +81,75 @@ export default function PGAHome() {
   }, []);
 
   return (
-  <ScrollView keyboardShouldPersistTaps="handled">
-    <View style={styles.container}>
-      {/* Header Section */}
-      <Text style={styles.title}>Welcome, {proName}</Text>
-      <Text style={styles.subtitle}>Choose a section to get started</Text>
+    <ScrollView keyboardShouldPersistTaps="handled">
+      <View style={styles.container}>
+        {/* Header Section */}
+        <Text style={styles.title}>Welcome, {proName}</Text>
+        <Text style={styles.subtitle}>Manage your lessons, drills, and clients</Text>
 
-      {/* Metrics Section */}
-      <View style={styles.metricsContainer}>
-        <Text style={styles.metric}>Clients Managed: {clientCount}</Text>
-        <Text style={styles.metric}>Lessons Completed: {lessonsCompleted}</Text>
-        <Text style={styles.metric}>Drills Assigned: {drillsAssigned}</Text>
+        {/* Metrics Section */}
+        <View style={styles.metricsCard}>
+          <Text style={styles.metricText}>👥 Clients Managed: <Text style={styles.metricValue}>{clientCount}</Text></Text>
+          <Text style={styles.metricText}>🏌️‍♂️ Lessons Completed: <Text style={styles.metricValue}>{lessonsCompleted}</Text></Text>
+          <Text style={styles.metricText}>📊 Drills Assigned: <Text style={styles.metricValue}>{drillsAssigned}</Text></Text>
+        </View>
+
+        {/* Action Buttons */}
+        <Button
+          title="Golfer Management"
+          icon={<FontAwesome5 name="user-friends" size={18} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => navigation.navigate('PGADashboard')}
+        />
+        <Button
+          title="Log a Lesson"
+          icon={<MaterialIcons name="playlist-add" size={22} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => navigation.navigate('LogLesson')}
+        />
+        <Button
+          title="View Lessons"
+          icon={<FontAwesome5 name="book" size={18} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => navigation.navigate('ViewLessonsPGA')}
+        />
+        <Button
+          title="Create Drills"
+          icon={<FontAwesome5 name="dumbbell" size={18} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => navigation.navigate('CreateDrills')}
+        />
+        <Button
+          title="View Drill Results"
+          icon={<FontAwesome5 name="chart-bar" size={18} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => navigation.navigate('ViewDrillResults')}
+        />
+        <Button
+          title="View Progression"
+          icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => navigation.navigate('ProgressionHomePGA')}
+        />
       </View>
-
-      {/* Action Buttons */}
-      <Button
-        title="Golfer Management"
-        buttonStyle={styles.primaryButton}
-        onPress={() => navigation.navigate('PGADashboard')}
-      />
-      <Button
-        title="Log a Lesson"
-        buttonStyle={styles.primaryButton}
-        onPress={() => navigation.navigate('LogLesson')}
-        containerStyle={styles.buttonContainer}
-      />
-      <Button
-        title="View Lessons"
-        buttonStyle={styles.primaryButton}
-        onPress={() => navigation.navigate('ViewLessonsPGA')}
-        containerStyle={styles.buttonContainer}
-      />
-      <Button
-        title="Create Drills"
-        buttonStyle={styles.primaryButton}
-        onPress={() => navigation.navigate('CreateDrills')}
-        containerStyle={styles.buttonContainer}
-      />
-      <Button
-        title="View Drill Results"
-        buttonStyle={styles.primaryButton}
-        onPress={() => navigation.navigate('ViewDrillResults')}
-        containerStyle={styles.buttonContainer}
-      />
-      <Button
-        title="View Progression"
-        buttonStyle={styles.primaryButton}
-        onPress={() => navigation.navigate('ViewProgressionPGA')}
-        containerStyle={styles.buttonContainer}
-      />
-    </View>
-  </ScrollView>
+    </ScrollView>
   );
 }
 
-// Styles for the PGAHome component Chatgpt
+// ✅ Modernized Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F0F4F8',
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
-    color: '#4CAF50',
+    color: '#388E3C',
     marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
@@ -155,31 +157,47 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  metricsContainer: {
-    width: '100%',
-    backgroundColor: '#FFF',
+  metricsCard: {
+    width: '90%',
+    backgroundColor: 'white',
     padding: 15,
     borderRadius: 10,
     marginBottom: 30,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    elevation: 3, // Android shadow
+    alignItems: 'center',
   },
-  metric: {
+  metricText: {
     fontSize: 16,
     color: '#333',
     marginBottom: 5,
   },
+  metricValue: {
+    fontWeight: 'bold',
+    color: '#1B5E20',
+  },
   primaryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#4CAF50',
     borderRadius: 8,
-    marginBottom: 15,
-    paddingVertical: 10,
-    width: '80%',
+    marginBottom: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    width: '90%',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2, // Android shadow
   },
-  buttonContainer: {
-    marginTop: 15,
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 10,
   },
 });
 

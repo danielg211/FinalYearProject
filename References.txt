@@ -38,3 +38,12 @@ Iteration 3 References
 12) Supabase Password Documentation https://supabase.com/docs/guides/auth/passwords 
 13) Kelvin Sowah: React Navigation Tutorial for Beginners - How to Pass Params (Expo) https://www.youtube.com/watch?v=6ghojgApo7A
 14) Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni
+
+Iteration 4 References
+
+1) Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
+2) React Native Picker Tutorial: Create Dropdown Menus with Ease - The Don Hub https://www.youtube.com/watch?v=Lzhraj1EYz8
+3) React Native Chart Kit - Data Visualization for React Native Apps https://www.npmjs.com/package/react-native-chart-kit
+4) Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
+5) React Native Multiple Select - Multi-Select Dropdown for React Native Apps. npm, https://www.npmjs.com/package/react-native-multiple-select. Accessed [Date].
+6) Abirhup Datta, "Line Chart, Stacked Bar Chart  - React Native Chart Kit Library." YouTube, https://www.youtube.com/watch?v=C6a6pmX4aLI. 
