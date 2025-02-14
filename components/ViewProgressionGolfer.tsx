@@ -7,11 +7,15 @@ import { LineChart } from 'react-native-chart-kit';
 import MultiSelect from 'react-native-multiple-select';
 import { BarChart } from 'react-native-chart-kit';
 
+
 // References
 // Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
 // React Native Picker Tutorial: Create Dropdown Menus with Ease - The Don Hub https://www.youtube.com/watch?v=Lzhraj1EYz8
 // React Native Chart Kit - Data Visualization for React Native Apps https://www.npmjs.com/package/react-native-chart-kit
 // Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
+// React Native Multiple Select - Multi-Select Dropdown for React Native Apps. npm, https://www.npmjs.com/package/react-native-multiple-select. Accessed [Date].
+// Abirhup Datta, "Line Chart, Stacked Bar Chart  - React Native Chart Kit Library." YouTube, https://www.youtube.com/watch?v=C6a6pmX4aLI. 
+// Lirs Tech Tips, "React Native: Multiple Select (Using library react-native-multiple-select)." YouTube https://www.youtube.com/watch?v=hVUIAOs_7Pc
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -282,7 +286,7 @@ return (
 
     {performanceTrend && <Text style={styles.performanceText}>{performanceTrend}</Text>}
 
-    {/* Enhanced Summary Section */}
+    {/*Summary Section */}
     <View style={styles.summaryContainer}>
       <Text style={styles.summaryText}>🏆 Best Score: {bestScore ?? 'N/A'}</Text>
       <Text style={styles.summaryText}>📉 Worst Score: {worstScore ?? 'N/A'}</Text>
@@ -298,7 +302,7 @@ return (
           labels: Object.values(progressionData)[0]?.dates || [],
           datasets: Object.entries(progressionData).map(([drillId, data]) => ({
             data: data.results,
-            label: drillId, // Optional, can be replaced with drill name
+            label: drillId, 
           })),
         }}
         width={screenWidth - 32}

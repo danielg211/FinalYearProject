@@ -14,7 +14,7 @@ import { BarChart } from 'react-native-chart-kit';
 // Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
 // React Native Multiple Select - Multi-Select Dropdown for React Native Apps. npm, https://www.npmjs.com/package/react-native-multiple-select. Accessed [Date].
 // Abirhup Datta, "Line Chart, Stacked Bar Chart  - React Native Chart Kit Library." YouTube, https://www.youtube.com/watch?v=C6a6pmX4aLI. 
-// 7.	Lirs Tech Tips, "React Native: Multiple Select (Using library react-native-multiple-select)." YouTube https://www.youtube.com/watch?v=hVUIAOs_7Pc
+// Lirs Tech Tips, "React Native: Multiple Select (Using library react-native-multiple-select)." YouTube https://www.youtube.com/watch?v=hVUIAOs_7Pc
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -337,7 +337,7 @@ return (
         <BarChart
           data={{
             labels: Object.keys(scoreDistribution), // Array of labels
-            datasets: [{ data: Object.values(scoreDistribution) }] // Ensuring datasets is an array of objects
+            datasets: [{ data: Object.values(scoreDistribution) }] 
           }}
           width={screenWidth - 32}
           height={220}

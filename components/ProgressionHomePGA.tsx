@@ -29,6 +29,11 @@ export default function ProgressionHomePGA() {
         buttonStyle={styles.button}
         onPress={() => navigation.navigate('LessonImprovementPGA')}
       />
+      <Button
+        title="📈 PGA Tour Benchmark"
+        buttonStyle={styles.button}
+        onPress={() => navigation.navigate('ViewPgaBenchmarksComparison')}
+      />
     </View>
   );
 }
