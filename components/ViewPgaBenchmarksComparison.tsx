@@ -4,6 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import { FlatList } from 'react-native';
 import { Card } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
+import { LinearProgress } from '@rneui/themed';
 
 // Interfaces
 interface Golfer {
@@ -123,25 +124,75 @@ export default function ViewPgaBenchmarksComparison() {
   }
 
   const renderDrillItem = ({ item }: { item: Drill }) => {
-    const progress = item.goalValue
-      ? ((item.golferValue ?? 0) / item.goalValue) * 100
-      : 0;
-
+    let progress = 0;
+    let differenceMessage = '';
+  
+    // Calculate progress based on the unit type
+    if (item.goalValue && item.golferValue) {
+      if (item.unit.toLowerCase() === "feet") {
+        // Lower is better for feet-based proximity metrics
+        progress = item.golferValue <= item.goalValue 
+          ? 100 
+          : (item.goalValue / item.golferValue) * 100;
+  
+        const diff = item.goalValue - item.golferValue;
+        differenceMessage = diff > 0 
+          ? `🏆 ${Math.abs(diff).toFixed(2)} feet better than PGA standard!`
+          : `📉 ${Math.abs(diff).toFixed(2)} feet behind the PGA standard.`;
+  
+      } else {
+        // Higher is better for other metrics (e.g., driving distance, accuracy)
+        progress = (item.golferValue / item.goalValue) * 100;
+  
+        const diff = item.golferValue - item.goalValue;
+        differenceMessage = diff > 0 
+          ? `🏆 ${Math.abs(diff).toFixed(2)} ${item.unit} above PGA standard!`
+          : `📉 ${Math.abs(diff).toFixed(2)} ${item.unit} below PGA standard.`;
+      }
+    }
+  
+    // Cap progress to 100%
+    const progressValue = Math.min(progress / 100, 1);
+  
     return (
       <Card containerStyle={styles.card}>
+        {/* Drill Name */}
         <Text style={styles.drillName}>{item.name}</Text>
+  
+        {/* PGA Standard vs Golfer Score */}
         <Text style={styles.metric}>
-          PGA Standard: {item.goalValue ?? 'N/A'} {item.unit} | Latest Score: {item.golferValue ?? 'N/A'} {item.unit}
+          PGA Standard: {item.goalValue ?? 'N/A'} {item.unit} | 
+          Latest Score: {item.golferValue ?? 'N/A'} {item.unit}
         </Text>
+  
+        {/* 🟢 Progress Bar */}
+        <LinearProgress 
+          value={progressValue}
+          color={progress >= 100 ? '#4CAF50' : '#2196F3'}
+          trackColor="#E0E0E0"
+          style={{ marginVertical: 10, height: 10, borderRadius: 5 }}
+          animation={{ duration: 1000 }}
+        />
+  
+        {/* Progress Percentage Text */}
         <Text style={styles.progressText}>
           {progress >= 100
-            ? '✅ You’ve reached the PGA standard!'
-            : `📊 You're ${isNaN(progress) ? '0.00' : progress.toFixed(2)}% of the way to PGA level!`}
+            ? '✅ You’ve matched or exceeded the PGA standard!'
+            : `📊 You’re ${isNaN(progress) ? '0.00' : progress.toFixed(2)}% of the way to PGA level!`}
         </Text>
-        <Button title="View All Past Results" onPress={() => console.log(`Fetching full history for ${item.name}`)} />
+  
+        {/* Difference Message */}
+        <Text style={styles.progressText}>{differenceMessage}</Text>
+  
+        {/* View All Results Button */}
+        <Button 
+          title="VIEW ALL PAST RESULTS" 
+          onPress={() => console.log(`Fetching full history for ${item.name}`)} 
+        />
       </Card>
     );
   };
+  
 
   return (
     <View style={styles.container}>
