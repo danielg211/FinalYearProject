@@ -80,12 +80,12 @@ export default function ViewProgressionPGA() {
     }
   }, [performanceTrend]);
   
+  useEffect(() => {
   const fetchDrillAreas = async () => {
     if (!selectedGolfer) {
       Alert.alert('Error', 'Please select a golfer first.');
       return;
     }
-
     try {
       console.log('Fetching drill areas for golfer:', selectedGolfer);
       const { data, error } = await supabase.from('Lesson1').select('area').eq('GolferID', selectedGolfer);
@@ -99,7 +99,11 @@ export default function ViewProgressionPGA() {
       Alert.alert('Error fetching drill areas', error.message || 'An unknown error occurred');
     }
   };
+  fetchDrillAreas();
+  }, [selectedGolfer]);
 
+
+  useEffect(() => {
   const fetchDrills = async () => {
     if (!selectedGolfer || !selectedArea) {
       Alert.alert('Error', 'Please select a golfer and drill area first.');
@@ -110,7 +114,8 @@ export default function ViewProgressionPGA() {
       console.log('Fetching drills for area:', selectedArea);
       const { data, error } = await supabase.from('DrillResults1')
         .select('drill_id, drills!inner(name)')
-        .eq('GolferID', selectedGolfer);
+        .eq('GolferID', selectedGolfer)
+        .eq('drills.category', selectedArea);
   
       if (error) throw error;
   
@@ -128,6 +133,8 @@ export default function ViewProgressionPGA() {
       Alert.alert('Error fetching drills', error.message || 'An unknown error occurred');
     }
   };
+  fetchDrills();
+}, [selectedArea]);
   
 //Fetch Progression  ChatGPt formulas
 // ChatGPT was utilized to formulate and optimize the statistical models 
@@ -135,6 +142,7 @@ export default function ViewProgressionPGA() {
 // The suggested mathematical models were then converted 
 // into JavaScript functions to ensure correct implementation in the React Native codebase
 
+useEffect(() => {
 const fetchProgressionData = async () => {
   if (!selectedGolfer || selectedDrill.length === 0) {
     Alert.alert('Error', 'Please select a golfer and at least one drill.');
@@ -240,7 +248,8 @@ const fetchProgressionData = async () => {
     setLoading(false);
   }
 };
-
+fetchProgressionData();
+}, [selectedDrill]);
 
   
 //Fetch Progression
@@ -259,7 +268,7 @@ return (
       ))}
     </Picker>
 
-    <Button title="Fetch Drill Areas" onPress={fetchDrillAreas} disabled={!selectedGolfer} buttonStyle={styles.button} />
+   
 
     {drillAreas.length > 0 && (
       <Picker selectedValue={selectedArea} onValueChange={(value) => setSelectedArea(value)} style={styles.picker}>
@@ -270,7 +279,7 @@ return (
       </Picker>
     )}
 
-    <Button title="Fetch Drills" onPress={fetchDrills} disabled={!selectedArea} buttonStyle={styles.button} />
+   
 
     {drills.length > 0 && (
       <MultiSelect
@@ -293,7 +302,7 @@ return (
       />
     )}
 
-    <Button title="Fetch Progression Data" onPress={fetchProgressionData} disabled={!selectedDrill.length} buttonStyle={styles.button} />
+    
 
     {performanceTrend && <Text style={styles.performanceText}>{performanceTrend}</Text>}
 
