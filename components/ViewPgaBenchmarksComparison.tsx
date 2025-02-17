@@ -31,12 +31,25 @@ interface Benchmark {
 
 const categories = ['Driving', 'Iron Play', 'Short Game', 'Putting'];
 
+
+
 export default function ViewPgaBenchmarksComparison() {
   const [selectedGolfer, setSelectedGolfer] = useState<string | null>(null);
   const [golfers, setGolfers] = useState<Golfer[]>([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
   const [drills, setDrills] = useState<Drill[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedTourPro, setSelectedTourPro] = useState<string | null>(null);
+  const [tourPros, setTourPros] = useState<string[]>([]);
+  const proNames = tourPros.map((pro: string) => pro);
+  const [proDrillData, setProDrillData] = useState<Drill[]>([]);
+  const [showProComparison, setShowProComparison] = useState<boolean>(false);
+  
+
+
+
+
+
 
   useEffect(() => {
     fetchGolfers();
@@ -58,6 +71,39 @@ export default function ViewPgaBenchmarksComparison() {
   useEffect(() => {
     if (selectedGolfer) fetchDrillsAndBenchmarks(selectedGolfer, selectedCategory);
   }, [selectedGolfer, selectedCategory]);
+
+  useEffect(() => {
+    const fetchTourPros = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("tour_pros")
+          .select("name");
+
+        if (error) {
+          console.error('Error fetching tour pro names:', error);
+          return;
+        }
+
+        // Use Set to extract unique names
+        const proNames = Array.from(
+          new Set(data?.map((pro: { name: string }) => pro.name))
+        );
+        setTourPros(proNames);
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      }
+    };
+
+    fetchTourPros();
+  }, []);
+
+  // Trigger fetch for PGA Pro Drill Data
+useEffect(() => {
+  if (selectedTourPro && selectedCategory) {
+    fetchProDrills(selectedTourPro, selectedCategory);
+  }
+}, [selectedTourPro, selectedCategory]);
+
 
   async function fetchDrillsAndBenchmarks(golferId: string, category: string) {
     setLoading(true);
@@ -122,10 +168,54 @@ export default function ViewPgaBenchmarksComparison() {
     }
     setLoading(false);
   }
+  async function fetchProDrills(proName: string, category: string) {
+    try {
+      const { data, error } = await supabase
+        .from('tour_pros')
+        .select('drill_id, stat_value, stat_category, name, Category') 
+        .eq('name', proName)
+        .eq('Category', category);
+  
+      if (error) throw error;
+  
+      const formattedProDrills: Drill[] = data.map((drill) => ({
+        drill_id: drill.drill_id,
+        name: drill.stat_category ?? 'Unnamed Drill',
+        golferValue: drill.stat_value ?? 0,
+        category: drill.Category ?? category,
+        unit: drill.stat_category?.includes('Distance') ? 'yards' : 'feet',
+        targetMetric: '',        // Add default empty string
+        benchmark_id: null,      // Add null as default
+        goalValue: undefined,    // Add undefined as default
+      }));
+  
+      console.log('Pro Drills fetched:', formattedProDrills);
+      setProDrillData(formattedProDrills);
+    } catch (error) {
+      console.error('Error fetching PGA Pro drills:', error);
+      Alert.alert('Error', 'Could not fetch PGA professional data');
+    }
+  }
+  
+  
 
   const renderDrillItem = ({ item }: { item: Drill }) => {
     let progress = 0;
     let differenceMessage = '';
+    const proStat = proDrillData.find((proItem) => proItem.drill_id === item.drill_id);
+
+    const golferStat = item.golferValue ?? 'N/A';
+    const proStatValue = proStat?.golferValue ?? 'N/A';
+
+    // Add a log to catch mismatches for debugging
+    if (!proStat) {
+      console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}`);
+    }
+
+    const comparisonProgress = Math.min(
+      (item.golferValue ?? 0) / (proStat?.golferValue ?? 1),
+      1
+    );
   
     // Calculate progress based on the unit type
     if (item.goalValue && item.golferValue) {
@@ -164,6 +254,13 @@ export default function ViewPgaBenchmarksComparison() {
           PGA Standard: {item.goalValue ?? 'N/A'} {item.unit} | 
           Latest Score: {item.golferValue ?? 'N/A'} {item.unit}
         </Text>
+
+        {/* Golfer vs PGA Pro Stats */}
+      <Text style={styles.metric}>
+      🏌️ Golfer: {golferStat} {item.unit} | 🏅 {selectedTourPro ?? 'PGA Pro'}: {proStatValue} {item.unit}
+      </Text>
+
+       
   
         {/* 🟢 Progress Bar */}
         <LinearProgress 
@@ -184,14 +281,13 @@ export default function ViewPgaBenchmarksComparison() {
         {/* Difference Message */}
         <Text style={styles.progressText}>{differenceMessage}</Text>
   
-        {/* View All Results Button */}
-        <Button 
-          title="VIEW ALL PAST RESULTS" 
-          onPress={() => console.log(`Fetching full history for ${item.name}`)} 
-        />
+        
+        
       </Card>
     );
   };
+ 
+
   
 
   return (
@@ -210,6 +306,18 @@ export default function ViewPgaBenchmarksComparison() {
           <Picker.Item key={category} label={category} value={category} />
         ))}
       </Picker>
+
+            <Picker
+        selectedValue={selectedTourPro}
+        onValueChange={(value) => setSelectedTourPro(value)}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select Tour Pro" value={null} />
+        {tourPros.map((pro) => (
+          <Picker.Item key={pro} label={pro} value={pro} />
+        ))}
+      </Picker>
+
 
       <FlatList
         data={drills}
