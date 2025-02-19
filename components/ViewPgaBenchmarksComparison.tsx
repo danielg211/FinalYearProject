@@ -5,6 +5,8 @@ import { FlatList } from 'react-native';
 import { Card } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 //import { LinearProgress } from '@rneui/themed';
+import { PieChart } from "react-native-chart-kit";
+
 
 // Interfaces
 interface Golfer {
@@ -294,6 +296,28 @@ if (isNaN(progressValue)) {
   
   <Text style={styles.boldText}>🏅 {selectedTourPro ?? 'PGA Pro'}'s average:</Text> {proStatValue} {item.unit}
 </Text>
+
+<View>
+  <PieChart
+    data={[
+      { name: "Golfer", population: item.golferValue || 1, color: "blue", legendFontColor: "#7F7F7F", legendFontSize: 12 },
+      { name: "PGA Pro", population: proStat?.golferValue || 1, color: "green", legendFontColor: "#7F7F7F", legendFontSize: 12 },
+    ]}
+    width={200}
+    height={120}
+    chartConfig={{
+      backgroundColor: "#F4F6F8",
+      backgroundGradientFrom: "#FFF",
+      backgroundGradientTo: "#FFF",
+      decimalPlaces: 1,
+      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    }}
+    accessor={"population"}
+    backgroundColor={"transparent"}
+    paddingLeft={"10"}
+    center={[10, 10]}
+  />
+</View>
 
 
        
