@@ -254,12 +254,15 @@ export default function LogLesson() {
           style={pickerSelectStyles}
         />
 
-        <Text style={styles.label}>Feedback:</Text>
+        <Text style={styles.label}>Lesson Notes:</Text>
         <Input
-          placeholder="Enter feedback"
+          placeholder="Write lesson notes here..."
           value={feedback}
           onChangeText={setFeedback}
           inputContainerStyle={styles.inputContainer}
+          multiline={true}  // Enable multi-line text
+          numberOfLines={4}  // Adjust height for better readability
+          textAlignVertical="top"  // Ensure text starts at the top
         />
 
         <Text style={styles.label}>Area of Game:</Text>
@@ -278,31 +281,35 @@ export default function LogLesson() {
           style={pickerSelectStyles}
         />
 
-        <Text style={styles.label}>Confidence Level:</Text>
-        <Slider
-          value={confidence}
-          onValueChange={setConfidence}
-          minimumValue={1}
-          maximumValue={10}
-          step={1}
-          thumbTintColor={colors.primaryGreen}
-        />
+        <View style={styles.sliderContainer}>
+          <Text style={styles.sliderText}>Confidence Level: {confidence}</Text>
+          <Slider
+            value={confidence}
+            onValueChange={setConfidence}
+            minimumValue={1}
+            maximumValue={10}
+            step={1}
+            thumbTintColor={colors.primaryGreen}
+          />
+        </View>
+
+        
         <Text style={styles.sliderValue}>Confidence: {confidence}</Text>
 
         <Text style={styles.label}>Before Picture:</Text>
-        <Button title="Select Before Picture" onPress={() => pickImage(setBeforeImage)} />
+        <Button title="Select Before Picture" onPress={() => pickImage(setBeforeImage)} buttonStyle={styles.buttonSecondary} />
         {beforeImage && <Text style={styles.imageText}>Image selected</Text>}
 
         <Text style={styles.label}>After Picture:</Text>
-        <Button title="Select After Picture" onPress={() => pickImage(setAfterImage)} />
+        <Button title="Select After Picture" onPress={() => pickImage(setAfterImage)} buttonStyle={styles.buttonSecondary}/>
         {afterImage && <Text style={styles.imageText}>Image selected</Text>}
 
         <Text style={styles.label}>Before Video:</Text>
-        <Button title="Select Before Video" onPress={() => pickVideo(setBeforeVideo)} />
+        <Button title="Select Before Video" onPress={() => pickVideo(setBeforeVideo)} buttonStyle={styles.buttonSecondary}/>
        
 
         <Text style={styles.label}>After Video:</Text>
-        <Button title="Select After Video" onPress={() => pickVideo(setAfterVideo)} />
+        <Button title="Select After Video" onPress={() => pickVideo(setAfterVideo)} buttonStyle={styles.buttonSecondary} />
         
 
 
@@ -318,10 +325,11 @@ export default function LogLesson() {
         {filteredDrills.length > 0 ? (
           filteredDrills.map((drill) => (
             <View key={drill.drill_id} style={styles.drillItem}>
-              <Text>{drill.name}</Text>
+              <Text style={styles.drillText}>{drill.name}</Text>
               <CheckBox
                 checked={selectedDrills.includes(drill.drill_id)}
                 onPress={() => toggleDrillSelection(drill.drill_id)}
+                containerStyle={styles.checkBox}
               />
             </View>
           ))
@@ -329,7 +337,7 @@ export default function LogLesson() {
           <Text style={styles.emptyMessage}>No drills available for the selected category.</Text>
         )}
 
-        <Button title="Log Lesson" onPress={logLesson} buttonStyle={styles.button} />
+        <Button title="Log Lesson" onPress={logLesson} buttonStyle={styles.buttonPrimary} />
       </ScrollView>
     </LinearGradient>
   );
@@ -355,23 +363,43 @@ const styles = StyleSheet.create({
     borderColor: colors.borderGray,
     borderWidth: 1,
     paddingHorizontal: 8,
-    marginBottom: 12,
+    marginBottom: 15,
+    paddingVertical: 8,  // Added vertical padding for better spacing
+    width: '100%', 
+    minHeight: 100,  // Set a taller height for multi-line text
+    justifyContent: 'flex-start', // Ensure inputs take up full width
   },
   drillItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     borderRadius: 8,
     borderColor: colors.borderGray,
     borderWidth: 1,
-    marginBottom: 8,
-    backgroundColor: '#FFFFFF',
+    marginBottom: 10,
+    backgroundColor: '#F8F9FA', 
   },
-  button: {
+  drillText: {
+    flex: 1, 
+    fontSize: 16, 
+    color: '#333', 
+    fontWeight: '500',
+  },
+  checkBox: {
+    padding: 5,
+  },
+  buttonPrimary: {
     backgroundColor: colors.primaryGreen,
     borderRadius: 8,
-    marginVertical: 20,
+    marginVertical: 15,  // More spacing
+    paddingVertical: 12,
+  },
+  buttonSecondary: {
+    backgroundColor: '#1976D2', // Use blue for secondary buttons (picture & video)
+    borderRadius: 8,
+    marginVertical: 10,
+    paddingVertical: 10,
   },
   sliderValue: {
     color: colors.textGreen,
@@ -394,6 +422,21 @@ const styles = StyleSheet.create({
     color: 'green', 
     marginVertical: 8,
   },
+  sliderContainer: {
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.borderGray,
+    marginVertical: 15,
+    backgroundColor: '#FAFAFA',
+  },
+  sliderText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.textGreen,
+  },
+  
   
 });
 
@@ -417,5 +460,6 @@ const pickerSelectStyles = {
     borderRadius: 8,
     color: colors.textGreen,
     backgroundColor: '#FFFFFF',
+    
   },
 };
