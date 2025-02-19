@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import { FlatList } from 'react-native';
 import { Card } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
-import { LinearProgress } from '@rneui/themed';
+//import { LinearProgress } from '@rneui/themed';
 
 // Interfaces
 interface Golfer {
@@ -102,6 +102,9 @@ useEffect(() => {
   if (selectedTourPro && selectedCategory) {
     fetchProDrills(selectedTourPro, selectedCategory);
   }
+  
+console.log("Driving Drills in UI:", drills.map((d) => d.drill_id));
+
 }, [selectedTourPro, selectedCategory]);
 
 
@@ -171,26 +174,40 @@ useEffect(() => {
   async function fetchProDrills(proName: string, category: string) {
     try {
       const { data, error } = await supabase
-        .from('tour_pros')
-        .select('drill_id, stat_value, stat_category, name, Category') 
-        .eq('name', proName)
-        .eq('Category', category);
-  
-      if (error) throw error;
-  
-      const formattedProDrills: Drill[] = data.map((drill) => ({
-        drill_id: drill.drill_id,
-        name: drill.stat_category ?? 'Unnamed Drill',
-        golferValue: drill.stat_value ?? 0,
-        category: drill.Category ?? category,
-        unit: drill.stat_category?.includes('Distance') ? 'yards' : 'feet',
-        targetMetric: '',        // Add default empty string
-        benchmark_id: null,      // Add null as default
-        goalValue: undefined,    // Add undefined as default
-      }));
-  
-      console.log('Pro Drills fetched:', formattedProDrills);
-      setProDrillData(formattedProDrills);
+  .from('tour_pros')
+  .select('*')  // Fetch all fields for debugging
+  .eq('name', proName)
+  .eq('Category', category);
+
+if (error) {
+  console.error('Error fetching PGA Pro drills:', error);
+  Alert.alert('Error', 'Could not fetch PGA professional data');
+  return;
+}
+
+console.log('Fetched PGA Pro Data:', data);
+
+// Debug mismatched drill IDs
+//const availableDrillIDs = new Set(data.map((pro) => pro.drill_id));
+//console.log('Available PGA Drill IDs:', availableDrillIDs);
+const availableDrillIDs = new Set(data.map((pro) => pro.drill_id.toLowerCase().trim()));
+console.log('Available PGA Drill IDs:', [...availableDrillIDs]);
+
+
+const formattedProDrills: Drill[] = data.map((drill) => ({
+  drill_id: drill.drill_id,
+  name: drill.stat_category ?? 'Unnamed Drill',
+  golferValue: drill.stat_value ?? 0,
+  category: drill.Category ?? category,
+  unit: drill.stat_category?.includes('Distance') ? 'yards' : 'feet',
+  targetMetric: '',
+  benchmark_id: null,
+  goalValue: undefined,
+}));
+
+console.log('Formatted PGA Pro Drills:', formattedProDrills);
+setProDrillData(formattedProDrills);
+
     } catch (error) {
       console.error('Error fetching PGA Pro drills:', error);
       Alert.alert('Error', 'Could not fetch PGA professional data');
@@ -208,14 +225,21 @@ useEffect(() => {
     const proStatValue = proStat?.golferValue ?? 'N/A';
 
     // Add a log to catch mismatches for debugging
-    if (!proStat) {
+    /*if (!proStat) {
       console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}`);
     }
-
+    */
+    if (!proStat) {
+      console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}. Check if it exists in 'tour_pros' table.`);
+      return null;  // Prevents rendering if no data is found
+    }
+    
     const comparisonProgress = Math.min(
       (item.golferValue ?? 0) / (proStat?.golferValue ?? 1),
       1
     );
+
+    //const safeProgress = Math.max(0, Math.min(1, Number(parseFloat(comparisonProgress.toFixed(2)))));
   
     // Calculate progress based on the unit type
     if (item.goalValue && item.golferValue) {
@@ -242,7 +266,17 @@ useEffect(() => {
     }
   
     // Cap progress to 100%
-    const progressValue = Math.min(progress / 100, 1);
+    //const progressValue = Math.min(progress / 100, 1);
+    //const progressValue = Math.min(Math.max(0, parseFloat((progress / 100).toFixed(2))), 1);
+   // const progressValue = Math.max(0, Math.min(1, parseFloat((progress / 100).toFixed(2))));
+   //const progressValue = Math.max(0, Math.min(1, Number(progress / 100) || 0));
+   const progressValue = Math.round(Math.max(0, Math.min(1, Number(progress / 100) || 0)) * 100) / 100;
+
+
+if (isNaN(progressValue)) {
+  console.warn(`Invalid progress value for drill: ${item.drill_id}, golferValue: ${item.golferValue}, goalValue: ${item.goalValue}`);
+}
+
   
     return (
       <Card containerStyle={styles.card}>
@@ -250,36 +284,30 @@ useEffect(() => {
         <Text style={styles.drillName}>{item.name}</Text>
   
         {/* PGA Standard vs Golfer Score */}
-        <Text style={styles.metric}>
-          PGA Standard: {item.goalValue ?? 'N/A'} {item.unit} | 
-          Latest Score: {item.golferValue ?? 'N/A'} {item.unit}
-        </Text>
+<Text style={styles.metric}>
+  <Text style={styles.boldText}>🎯 PGA Tour Average:</Text> {item.goalValue ?? 'N/A'} {item.unit}{"\n"}
+  <Text style={styles.boldText}>🏌️ This Golfer's Score:</Text> {item.golferValue ?? 'N/A'} {item.unit}
+</Text>
 
-        {/* Golfer vs PGA Pro Stats */}
-      <Text style={styles.metric}>
-      🏌️ Golfer: {golferStat} {item.unit} | 🏅 {selectedTourPro ?? 'PGA Pro'}: {proStatValue} {item.unit}
-      </Text>
+{/* Golfer vs PGA Pro Stats */}
+<Text style={styles.metric}>
+  
+  <Text style={styles.boldText}>🏅 {selectedTourPro ?? 'PGA Pro'}'s average:</Text> {proStatValue} {item.unit}
+</Text>
+
 
        
   
         {/* 🟢 Progress Bar */}
-        <LinearProgress 
-          value={progressValue}
-          color={progress >= 100 ? '#4CAF50' : '#2196F3'}
-          trackColor="#E0E0E0"
-          style={{ marginVertical: 10, height: 10, borderRadius: 5 }}
-          animation={{ duration: 1000 }}
-        />
-  
-        {/* Progress Percentage Text */}
-        <Text style={styles.progressText}>
-          {progress >= 100
-            ? '✅ You’ve matched or exceeded the PGA standard!'
-            : `📊 You’re ${isNaN(progress) ? '0.00' : progress.toFixed(2)}% of the way to PGA level!`}
-        </Text>
+       {/* 🟢 Progress Bar */}
+
+
   
         {/* Difference Message */}
-        <Text style={styles.progressText}>{differenceMessage}</Text>
+        <Text style={[styles.progressText, { color: differenceMessage.includes("behind") ? "red" : "green" }]}>
+  {differenceMessage}
+</Text>
+
   
         
         
@@ -338,5 +366,10 @@ const styles = StyleSheet.create({
   drillName: { fontSize: 18, fontWeight: 'bold', color: '#333' },
   metric: { fontSize: 16, color: '#555' },
   progressText: { fontSize: 14, fontWeight: 'bold', color: '#2E7D32', marginTop: 5 },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  
 });
 
