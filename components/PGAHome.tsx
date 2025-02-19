@@ -7,6 +7,7 @@ import { RootStackParamList } from '../App';
 import { supabase } from '../lib/supabase';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
+
 // Define the navigation type for MainDashboard
 type PGAHomeNavigationProp = StackNavigationProp<RootStackParamList, 'PGAHome'>;
 
@@ -80,6 +81,21 @@ export default function PGAHome() {
     fetchMetrics();
   }, []);
 
+  
+    async function handleSignOut() {
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+  
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Homescreen' }],
+        });
+      } catch (error) {
+        Alert.alert('Error', 'Failed to sign out.');
+      }
+    }
+
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
@@ -130,6 +146,12 @@ export default function PGAHome() {
           icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
           buttonStyle={styles.primaryButton}
           onPress={() => navigation.navigate('ProgressionHomePGA')}
+        />
+        <Button
+          title="Sign Out"
+          icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
+          buttonStyle={[styles.primaryButton, styles.signOutButton]}
+          onPress={handleSignOut}
         />
       </View>
     </ScrollView>
@@ -199,5 +221,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 10,
   },
+  signOutButton: {
+      
+    },
 });
 
