@@ -23,7 +23,7 @@ type Golfer = {
   GolferID: string;
   created_at: string;
   handicap: number;
-  progress: string; 
+  //progress: string; 
   name: string;
 };
 
@@ -38,7 +38,7 @@ export default function PGADashboard() {
   const [golfers, setGolfers] = useState<Golfer[]>([]); // Array to store golfers data
   const [name, setName] = useState<string>(''); // Name input for adding/updating a golfer
   const [handicap, setHandicap] = useState<string>(''); // Handicap input for adding/updating a golfer
-  const [progress, setProgress] = useState<string>(''); // Progress input for adding/updating a golfer
+ // const [progress, setProgress] = useState<string>(''); // Progress input for adding/updating a golfer
   const [email, setEmail] = useState<string>(''); // Email input for creating a golfer account
   
   const [selectedGolfer, setSelectedGolfer] = useState<Golfer | null>(null); // Selected golfer for editing
@@ -55,7 +55,7 @@ export default function PGADashboard() {
     try {
       const { data, error } = await supabase
         .from('golfers1')
-        .select('GolferID, name, handicap, progress, created_at')
+        .select('GolferID, name, handicap, created_at')
         .order('created_at', { ascending: false }); // Order by most recent
 
       if (error) throw error; // Handle error if fetching fails
@@ -72,41 +72,65 @@ export default function PGADashboard() {
 
   // Function to add a new golfer to the database
   async function addGolfer() {
-    if (!name || !handicap || !progress || !email) {
-      Alert.alert('Error', 'Please fill in all fields: Name, Handicap, Progress, and Email.');
+    if (!name.trim() || !handicap.trim() || !email.trim()) {
+      Alert.alert('Error', 'Please fill in all fields: Name, Handicap and Email.');
       return; // Exit if any field is missing
     }
   
     setLoading(true); // Set loading state to true
   
     try {
+
+      // Get the current logged-in PGA professional's user ID
+      const { data: userSession, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !userSession?.session?.user) {
+        throw new Error('Unable to retrieve authenticated PGA Professional. Please log in again.');
+      }
+
+      const PGAID = userSession.session.user.id; // Set PGAID as the logged-in user's ID
+
+      console.log(`Creating golfer under PGAID: ${PGAID}`);
+
       // Create a new Supabase user with email and the default password "Golf1234"
+      console.log("Creating golfer account with:", email);
+
       const { data: userData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email,
         password: "Golf1234", // Default password
         email_confirm: true, // Automatically confirm email
       });
   
-      if (authError) throw authError; // Handle authentication error
+      if (authError) {
+        console.error("Supabase Admin API Error:", authError);
+        throw new Error(`Account creation failed: ${authError.message}`);
+      }
+      console.log("User created successfully:", userData);
+   
   
-      const golferID = userData.user?.id; // Retrieve the user ID from the created user
+      const golferID = userData.user?.id;
+      if (!golferID) {
+        throw new Error("User ID is undefined. Account creation failed.");
+      }
+
+       // Retrieve the user ID from the created user
       const { error: insertError } = await supabase
         .from('golfers1')
-        .insert([{ GolferID: golferID, name, handicap: parseInt(handicap), progress }]);
+        .insert([{ GolferID: golferID, name, handicap: parseInt(handicap),email, PGAID }]);
   
       if (insertError) throw insertError; // Handle error if insertion fails
   
       // Update golfers list with the newly added golfer
-      setGolfers([{ GolferID: golferID, name, handicap: parseInt(handicap), progress, created_at: new Date().toISOString() }, ...golfers]);
+      setGolfers([{ GolferID: golferID, name, handicap: parseInt(handicap), created_at: new Date().toISOString() }, ...golfers]);
   
       // Reset form inputs
       setName('');
       setHandicap('');
-      setProgress('');
+     // setProgress('');
       setEmail('');
   
-      Alert.alert('Success', 'Golfer account created successfully'); // Show success message
+      Alert.alert('Success', `Golfer ${name} added successfully!`); // Show success message
     } catch (error) {
+      console.error("Error Adding Golfer:", error);
       if (error instanceof Error) {
         Alert.alert('Error adding golfer', error.message); // Show error message if any
       }
@@ -118,7 +142,7 @@ export default function PGADashboard() {
 
   // Function to update an existing golfer's details
   async function updateGolfer() {
-    if (!selectedGolfer || !name || !handicap || !progress) {
+    if (!selectedGolfer || !name || !handicap ) {
       Alert.alert('Error', 'Please select a golfer and fill in all fields: Name, Handicap, and Progress.');
       return;
     }
@@ -128,7 +152,7 @@ export default function PGADashboard() {
     try {
       const { error } = await supabase
         .from('golfers1')
-        .update({ name, handicap: parseInt(handicap), progress })
+        .update({ name, handicap: parseInt(handicap) })
         .eq('GolferID', selectedGolfer.GolferID); // Match GolferID to update the correct golfer
 
       if (error) throw error; // Handle error if update fails
@@ -136,7 +160,7 @@ export default function PGADashboard() {
       // Update golfers list to reflect changes
       setGolfers((prevGolfers) =>
         prevGolfers.map((g) =>
-          g.GolferID === selectedGolfer.GolferID ? { ...g, name, handicap: parseInt(handicap), progress } : g
+          g.GolferID === selectedGolfer.GolferID ? { ...g, name, handicap: parseInt(handicap)} : g
         )
       );
 
@@ -144,7 +168,7 @@ export default function PGADashboard() {
       setSelectedGolfer(null);
       setName('');
       setHandicap('');
-      setProgress('');
+     // setProgress('');
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Error updating golfer', error.message); // Show error message if any
@@ -178,7 +202,7 @@ export default function PGADashboard() {
     setSelectedGolfer(golfer); // Set the selected golfer
     setName(golfer.name); // Set name input to golfer's name
     setHandicap(golfer.handicap.toString()); // Set handicap input
-    setProgress(golfer.progress); // Set progress input
+   // setProgress(golfer.progress); // Set progress input
   }
 
   // Function to render each golfer item in the list
@@ -187,7 +211,7 @@ export default function PGADashboard() {
       <ListItem.Content>
         <ListItem.Title>{`Name: ${item.name}`}</ListItem.Title>
         <ListItem.Subtitle>{`Handicap: ${item.handicap}`}</ListItem.Subtitle>
-        <ListItem.Subtitle>{`Progress: ${item.progress}`}</ListItem.Subtitle>
+       {/* <ListItem.Subtitle>{`Progress: ${item.progress}`}</ListItem.Subtitle> */}
         <ListItem.Subtitle>{`Created At: ${new Date(item.created_at).toLocaleDateString()}`}</ListItem.Subtitle>
       </ListItem.Content>
       <Button title="Delete" buttonStyle={styles.deleteButton} onPress={() => deleteGolfer(item.GolferID)} />
@@ -203,7 +227,7 @@ export default function PGADashboard() {
         {/* Input fields for golfer details */}
         <Input label="Name" value={name} onChangeText={setName} placeholder="Enter Name" containerStyle={styles.inputContainer} />
         <Input label="Handicap" value={handicap} keyboardType="numeric" onChangeText={setHandicap} placeholder="Enter Handicap" containerStyle={styles.inputContainer} />
-        <Input label="Progress" value={progress} onChangeText={setProgress} placeholder="Enter Progress" containerStyle={styles.inputContainer} />
+       {/* <Input label="Progress" value={progress} onChangeText={setProgress} placeholder="Enter Progress" containerStyle={styles.inputContainer} /> */}
         <Input label="Email" value={email} onChangeText={setEmail} placeholder="Enter Golfer's Email" containerStyle={styles.inputContainer} />
        
 
@@ -249,18 +273,21 @@ const styles = StyleSheet.create({
      // Font size, weight, and color were chosen with ChatGPT's assistance to ensure readability and alignment with app color scheme.
   },
   inputContainer: {
-    marginBottom: 10,
+    
     borderRadius: 8,
     borderWidth: 1,
     borderColor: colors.borderGray,
     paddingHorizontal: 8,
     backgroundColor: colors.inputBackground,
+    
     // ChatGPT provided recommendations for padding, border radius, and background color to create a clean and consistent input style.
   },
   primaryButton: {
     backgroundColor: colors.primaryGreen,
     borderRadius: 8,
     marginVertical: 10,
+    width: '90%', // Reduce width slightly for aesthetics
+    alignSelf: 'center', // Center align button
      // ChatGPT helped refine button styling to ensure the primary button stands out while maintaining consistency in border radius and spacing.
   },
   secondaryButton: {
