@@ -98,6 +98,12 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
           onPress={() => navigation.navigate('ViewProgressionGolfer')}
         />
         <Button
+          title="See How You Compare against the Pros"
+          icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => navigation.navigate('ViewPGABenchmarksComparisonGolfer')}
+        />
+        <Button
           title="Sign Out"
           icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
           buttonStyle={[styles.primaryButton, styles.signOutButton]}

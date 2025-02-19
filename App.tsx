@@ -24,6 +24,7 @@ import ViewProgressionGolfer from './components/ViewProgressionGolfer';
 import ProgressionHomePGA from './components/ProgressionHomePGA';
 import LessonImprovementPGA from './components/LessonImprovementPGA';
 import ViewPgaBenchmarksComparison from './components/ViewPgaBenchmarksComparison';
+import ViewPGABenchmarksComparisonGolfer from './components/ViewPGABenchmarksComparisonGolfer';
 
 // Define route param list for navigation
 export type RootStackParamList = {
@@ -48,6 +49,7 @@ export type RootStackParamList = {
   ProgressionHomePGA: undefined;
   LessonImprovementPGA: undefined;
   ViewPgaBenchmarksComparison: undefined;
+  ViewPGABenchmarksComparisonGolfer:undefined;
 };
 
 // Create the Stack Navigator
@@ -112,7 +114,8 @@ export default function App() {
             <Stack.Screen name="LessonDetailsGolfer" component={LessonDetailsGolfer} options={{ title: 'Lesson Details' }} />
             <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} options={{ title: 'Upload Drill Result' }} />
             <Stack.Screen name="ViewProgressionGolfer" component={ViewProgressionGolfer} options={{ title: 'View Progression Golfer' }} />
-           
+            <Stack.Screen name="ViewPGABenchmarksComparisonGolfer" component={ViewPGABenchmarksComparisonGolfer} options={{ title: 'PGA Benchmarking' }} />
+
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
             <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Dashboard', headerLeft: () => null }}/>
             
