@@ -4,8 +4,20 @@ import { Picker } from '@react-native-picker/picker';
 import { FlatList } from 'react-native';
 import { Card } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
-//import { LinearProgress } from '@rneui/themed';
-import { PieChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
+import { Dimensions } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
+
+
+// Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
+// React Native Picker Tutorial: Create Dropdown Menus with Ease - The Don Hub https://www.youtube.com/watch?v=Lzhraj1EYz8
+// React Native Chart Kit - Data Visualization for React Native Apps https://www.npmjs.com/package/react-native-chart-kit
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
+// Abhirup Datta #1 Installation and Bar Chart - chart kit react-native library https://www.youtube.com/watch?v=dlpn8bWJgkw
+// React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
+// Filter Product List by Category using React Native Dropdown Picker, The Web Designer https://www.youtube.com/watch?v=AWB_x9Fb3vM
+// Supabase Table Management https://supabase.com/docs/guides/database/tables?queryGroups=database-method&database-method=dashboard&queryGroups=language&language=sql
 
 
 // Interfaces
@@ -47,12 +59,6 @@ export default function ViewPGABenchmarksComparisonGolfer() {
   const [proDrillData, setProDrillData] = useState<Drill[]>([]);
   const [showProComparison, setShowProComparison] = useState<boolean>(false);
   
-
-
-
-
-
-
   useEffect(() => {
     fetchCurrentGolfer();
   }, []);
@@ -81,11 +87,8 @@ export default function ViewPGABenchmarksComparisonGolfer() {
             Alert.alert('Error', error.message);
           } else {
             Alert.alert('Error', 'An unexpected error occurred.');
-          }}
-          
+          }} 
   }
-  
-
   useEffect(() => {
     if (selectedGolfer) {
       fetchDrillsAndBenchmarks(selectedGolfer, selectedCategory);
@@ -236,8 +239,7 @@ setProDrillData(formattedProDrills);
   }
   
   
-
-  const renderDrillItem = ({ item }: { item: Drill }) => {
+const renderDrillItem = ({ item }: { item: Drill }) => {
     let progress = 0;
     let differenceMessage = '';
     const proStat = proDrillData.find((proItem) => proItem.drill_id === item.drill_id);
@@ -245,22 +247,33 @@ setProDrillData(formattedProDrills);
     const golferStat = item.golferValue ?? 'N/A';
     const proStatValue = proStat?.golferValue ?? 'N/A';
 
-    // Add a log to catch mismatches for debugging
-    /*if (!proStat) {
-      console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}`);
-    }
-    */
+    const golferStatNum = Number(item.golferValue) || 0;
+    const proStatNum = Number(proStat?.golferValue) || 0;
+    const pgaAverage = Number(item.goalValue) || 0;
+
+    if (!pgaAverage || golferStatNum === 0) return null; // Ensure valid data
+
+    const isFeetMeasure = item.unit.toLowerCase() === "feet";
+  
+    // We invert values for feet-based metrics because LOWER is BETTER
+    const golferScore = isFeetMeasure ? golferStatNum : golferStatNum;
+    const proScore = isFeetMeasure ? proStatNum : proStatNum;
+  
+    const maxScore = Math.max(golferScore, proScore, pgaAverage) + 5;
+
+    
     if (!proStat) {
       console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}. Check if it exists in 'tour_pros' table.`);
       return null;  // Prevents rendering if no data is found
     }
+      
+      
     
     const comparisonProgress = Math.min(
       (item.golferValue ?? 0) / (proStat?.golferValue ?? 1),
       1
     );
 
-    //const safeProgress = Math.max(0, Math.min(1, Number(parseFloat(comparisonProgress.toFixed(2)))));
   
     // Calculate progress based on the unit type
     if (item.goalValue && item.golferValue) {
@@ -285,20 +298,13 @@ setProDrillData(formattedProDrills);
           : `📉 ${Math.abs(diff).toFixed(2)} ${item.unit} below PGA standard.`;
       }
     }
-  
-    // Cap progress to 100%
-    //const progressValue = Math.min(progress / 100, 1);
-    //const progressValue = Math.min(Math.max(0, parseFloat((progress / 100).toFixed(2))), 1);
-   // const progressValue = Math.max(0, Math.min(1, parseFloat((progress / 100).toFixed(2))));
-   //const progressValue = Math.max(0, Math.min(1, Number(progress / 100) || 0));
-   const progressValue = Math.round(Math.max(0, Math.min(1, Number(progress / 100) || 0)) * 100) / 100;
 
+   const progressValue = Math.round(Math.max(0, Math.min(1, Number(progress / 100) || 0)) * 100) / 100;
 
 if (isNaN(progressValue)) {
   console.warn(`Invalid progress value for drill: ${item.drill_id}, golferValue: ${item.golferValue}, goalValue: ${item.goalValue}`);
 }
 
-  
     return (
       <Card containerStyle={styles.card}>
         {/* Drill Name */}
@@ -307,7 +313,7 @@ if (isNaN(progressValue)) {
         {/* PGA Standard vs Golfer Score */}
 <Text style={styles.metric}>
   <Text style={styles.boldText}>🎯 PGA Tour Average:</Text> {item.goalValue ?? 'N/A'} {item.unit}{"\n"}
-  <Text style={styles.boldText}>🏌️ This Golfer's Score:</Text> {item.golferValue ?? 'N/A'} {item.unit}
+  <Text style={styles.boldText}>🏌️ Your Score:</Text> {item.golferValue ?? 'N/A'} {item.unit}
 </Text>
 
 {/* Golfer vs PGA Pro Stats */}
@@ -316,33 +322,43 @@ if (isNaN(progressValue)) {
   <Text style={styles.boldText}>🏅 {selectedTourPro ?? 'PGA Pro'}'s average:</Text> {proStatValue} {item.unit}
 </Text>
 
-<View>
-  <PieChart
-    data={[
-      { name: "Golfer", population: item.golferValue || 1, color: "blue", legendFontColor: "#7F7F7F", legendFontSize: 12 },
-      { name: "PGA Pro", population: proStat?.golferValue || 1, color: "green", legendFontColor: "#7F7F7F", legendFontSize: 12 },
-    ]}
-    width={200}
-    height={120}
-    chartConfig={{
-      backgroundColor: "#F4F6F8",
-      backgroundGradientFrom: "#FFF",
-      backgroundGradientTo: "#FFF",
-      decimalPlaces: 1,
-      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    }}
-    accessor={"population"}
-    backgroundColor={"transparent"}
-    paddingLeft={"10"}
-    center={[10, 10]}
-  />
-</View>
+ {/* Bar Chart Comparison */}
+ <View>
+        <Text style={styles.chartTitle}>Golfer vs. PGA Pro</Text>
+        <BarChart
+          data={{
+            labels: ["Golfer", selectedTourPro ?? "PGA Pro"],
+            datasets: [{ data: [golferScore, proScore] }],
+          }}
+          width={screenWidth - 50}
+          height={220}
+          yAxisSuffix={` ${item.unit}`}
+          yAxisLabel=""
+          chartConfig={{
+            backgroundGradientFrom: "#fff",
+            backgroundGradientTo: "#fff",
+            decimalPlaces: 1,
+            color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          }}
+          showValuesOnTopOfBars
+          fromZero
+          yAxisInterval={1} // Adjust step size
+        />
 
+
+
+      </View>
+           {/* Explanation Message */}
+      <Text style={styles.infoMessage}>
+        {isFeetMeasure
+          ? "🔹 Lower values indicate better performance (closer to the hole)."
+          : "🔹 Higher values indicate better performance."}
+      </Text>
 
        
   
-        {/* 🟢 Progress Bar */}
-       {/* 🟢 Progress Bar */}
+       
 
 
   
@@ -357,7 +373,6 @@ if (isNaN(progressValue)) {
       </Card>
     );
   };
- 
 
   
 
@@ -408,6 +423,24 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  chartTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginVertical: 10,
+    color: "#333"
+  },
+  infoMessage: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#4A90E2", // Blue color for better visibility
+    textAlign: "center",
+    marginTop: 10,
+    backgroundColor: "#EAF2FF", // Light blue background for contrast
+    padding: 8,
+    borderRadius: 5,
+    width: "100%",
+  },
+  
   
 });
-

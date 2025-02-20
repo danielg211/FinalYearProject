@@ -10,7 +10,16 @@ import { Dimensions } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
 
+// References
 
+// Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
+// React Native Picker Tutorial: Create Dropdown Menus with Ease - The Don Hub https://www.youtube.com/watch?v=Lzhraj1EYz8
+// React Native Chart Kit - Data Visualization for React Native Apps https://www.npmjs.com/package/react-native-chart-kit
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
+// Abhirup Datta #1 Installation and Bar Chart - chart kit react-native library https://www.youtube.com/watch?v=dlpn8bWJgkw
+// React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
+// Filter Product List by Category using React Native Dropdown Picker, The Web Designer https://www.youtube.com/watch?v=AWB_x9Fb3vM
+// Supabase Table Management https://supabase.com/docs/guides/database/tables?queryGroups=database-method&database-method=dashboard&queryGroups=language&language=sql
 
 // Interfaces
 interface Golfer {
@@ -35,6 +44,7 @@ interface Benchmark {
   unit: string;
 }
 
+
 const categories = ['Driving', 'Iron Play', 'Short Game', 'Putting'];
 
 
@@ -51,12 +61,6 @@ export default function ViewPgaBenchmarksComparison() {
   const [proDrillData, setProDrillData] = useState<Drill[]>([]);
   const [showProComparison, setShowProComparison] = useState<boolean>(false);
   
-
-
-
-
-
-
   useEffect(() => {
     fetchGolfers();
   }, []);
@@ -193,12 +197,8 @@ if (error) {
 
 console.log('Fetched PGA Pro Data:', data);
 
-// Debug mismatched drill IDs
-//const availableDrillIDs = new Set(data.map((pro) => pro.drill_id));
-//console.log('Available PGA Drill IDs:', availableDrillIDs);
 const availableDrillIDs = new Set(data.map((pro) => pro.drill_id.toLowerCase().trim()));
 console.log('Available PGA Drill IDs:', [...availableDrillIDs]);
-
 
 const formattedProDrills: Drill[] = data.map((drill) => ({
   drill_id: drill.drill_id,
@@ -236,25 +236,21 @@ setProDrillData(formattedProDrills);
 
     const isFeetMeasure = item.unit.toLowerCase() === "feet";
   
-    // We invert values for feet-based metrics because LOWER is BETTER
+    
     const golferScore = isFeetMeasure ? golferStatNum : golferStatNum;
     const proScore = isFeetMeasure ? proStatNum : proStatNum;
   
     const maxScore = Math.max(golferScore, proScore, pgaAverage) + 5;
-
     
     if (!proStat) {
       console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}. Check if it exists in 'tour_pros' table.`);
       return null;  // Prevents rendering if no data is found
     }
       
-      
-    
     const comparisonProgress = Math.min(
       (item.golferValue ?? 0) / (proStat?.golferValue ?? 1),
       1
     );
-
   
     // Calculate progress based on the unit type
     if (item.goalValue && item.golferValue) {
@@ -269,7 +265,7 @@ setProDrillData(formattedProDrills);
           ? `🏆 ${Math.abs(diff).toFixed(2)} feet better than PGA standard!`
           : `📉 ${Math.abs(diff).toFixed(2)} feet behind the PGA standard.`;
   
-      } else {
+        } else {
         // Higher is better for other metrics (e.g., driving distance, accuracy)
         progress = (item.golferValue / item.goalValue) * 100;
   
@@ -280,17 +276,11 @@ setProDrillData(formattedProDrills);
       }
     }
   
-    // Cap progress to 100%
-    //const progressValue = Math.min(progress / 100, 1);
-    //const progressValue = Math.min(Math.max(0, parseFloat((progress / 100).toFixed(2))), 1);
-   // const progressValue = Math.max(0, Math.min(1, parseFloat((progress / 100).toFixed(2))));
-   //const progressValue = Math.max(0, Math.min(1, Number(progress / 100) || 0));
-   const progressValue = Math.round(Math.max(0, Math.min(1, Number(progress / 100) || 0)) * 100) / 100;
+    const progressValue = Math.round(Math.max(0, Math.min(1, Number(progress / 100) || 0)) * 100) / 100;
 
-
-if (isNaN(progressValue)) {
-  console.warn(`Invalid progress value for drill: ${item.drill_id}, golferValue: ${item.golferValue}, goalValue: ${item.goalValue}`);
-}
+    if (isNaN(progressValue)) {
+      console.warn(`Invalid progress value for drill: ${item.drill_id}, golferValue: ${item.golferValue}, goalValue: ${item.goalValue}`);
+    }
 
   
     return (
@@ -299,19 +289,19 @@ if (isNaN(progressValue)) {
         <Text style={styles.drillName}>{item.name}</Text>
   
         {/* PGA Standard vs Golfer Score */}
-<Text style={styles.metric}>
-  <Text style={styles.boldText}>🎯 PGA Tour Average:</Text> {item.goalValue ?? 'N/A'} {item.unit}{"\n"}
-  <Text style={styles.boldText}>🏌️ This Golfer's Score:</Text> {item.golferValue ?? 'N/A'} {item.unit}
-</Text>
+        <Text style={styles.metric}>
+          <Text style={styles.boldText}>🎯 PGA Tour Average:</Text> {item.goalValue ?? 'N/A'} {item.unit}{"\n"}
+          <Text style={styles.boldText}>🏌️ This Golfer's Score:</Text> {item.golferValue ?? 'N/A'} {item.unit}
+        </Text>
 
-{/* Golfer vs PGA Pro Stats */}
-<Text style={styles.metric}>
-  
-  <Text style={styles.boldText}>🏅 {selectedTourPro ?? 'PGA Pro'}'s average:</Text> {proStatValue} {item.unit}
-</Text>
+        {/* Golfer vs PGA Pro Stats */}
+        <Text style={styles.metric}>
+          
+          <Text style={styles.boldText}>🏅 {selectedTourPro ?? 'PGA Pro'}'s average:</Text> {proStatValue} {item.unit}
+        </Text>
 
- {/* Bar Chart Comparison */}
- <View>
+        {/* Bar Chart Comparison */}
+        <View>
         <Text style={styles.chartTitle}>Golfer vs. PGA Pro</Text>
         <BarChart
           data={{
@@ -333,37 +323,21 @@ if (isNaN(progressValue)) {
           fromZero
           yAxisInterval={1} // Adjust step size
         />
-
-
-
       </View>
            {/* Explanation Message */}
-      <Text style={styles.infoMessage}>
-        {isFeetMeasure
-          ? "🔹 Lower values indicate better performance (closer to the hole)."
-          : "🔹 Higher values indicate better performance."}
-      </Text>
+            <Text style={styles.infoMessage}>
+              {isFeetMeasure
+                ? "🔹 Lower values indicate better performance (closer to the hole)."
+                : "🔹 Higher values indicate better performance."}
+            </Text>
 
-       
-  
-       
-
-
-  
         {/* Difference Message */}
-        <Text style={[styles.progressText, { color: differenceMessage.includes("behind") ? "red" : "green" }]}>
-  {differenceMessage}
-</Text>
-
-  
-        
-        
+                <Text style={[styles.progressText, { color: differenceMessage.includes("behind") ? "red" : "green" }]}>
+          {differenceMessage}
+        </Text>    
       </Card>
     );
   };
- 
-
-  
 
   return (
     <View style={styles.container}>
@@ -392,8 +366,6 @@ if (isNaN(progressValue)) {
           <Picker.Item key={pro} label={pro} value={pro} />
         ))}
       </Picker>
-
-
       <FlatList
         data={drills}
         keyExtractor={(item) => item.drill_id}
@@ -435,7 +407,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: "100%",
   },
-  
-  
 });
 
