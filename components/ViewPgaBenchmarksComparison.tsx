@@ -5,7 +5,11 @@ import { FlatList } from 'react-native';
 import { Card } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 //import { LinearProgress } from '@rneui/themed';
-import { PieChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
+import { Dimensions } from "react-native";
+
+const screenWidth = Dimensions.get("window").width;
+
 
 
 // Interfaces
@@ -216,8 +220,6 @@ setProDrillData(formattedProDrills);
     }
   }
   
-  
-
   const renderDrillItem = ({ item }: { item: Drill }) => {
     let progress = 0;
     let differenceMessage = '';
@@ -226,22 +228,33 @@ setProDrillData(formattedProDrills);
     const golferStat = item.golferValue ?? 'N/A';
     const proStatValue = proStat?.golferValue ?? 'N/A';
 
-    // Add a log to catch mismatches for debugging
-    /*if (!proStat) {
-      console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}`);
-    }
-    */
+    const golferStatNum = Number(item.golferValue) || 0;
+    const proStatNum = Number(proStat?.golferValue) || 0;
+    const pgaAverage = Number(item.goalValue) || 0;
+
+    if (!pgaAverage || golferStatNum === 0) return null; // Ensure valid data
+
+    const isFeetMeasure = item.unit.toLowerCase() === "feet";
+  
+    // We invert values for feet-based metrics because LOWER is BETTER
+    const golferScore = isFeetMeasure ? golferStatNum : golferStatNum;
+    const proScore = isFeetMeasure ? proStatNum : proStatNum;
+  
+    const maxScore = Math.max(golferScore, proScore, pgaAverage) + 5;
+
+    
     if (!proStat) {
       console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}. Check if it exists in 'tour_pros' table.`);
       return null;  // Prevents rendering if no data is found
     }
+      
+      
     
     const comparisonProgress = Math.min(
       (item.golferValue ?? 0) / (proStat?.golferValue ?? 1),
       1
     );
 
-    //const safeProgress = Math.max(0, Math.min(1, Number(parseFloat(comparisonProgress.toFixed(2)))));
   
     // Calculate progress based on the unit type
     if (item.goalValue && item.golferValue) {
@@ -297,33 +310,43 @@ if (isNaN(progressValue)) {
   <Text style={styles.boldText}>🏅 {selectedTourPro ?? 'PGA Pro'}'s average:</Text> {proStatValue} {item.unit}
 </Text>
 
-<View>
-  <PieChart
-    data={[
-      { name: "Golfer", population: item.golferValue || 1, color: "blue", legendFontColor: "#7F7F7F", legendFontSize: 12 },
-      { name: "PGA Pro", population: proStat?.golferValue || 1, color: "green", legendFontColor: "#7F7F7F", legendFontSize: 12 },
-    ]}
-    width={200}
-    height={120}
-    chartConfig={{
-      backgroundColor: "#F4F6F8",
-      backgroundGradientFrom: "#FFF",
-      backgroundGradientTo: "#FFF",
-      decimalPlaces: 1,
-      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    }}
-    accessor={"population"}
-    backgroundColor={"transparent"}
-    paddingLeft={"10"}
-    center={[10, 10]}
-  />
-</View>
+ {/* Bar Chart Comparison */}
+ <View>
+        <Text style={styles.chartTitle}>Golfer vs. PGA Pro</Text>
+        <BarChart
+          data={{
+            labels: ["Golfer", selectedTourPro ?? "PGA Pro"],
+            datasets: [{ data: [golferScore, proScore] }],
+          }}
+          width={screenWidth - 50}
+          height={220}
+          yAxisSuffix={` ${item.unit}`}
+          yAxisLabel=""
+          chartConfig={{
+            backgroundGradientFrom: "#fff",
+            backgroundGradientTo: "#fff",
+            decimalPlaces: 1,
+            color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          }}
+          showValuesOnTopOfBars
+          fromZero
+          yAxisInterval={1} // Adjust step size
+        />
 
+
+
+      </View>
+           {/* Explanation Message */}
+      <Text style={styles.infoMessage}>
+        {isFeetMeasure
+          ? "🔹 Lower values indicate better performance (closer to the hole)."
+          : "🔹 Higher values indicate better performance."}
+      </Text>
 
        
   
-        {/* 🟢 Progress Bar */}
-       {/* 🟢 Progress Bar */}
+       
 
 
   
@@ -394,6 +417,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  chartTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginVertical: 10,
+    color: "#333"
+  },
+  infoMessage: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#4A90E2", // Blue color for better visibility
+    textAlign: "center",
+    marginTop: 10,
+    backgroundColor: "#EAF2FF", // Light blue background for contrast
+    padding: 8,
+    borderRadius: 5,
+    width: "100%",
+  },
+  
   
 });
 
