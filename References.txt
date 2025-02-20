@@ -47,3 +47,14 @@ Iteration 4 References
 4) Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
 5) React Native Multiple Select - Multi-Select Dropdown for React Native Apps. npm, https://www.npmjs.com/package/react-native-multiple-select. Accessed [Date].
 6) Abirhup Datta, "Line Chart, Stacked Bar Chart  - React Native Chart Kit Library." YouTube, https://www.youtube.com/watch?v=C6a6pmX4aLI. 
+
+Iteration 5 References
+
+1) Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select Accessed 20/02/2025
+2) React Native Picker Tutorial: Create Dropdown Menus with Ease - The Don Hub https://www.youtube.com/watch?v=Lzhraj1EYz8 Accessed 20/02/2025
+3) React Native Chart Kit - Data Visualization for React Native Apps https://www.npmjs.com/package/react-native-chart-kit Accessed 20/02/2025
+4) Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU Accessed 20/02/2025
+5) Abhirup Datta #1 Installation and Bar Chart - chart kit react-native library https://www.youtube.com/watch?v=dlpn8bWJgkw Accessed 20/02/2025
+6) React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge Accessed 20/02/2025
+7) Filter Product List by Category using React Native Dropdown Picker, The Web Designer https://www.youtube.com/watch?v=AWB_x9Fb3vM Accessed 20/02/2025
+8) Supabase Table Management https://supabase.com/docs/guides/database/tables?queryGroups=database-method&database-method=dashboard&queryGroups=language&language=sql Accessed 20/02/2025

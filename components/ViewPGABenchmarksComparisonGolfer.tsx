@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, Button } from 'react-native';
+import { View, Text, StyleSheet, Alert, Button, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { FlatList } from 'react-native';
 import { Card } from '@rneui/themed';
@@ -377,6 +377,7 @@ if (isNaN(progressValue)) {
   
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Text style={styles.title}>🏌️‍♂️ PGA Benchmarks Comparison</Text>
 
@@ -408,6 +409,7 @@ if (isNaN(progressValue)) {
         onRefresh={() => fetchDrillsAndBenchmarks(selectedGolfer || '', selectedCategory)}
       />
     </View>
+    </ScrollView>
   );
 }
 
@@ -415,7 +417,18 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: '#F4F6F8', alignItems: 'center' },
   title: { fontSize: 24, fontWeight: 'bold', color: '#4CAF50', marginBottom: 10 },
   picker: { width: '100%', backgroundColor: 'white', marginVertical: 10 },
-  card: { width: '90%', padding: 15, borderRadius: 8 },
+  card: {
+    width: '95%', // Adjust width to take up most of the screen
+    alignSelf: 'center', // Center the card in the view
+    padding: 15,
+    borderRadius: 8,
+    marginVertical: 10, // Add vertical spacing
+    elevation: 3, // Adds shadow on Android
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
   drillName: { fontSize: 18, fontWeight: 'bold', color: '#333' },
   metric: { fontSize: 16, color: '#555' },
   progressText: { fontSize: 14, fontWeight: 'bold', color: '#2E7D32', marginTop: 5 },
