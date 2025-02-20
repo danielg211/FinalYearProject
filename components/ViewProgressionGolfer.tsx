@@ -82,12 +82,13 @@ export default function ViewProgressionGolfer() {
     }
   }, [performanceTrend]);
   
+  useEffect(() => {
   const fetchDrillAreas = async () => {
     if (!golferID) {
       Alert.alert('Error', '.');
       return;
     }
-
+  
     try {
       console.log('Fetching drill areas for golfer:', golferID);
       const { data, error } = await supabase.from('Lesson1').select('area').eq('GolferID', golferID);
@@ -101,7 +102,10 @@ export default function ViewProgressionGolfer() {
       Alert.alert('Error fetching drill areas', error.message || 'An unknown error occurred');
     }
   };
+  fetchDrillAreas();
+}, [golferID]);
 
+useEffect(() => {
   const fetchDrills = async () => {
     if (!golferID || !selectedArea) {
       Alert.alert('Error', 'Please select a golfer and drill area first.');
@@ -130,8 +134,11 @@ export default function ViewProgressionGolfer() {
       Alert.alert('Error fetching drills', error.message || 'An unknown error occurred');
     }
   };
+  fetchDrills();
+}, [golferID, selectedArea]);
   
 //Fetch Progression
+useEffect(() => {
 const fetchProgressionData = async () => {
   if (!golferID || selectedDrill.length === 0) {
     Alert.alert('Error', 'Please select a golfer and at least one drill.');
@@ -237,6 +244,8 @@ const fetchProgressionData = async () => {
     setLoading(false);
   }
 };
+  fetchProgressionData();
+}, [golferID, selectedDrill]);
 
 
   
@@ -248,7 +257,7 @@ return (
   <View style={styles.container}>
     <Text style={styles.header}>View Your Progression</Text>
 
-    <Button title="Fetch Drill Areas" onPress={fetchDrillAreas} disabled={!golferID} buttonStyle={styles.button} />
+
 
     {drillAreas.length > 0 && (
       <Picker selectedValue={selectedArea} onValueChange={(value) => setSelectedArea(value)} style={styles.picker}>
@@ -259,7 +268,7 @@ return (
       </Picker>
     )}
 
-    <Button title="Fetch Drills" onPress={fetchDrills} disabled={!selectedArea} buttonStyle={styles.button} />
+    
 
     {drills.length > 0 && (
       <MultiSelect
@@ -282,7 +291,7 @@ return (
       />
     )}
 
-    <Button title="Fetch Progression Data" onPress={fetchProgressionData} disabled={!selectedDrill.length} buttonStyle={styles.button} />
+    
 
     {performanceTrend && <Text style={styles.performanceText}>{performanceTrend}</Text>}
 
