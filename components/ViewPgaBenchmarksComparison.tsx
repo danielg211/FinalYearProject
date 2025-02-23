@@ -219,8 +219,8 @@ setProDrillData(formattedProDrills);
       Alert.alert('Error', 'Could not fetch PGA professional data');
     }
   }
-  
-  const renderDrillItem = ({ item }: { item: Drill }) => {
+   // Chatgpt helped with logic
+  const renderDrillItem = ({ item }: { item: Drill }) => { 
     let progress = 0;
     let differenceMessage = '';
     const proStat = proDrillData.find((proItem) => proItem.drill_id === item.drill_id);

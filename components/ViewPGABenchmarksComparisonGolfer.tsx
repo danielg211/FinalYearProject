@@ -199,7 +199,7 @@ console.log("Driving Drills in UI:", drills.map((d) => d.drill_id));
     try {
       const { data, error } = await supabase
   .from('tour_pros')
-  .select('*')  // Fetch all fields for debugging
+  .select('*')  
   .eq('name', proName)
   .eq('Category', category);
 
@@ -211,9 +211,7 @@ if (error) {
 
 console.log('Fetched PGA Pro Data:', data);
 
-// Debug mismatched drill IDs
-//const availableDrillIDs = new Set(data.map((pro) => pro.drill_id));
-//console.log('Available PGA Drill IDs:', availableDrillIDs);
+
 const availableDrillIDs = new Set(data.map((pro) => pro.drill_id.toLowerCase().trim()));
 console.log('Available PGA Drill IDs:', [...availableDrillIDs]);
 
@@ -238,7 +236,7 @@ setProDrillData(formattedProDrills);
     }
   }
   
-  
+    //Chatgpt helped with logic
 const renderDrillItem = ({ item }: { item: Drill }) => {
     let progress = 0;
     let differenceMessage = '';
