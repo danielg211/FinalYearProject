@@ -18,6 +18,27 @@ export default function PGAHome() {
   const [clientCount, setClientCount] = useState<number>(0);
   const [lessonsCompleted, setLessonsCompleted] = useState<number>(0);
   const [drillsAssigned, setDrillsAssigned] = useState<number>(0);
+  const [proId, setProId] = useState<string | null>(null);
+
+useEffect(() => {
+  const fetchPGAId = async () => {
+    const { data: sessionData, error } = await supabase.auth.getSession();
+
+    if (error) {
+      Alert.alert("Error", "Failed to fetch session");
+      return;
+    }
+
+    const userId = sessionData?.session?.user?.id;
+
+    if (userId) {
+      setProId(userId);
+    }
+  };
+
+  fetchPGAId();
+}, []);
+
 
   // Fetch PGA Pro data and metrics
   useEffect(() => {
@@ -148,11 +169,29 @@ export default function PGAHome() {
           onPress={() => navigation.navigate('ProgressionHomePGA')}
         />
         <Button
-          title="Sign Out"
-          icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
-          buttonStyle={[styles.primaryButton, styles.signOutButton]}
-          onPress={handleSignOut}
-        />
+            title="Open Chat"
+            icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
+            buttonStyle={styles.primaryButton}
+            onPress={() => {
+              if (!proId) {
+                Alert.alert("Error", "PGA Pro ID not found.");
+                return;
+              }
+
+              navigation.navigate("ChatScreen", {
+                senderId: proId,         // ✅ Use fetched PGA ID
+                senderType: "pga",       // ✅ Correct type
+                receiverId: null,        // ✅ No golfer selected yet
+                receiverType: "golfer",
+              });
+            }}
+          />
+          <Button
+                    title="Sign Out"
+                    icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
+                    buttonStyle={[styles.primaryButton, styles.signOutButton]}
+                    onPress={handleSignOut}
+                  />
       </View>
     </ScrollView>
   );

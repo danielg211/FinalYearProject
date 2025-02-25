@@ -9,38 +9,90 @@ import { colors } from '../colors';
 export default function GolferDashboard({ navigation }: { navigation: any }) {
   const [golferName, setGolferName] = useState<string>('Golfer');
   const [loading, setLoading] = useState(true);
+  const [golferId, setGolferId] = useState<string | null>(null);
+  const [pgaProId, setPgaProId] = useState<string | null>(null);
+
+
 
   useEffect(() => {
     fetchGolferProfile();
+    fetchAssignedPGAPro();
   }, []);
 
-  async function fetchGolferProfile() {
-    setLoading(true);
+  async function fetchAssignedPGAPro() {
     try {
       const {
         data: { session },
         error,
       } = await supabase.auth.getSession();
-
+  
       if (error || !session) {
         throw new Error("Unable to fetch session or user is not authenticated");
       }
-
+  
       const { data, error: fetchError } = await supabase
         .from('golfers1')
-        .select('name')
-        .eq('GolferID', session.user.id) 
+        .select('PGAID')
+        .eq('GolferID', session.user.id)
         .single();
+  
+      if (fetchError) throw fetchError;
+  
+      setPgaProId(data?.PGAID || null);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to fetch assigned PGA Professional.');
+    }
+  }
+  async function fetchGolferProfile() {
+    setLoading(true);
+    console.log("🔄 Fetching golfer profile...");
+
+    try {
+      // ✅ Fetch session
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      console.log("🔍 Session response:", sessionData);
+
+      if (sessionError || !sessionData?.session?.user?.id) {
+        throw new Error("❌ No session found or user is not authenticated.");
+      }
+
+      const userId = sessionData.session.user.id;
+      console.log("✅ Logged-in golfer ID:", userId);
+
+      setGolferId(userId);
+
+      // ✅ Fetch golfer details from 'golfers1'
+      const { data, error: fetchError } = await supabase
+        .from("golfers1")
+        .select("name, PGAID")
+        .eq("GolferID", userId)
+        .single();
+
+      console.log("📊 Golfer data from DB:", data);
 
       if (fetchError) throw fetchError;
 
-      setGolferName(data?.name || 'Golfer');
+      setGolferName(data?.name || "Golfer");
+      setPgaProId(data?.PGAID || null);
     } catch (error) {
-      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to fetch golfer profile.');
+      console.error("❌ Error fetching golfer profile:", error);
+      Alert.alert("Error", error instanceof Error ? error.message : "Failed to fetch golfer profile.");
     } finally {
+      console.log("✅ Setting loading to false.");
       setLoading(false);
     }
   }
+
+  // ✅ Debug log for loading state
+  if (loading) {
+    console.log("⏳ GolferDashboard is still loading...");
+    return (
+      <View style={styles.container}>
+        <Text>Loading golfer profile...</Text>
+      </View>
+    );
+  }
+
 
   async function handleSignOut() {
     try {
@@ -102,6 +154,28 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
           icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
           buttonStyle={styles.primaryButton}
           onPress={() => navigation.navigate('ViewPGABenchmarksComparisonGolfer')}
+        />
+        <Button
+          title="Chat with Coach"
+          icon={<Ionicons name="chatbubbles-outline" size={20} color="white" />}
+          buttonStyle={styles.primaryButton}
+          onPress={() => {
+            if (!golferId) {
+              Alert.alert("Error", "Golfer ID not found.");
+              return;
+            }
+            if (!pgaProId) {
+              Alert.alert("Error", "No assigned PGA Professional found.");
+              return;
+            }
+
+            navigation.navigate("ChatScreen", {
+              senderId: golferId,  // ✅ Now using golferId state
+              senderType: "golfer",
+              receiverId: pgaProId, // ✅ Assigned PGA Pro ID
+              receiverType: "pga",
+            });
+          }}
         />
         <Button
           title="Sign Out"

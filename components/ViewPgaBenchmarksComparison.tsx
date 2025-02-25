@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, Button } from 'react-native';
+import { View, Text, StyleSheet, Alert, Button, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { FlatList } from 'react-native';
 import { Card } from '@rneui/themed';
@@ -340,6 +340,7 @@ setProDrillData(formattedProDrills);
   };
 
   return (
+    <ScrollView keyboardShouldPersistTaps="handled">
     <View style={styles.container}>
       <Text style={styles.title}>🏌️‍♂️ PGA Benchmarks Comparison</Text>
 
@@ -374,6 +375,7 @@ setProDrillData(formattedProDrills);
         onRefresh={() => fetchDrillsAndBenchmarks(selectedGolfer || '', selectedCategory)}
       />
     </View>
+  </ScrollView>
   );
 }
 

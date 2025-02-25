@@ -25,6 +25,7 @@ import ProgressionHomePGA from './components/ProgressionHomePGA';
 import LessonImprovementPGA from './components/LessonImprovementPGA';
 import ViewPgaBenchmarksComparison from './components/ViewPgaBenchmarksComparison';
 import ViewPGABenchmarksComparisonGolfer from './components/ViewPGABenchmarksComparisonGolfer';
+import ChatScreen from './components/ChatScreen'
 
 // Define route param list for navigation
 export type RootStackParamList = {
@@ -50,6 +51,12 @@ export type RootStackParamList = {
   LessonImprovementPGA: undefined;
   ViewPgaBenchmarksComparison: undefined;
   ViewPGABenchmarksComparisonGolfer:undefined;
+  ChatScreen: {
+    senderId: string;
+    senderType: "golfer" | "pga";
+    receiverId: string | null;
+    receiverType: "golfer" | "pga";
+  };
 };
 
 // Create the Stack Navigator
@@ -127,6 +134,10 @@ export default function App() {
             <Stack.Screen name="ProgressionHomePGA" component={ProgressionHomePGA} />
             <Stack.Screen name="LessonImprovementPGA" component={LessonImprovementPGA} />
             <Stack.Screen name="ViewPgaBenchmarksComparison" component={ViewPgaBenchmarksComparison} options={{ title: 'PGA Tour Analysis'}} />
+
+            <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ title: 'Chat'}} />
+
+
 
           </>
         )}
