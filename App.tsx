@@ -116,7 +116,7 @@ export default function App() {
             <Stack.Screen name="GolferAccount" component={GolferAccount} initialParams={{ session }} />
             <Stack.Screen name="ChangePasswordGolfer" component={ChangePasswordGolfer} initialParams={{ session }} />
 
-            <Stack.Screen name="GolferDashboard" component={GolferDashboard} options={{ title: 'Golfer Dashboard' }} />
+            <Stack.Screen name="GolferDashboard" component={GolferDashboard} options={{ title: 'Golfer Dashboard', headerShown: false }} />
             <Stack.Screen name="ViewLessonsGolfer" component={ViewLessonsGolfer}  options={{ title: 'Your Lessons' }}/>
             <Stack.Screen name="LessonDetailsGolfer" component={LessonDetailsGolfer} options={{ title: 'Lesson Details' }} />
             <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} options={{ title: 'Upload Drill Result' }} />
