@@ -124,7 +124,7 @@ export default function App() {
             <Stack.Screen name="ViewPGABenchmarksComparisonGolfer" component={ViewPGABenchmarksComparisonGolfer} options={{ title: 'PGA Benchmarking' }} />
 
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
-            <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Dashboard', headerLeft: () => null }}/>
+            <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Dashboard', headerLeft: () => null, headerShown: false }}/>
             
             <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} options={{ title: 'View Lessons' }}/>
             <Stack.Screen name="LogLesson" component={LogLesson} options={{ title: 'Log Lesson' }}/>

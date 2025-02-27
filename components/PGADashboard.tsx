@@ -258,53 +258,81 @@ export default function PGADashboard() {
 //https://reactnative.dev/docs/style
 // ChatGPT was used to optimize styling choices for buttons, list items, and input containers for visual consistency and improved UI aesthetics.
 
-//This was done for account, auth and Pga dashboard
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    // ChatGPT recommended padding to improve layout spacing and overall screen balance.
+    backgroundColor: "#FFFFFF",  // ✅ Keeps the background white (like PGA Home)
+  },
+
+  // 📌 Header Section
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#1E88E5",  // ✅ Same as PGA Home title
     marginBottom: 10,
-    color: colors.textGreen,
-     // Font size, weight, and color were chosen with ChatGPT's assistance to ensure readability and alignment with app color scheme.
   },
+
+  // 📌 Input Fields (New Background Color)
   inputContainer: {
-    
-    borderRadius: 8,
+    borderRadius: 10, 
     borderWidth: 1,
-    borderColor: colors.borderGray,
-    paddingHorizontal: 8,
-    backgroundColor: colors.inputBackground,
-    
-    // ChatGPT provided recommendations for padding, border radius, and background color to create a clean and consistent input style.
+    borderColor: "#BDBDBD",  // ✅ Softer gray border for subtle contrast
+    paddingHorizontal: 12,
+    paddingVertical: 14,
+    backgroundColor: "#F0F4F8",  // ✅ Light gray background for contrast
+    width: "90%",  
+    alignSelf: "center",
+    marginBottom: 15, // ✅ Consistent spacing
   },
+
+  // 📌 Primary Button (Same as PGA Home)
   primaryButton: {
-    backgroundColor: colors.primaryGreen,
-    borderRadius: 8,
-    marginVertical: 10,
-    width: '90%', // Reduce width slightly for aesthetics
-    alignSelf: 'center', // Center align button
-     // ChatGPT helped refine button styling to ensure the primary button stands out while maintaining consistency in border radius and spacing.
+    backgroundColor: "#4CAF50",  // ✅ PGA Green
+    borderRadius: 10,
+    paddingVertical: 14,
+    width: "90%",
+    alignSelf: "center",
+    marginVertical: 8,
   },
+
+  // 📌 Secondary Button (Gray Buttons)
   secondaryButton: {
-    backgroundColor: colors.buttonGray,
-    borderRadius: 8,
-    marginVertical: 10,
-    // ChatGPT recommended color and margin adjustments for visual consistency across button types.
+    backgroundColor: "#E0E0E0",  // ✅ Light gray secondary button
+    borderRadius: 10,
+    paddingVertical: 14,
+    width: "90%",
+    alignSelf: "center",
+    marginVertical: 8,
   },
+
+  // 📌 Delete Button
   deleteButton: {
-    backgroundColor: colors.deleteRed,
-    borderRadius: 8,
+    backgroundColor: "#D32F2F",  // ✅ Red for delete
+    borderRadius: 10,
+    paddingVertical: 10,
+    width: "90%",
+    alignSelf: "center",
+    marginVertical: 8,
   },
+
+  // 📌 Golfer List Items (Updated Card Color)
   listItem: {
-    borderRadius: 8,
-    marginVertical: 5,
-    padding: 10,
-    backgroundColor: colors.inputBackground,
-    // ChatGPT contributed to the styling of list items with padding, margin, and background color choices for improved visual appeal and separation.
+    borderRadius: 12,
+    marginVertical: 6,
+    padding: 16,
+    backgroundColor: "#F8F9FA",  // ✅ Light gray to contrast white background
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
+    elevation: 3,  // ✅ Subtle shadow for depth
+    borderWidth: 1,
+    borderColor: "#E0E0E0",  // ✅ Soft border to match modern UI
   },
 });
+
+

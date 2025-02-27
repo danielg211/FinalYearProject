@@ -352,93 +352,112 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
+
+  // 📌 Bold Labels for Better Visibility
   label: {
-    color: colors.textGreen,
+    color: "#2E7D32",  // ✅ PGA Green
     fontSize: 16,
+    fontWeight: "bold",  // ✅ Bold text for better readability
     marginBottom: 4,
   },
+
+  // 📌 Input Fields (Refined)
   inputContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#F0F4F8",  // ✅ Light Gray for Contrast
     borderRadius: 8,
-    borderColor: colors.borderGray,
+    borderColor: "#BDBDBD",  // ✅ Subtle gray border
     borderWidth: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
     marginBottom: 15,
-    paddingVertical: 8,  // Added vertical padding for better spacing
-    width: '100%', 
-    minHeight: 100,  // Set a taller height for multi-line text
-    justifyContent: 'flex-start', // Ensure inputs take up full width
+    paddingVertical: 10,  // ✅ Better spacing
+    width: "100%", 
+    minHeight: 100,  // ✅ Taller height for multi-line text
+    justifyContent: "flex-start",
   },
+
+  // 📌 Drill Items (CheckBox Styling)
   drillItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 8,
-    borderColor: colors.borderGray,
+    borderColor: "#BDBDBD",
     borderWidth: 1,
     marginBottom: 10,
-    backgroundColor: '#F8F9FA', 
+    backgroundColor: "#F8F9FA", 
   },
   drillText: {
     flex: 1, 
     fontSize: 16, 
-    color: '#333', 
-    fontWeight: '500',
+    color: "#333", 
+    fontWeight: "bold",  // ✅ Bold drill names
   },
-  checkBox: {
-    padding: 5,
-  },
+
+  // 📌 Buttons (Primary & Secondary)
   buttonPrimary: {
-    backgroundColor: colors.primaryGreen,
+    backgroundColor: "#4CAF50",  // ✅ PGA Green
     borderRadius: 8,
-    marginVertical: 15,  // More spacing
+    marginVertical: 15,  // ✅ More spacing
     paddingVertical: 12,
   },
   buttonSecondary: {
-    backgroundColor: '#1976D2', // Use blue for secondary buttons (picture & video)
+    backgroundColor: "#1976D2", // ✅ Blue for secondary buttons (image/video upload)
     borderRadius: 8,
     marginVertical: 10,
     paddingVertical: 10,
   },
-  sliderValue: {
-    color: colors.textGreen,
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  imageText: {
-    color: colors.textGreen,
-    textAlign: 'center',
-    marginVertical: 8,
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: colors.borderGray,
-    marginVertical: 8,
-  },
-  videoText: {
-    textAlign: 'center',
-    color: 'green', 
-    marginVertical: 8,
-  },
+
+  // 📌 Slider Styling
   sliderContainer: {
     padding: 12,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: colors.borderGray,
+    borderColor: "#BDBDBD",
     marginVertical: 15,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: "#FAFAFA",
   },
   sliderText: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
-    fontWeight: '600',
-    color: colors.textGreen,
+    fontWeight: "bold",  // ✅ Bold Confidence Level Text
+    color: "#2E7D32",
   },
-  
+  checkBox: {
+    padding: 5,
+  },
+
+  // 📌 Other Text Improvements
+  sliderValue: {
+    color: "#2E7D32",
+    textAlign: "center",
+    marginBottom: 12,
+    fontWeight: "bold",  // ✅ Bold Confidence Value
+  },
+  imageText: {
+    color: "#2E7D32",
+    textAlign: "center",
+    marginVertical: 8,
+    fontWeight: "bold",  // ✅ Bold Image Status
+  },
+  emptyMessage: {
+    textAlign: "center",
+    fontSize: 14,
+    color: "#757575",  // ✅ Darker Gray for Readability
+    marginVertical: 8,
+    fontWeight: "bold",
+  },
+  videoText: {
+    textAlign: "center",
+    color: "green", 
+    marginVertical: 8,
+    fontWeight: "bold",  // ✅ Bold Video Status
+  },
+
+  // 📌 Picker (Dropdown) Styling
   
 });
+
 
 const pickerSelectStyles = {
   inputIOS: {

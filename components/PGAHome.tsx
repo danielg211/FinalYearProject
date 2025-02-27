@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { Button } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../App';
 import { supabase } from '../lib/supabase';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Dimensions } from 'react-native';
+
+const screenHeight = Dimensions.get('window').height;
 
 
 // Define the navigation type for MainDashboard
@@ -118,11 +122,41 @@ useEffect(() => {
     }
 
   return (
-    <ScrollView keyboardShouldPersistTaps="handled">
-      <View style={styles.container}>
-        {/* Header Section */}
-        <Text style={styles.title}>Welcome, {proName}</Text>
-        <Text style={styles.subtitle}>Manage your lessons, drills, and clients</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F0F4F8' }}>
+       {/* 🔹 Chat Button Moved to Top-Right */}
+    <View style={styles.topBar}>
+      <Text style={styles.dashboardTitle}>PGA Dashboard</Text>
+      <TouchableOpacity 
+        style={styles.chatButton} 
+        onPress={() => {
+          if (!proId) {
+            Alert.alert("Error", "PGA Pro ID not found.");
+            return;
+          }
+        
+          navigation.navigate("ChatScreen", {
+            senderId: proId ?? "",  // ✅ Ensures senderId is never null
+            senderType: "pga",
+            receiverId: null, 
+            receiverType: "golfer",
+          });
+        }}
+        
+      >
+        <FontAwesome5 name="comments" size={20} color="white" />
+      </TouchableOpacity>
+    </View>
+      
+    <ScrollView 
+      keyboardShouldPersistTaps="handled" 
+      contentContainerStyle={{ paddingBottom: 50 }} // ✅ Ensures scrolling works 
+    >
+      <View style={styles.header}>
+  <FontAwesome5 name="golf-ball" size={28} color="#1E88E5" style={{ marginBottom: 10 }} />
+  <Text style={styles.title}>Welcome, {proName}</Text>
+  <Text style={styles.subtitle}>Manage your lessons, drills, and clients</Text>
+
+
 
         {/* Metrics Section */}
         <View style={styles.metricsCard}>
@@ -133,135 +167,164 @@ useEffect(() => {
 
         {/* Action Buttons */}
         <Button
-          title="Golfer Management"
-          icon={<FontAwesome5 name="user-friends" size={18} color="white" />}
-          buttonStyle={styles.primaryButton}
-          onPress={() => navigation.navigate('PGADashboard')}
-        />
-        <Button
-          title="Log a Lesson"
-          icon={<MaterialIcons name="playlist-add" size={22} color="white" />}
-          buttonStyle={styles.primaryButton}
-          onPress={() => navigation.navigate('LogLesson')}
-        />
-        <Button
-          title="View Lessons"
-          icon={<FontAwesome5 name="book" size={18} color="white" />}
-          buttonStyle={styles.primaryButton}
-          onPress={() => navigation.navigate('ViewLessonsPGA')}
-        />
-        <Button
-          title="Create Drills"
-          icon={<FontAwesome5 name="dumbbell" size={18} color="white" />}
-          buttonStyle={styles.primaryButton}
-          onPress={() => navigation.navigate('CreateDrills')}
-        />
-        <Button
-          title="View Drill Results"
-          icon={<FontAwesome5 name="chart-bar" size={18} color="white" />}
-          buttonStyle={styles.primaryButton}
-          onPress={() => navigation.navigate('ViewDrillResults')}
-        />
-        <Button
-          title="View Progression"
-          icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
-          buttonStyle={styles.primaryButton}
-          onPress={() => navigation.navigate('ProgressionHomePGA')}
-        />
-        <Button
-            title="Open Chat"
-            icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
-            buttonStyle={styles.primaryButton}
-            onPress={() => {
-              if (!proId) {
-                Alert.alert("Error", "PGA Pro ID not found.");
-                return;
-              }
+  title="Golfer Management"
+  icon={<FontAwesome5 name="user-friends" size={18} color="white" />}
+  buttonStyle={styles.primaryButton}
+  onPress={() => navigation.navigate('PGADashboard')}
+/>
+<Button
+  title="Log a Lesson"
+  icon={<MaterialIcons name="playlist-add" size={22} color="white" />}
+  buttonStyle={styles.primaryButton}
+  onPress={() => navigation.navigate('LogLesson')}
+/>
+<Button
+  title="View Lessons"
+  icon={<FontAwesome5 name="book" size={18} color="white" />}
+  buttonStyle={styles.primaryButton}
+  onPress={() => navigation.navigate('ViewLessonsPGA')}
+/>
+<Button
+  title="Create Drills"
+  icon={<FontAwesome5 name="dumbbell" size={18} color="white" />}
+  buttonStyle={styles.primaryButton}
+  onPress={() => navigation.navigate('CreateDrills')}
+/>
+<Button
+  title="View Drill Results"
+  icon={<FontAwesome5 name="chart-bar" size={18} color="white" />}
+  buttonStyle={styles.primaryButton}
+  onPress={() => navigation.navigate('ViewDrillResults')}
+/>
+<Button
+  title="View Progression"
+  icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
+  buttonStyle={styles.primaryButton}
+  onPress={() => navigation.navigate('ProgressionHomePGA')}
+/>
 
-              navigation.navigate("ChatScreen", {
-                senderId: proId,         // ✅ Use fetched PGA ID
-                senderType: "pga",       // ✅ Correct type
-                receiverId: null,        // ✅ No golfer selected yet
-                receiverType: "golfer",
-              });
-            }}
-          />
-          <Button
-                    title="Sign Out"
-                    icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
-                    buttonStyle={[styles.primaryButton, styles.signOutButton]}
-                    onPress={handleSignOut}
-                  />
+{/* ✅ Sign Out Button */}
+<Button
+  title="Sign Out"
+  icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
+  buttonStyle={[styles.primaryButton, styles.signOutButton]}
+  onPress={handleSignOut}
+/>
+
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
-// ✅ Modernized Styles
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: '#F8F9FA',
     alignItems: 'center',
-    backgroundColor: '#F0F4F8',
+  },
+  scrollView: {
+    paddingBottom: 50,
+    alignItems: 'center',
+    width: '100%',
+  },
+
+  // 📌 Top Bar (Chat Button on Right)
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Chat button pushed to the right
+    alignItems: 'center',
+    backgroundColor: '#4CAF50', // Green PGA branding
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+  },
+  dashboardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  chatButton: {
+    backgroundColor: '#1E88E5', // Blue color for chat button
+    borderRadius: 50,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+
+  // 📌 Header Section
+  header: {
+    marginTop: 20,
+    alignItems: 'center',
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
-    color: '#388E3C',
-    marginBottom: 10,
+    color: '#1E88E5',
+    marginBottom: 5,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#2E7D32',
+    color: '#555',
     marginBottom: 20,
     textAlign: 'center',
+    width: '90%',
   },
+
+  // 📌 Stats Card (Modern Look)
   metricsCard: {
     width: '90%',
+    maxWidth: 600,
     backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 30,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3, // Android shadow
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 25,
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
   },
   metricText: {
     fontSize: 16,
     color: '#333',
     marginBottom: 5,
+    fontWeight: '500',
   },
   metricValue: {
     fontWeight: 'bold',
-    color: '#1B5E20',
-  },
-  primaryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-    marginBottom: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    width: '90%',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2, // Android shadow
-  },
-  buttonText: {
-    color: 'white',
+    color: '#388E3C',
     fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 10,
   },
-  signOutButton: {
-      
+    
+    primaryButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#4CAF50', // Green PGA color
+      borderRadius: 10,
+      paddingVertical: 14,
+      width: '80%',   // ✅ Makes all buttons the same width
+      maxWidth: 400,  // ✅ Prevents them from being too wide on large screens
+      justifyContent: 'center',
+      marginVertical: 8, // ✅ Ensures equal spacing between buttons
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+  
+    // 📌 Special Style for Sign Out Button
+    signOutButton: {
+      backgroundColor: '#D32F2F',  // Red for logout
     },
 });
+
+
 
