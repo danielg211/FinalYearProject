@@ -184,12 +184,14 @@ useEffect(() => {
   buttonStyle={styles.primaryButton}
   onPress={() => navigation.navigate('ViewLessonsPGA')}
 />
+{/*
 <Button
   title="Create Drills"
   icon={<FontAwesome5 name="dumbbell" size={18} color="white" />}
   buttonStyle={styles.primaryButton}
   onPress={() => navigation.navigate('CreateDrills')}
 />
+*/}
 <Button
   title="View Drill Results"
   icon={<FontAwesome5 name="chart-bar" size={18} color="white" />}
