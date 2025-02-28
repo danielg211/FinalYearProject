@@ -239,9 +239,10 @@ export default function PGADashboard() {
           buttonStyle={styles.primaryButton}
         />
 
-        {/* Button to navigate to log a lesson */}
+        {/* Button to navigate to log a lesson 
         <Button title="Log a Lesson" onPress={() => navigation.navigate('LogLesson')} buttonStyle={styles.secondaryButton} />
-
+        */}
+        
         {/* FlatList to display golfers */}
         <FlatList
           data={golfers}
