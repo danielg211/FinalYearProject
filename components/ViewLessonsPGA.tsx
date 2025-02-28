@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import { Button } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
@@ -8,6 +9,7 @@ import { Image } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
 import jsPDF from 'jspdf';
 import * as FileSystem from 'expo-file-system';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 // FlatList reference:
 // React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
@@ -52,6 +54,20 @@ export default function ViewLessonsPGA() {
   const [golfers, setGolfers] = useState<Golfer[]>([]);
   const [selectedGolfer, setSelectedGolfer] = useState<string>(''); // State to track selected golfer
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [filteredLessons, setFilteredLessons] = useState<Lesson[]>([]);
+
+  useEffect(() => {
+    fetchGolfers();
+    fetchLessons();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [selectedGolfer, selectedDate]);
+
+
 
  // Fetch lessons from the database
 const fetchLessons = async (golferId: string | null = null) => {
@@ -235,7 +251,33 @@ const fetchLessons = async (golferId: string | null = null) => {
     }
   };
   
-  
+   const applyFilters = () => {
+    let filtered = [...lessons];
+
+    if (selectedGolfer) {
+      filtered = filtered.filter((lesson) => lesson.GolferID === selectedGolfer);
+    }
+
+    if (selectedDate) {
+      const selectedDateString = selectedDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+      filtered = filtered.filter((lesson) => lesson.created_at.startsWith(selectedDateString));
+    }
+
+    setFilteredLessons(filtered);
+  };
+
+  const filterByDateRange = (days: number) => {
+    const today = new Date();
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - days);
+
+    const filtered = lessons.filter((lesson) => {
+      const lessonDate = new Date(lesson.created_at);
+      return lessonDate >= pastDate;
+    });
+
+    setFilteredLessons(filtered);
+  };
   
   const renderLesson = ({ item }: { item: Lesson }) => {
     return (
@@ -315,16 +357,38 @@ const fetchLessons = async (golferId: string | null = null) => {
         style={pickerSelectStyles}
         value={selectedGolfer}
       />
+       {/* Date Picker */}
+       <Text style={styles.label}>Filter by Date</Text>
+      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
+        <Text style={styles.dateText}>{selectedDate ? selectedDate.toDateString() : 'Select Date'}</Text>
+      </TouchableOpacity>
+      {showDatePicker && (
+        <DateTimePicker
+          value={selectedDate || new Date()}
+          mode="date"
+          display="default"
+          onChange={(event, date) => {
+            setShowDatePicker(false);
+            if (date) setSelectedDate(date);
+          }}
+        />
+      )}
+
+      {/* Quick Filters */}
+      <View style={styles.buttonContainer}>
+        <Button title="Last 7 Days" onPress={() => filterByDateRange(7)} buttonStyle={styles.filterButton} />
+        <Button title="Last Month" onPress={() => filterByDateRange(30)} buttonStyle={styles.filterButton} />
+      </View>
 
       {loading ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
-          data={lessons}
-          keyExtractor={(item) => item.GolferID + item.created_at}
-          renderItem={renderLesson}
-          ListEmptyComponent={<Text style={styles.emptyMessage}>No lessons found.</Text>}
-        />
+        data={filteredLessons}
+        keyExtractor={(item) => item.GolferID + item.created_at}
+        renderItem={renderLesson}
+        ListEmptyComponent={<Text style={styles.emptyMessage}>No lessons found.</Text>}
+      />
       )}
     </LinearGradient>
   );
@@ -342,25 +406,9 @@ const styles = StyleSheet.create({
     color: colors.textGreen,
     marginBottom: 20,
   },
-  lessonCard: {
-    padding: 15,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    marginBottom: 10,
-    borderColor: colors.borderGray,
-    borderWidth: 1,
-  },
-  lessonText: {
-    fontSize: 16,
-    color: colors.textGreen,
-    marginBottom: 5,
-  },
-  emptyMessage: {
-    textAlign: 'center',
-    fontSize: 18,
-    color: colors.borderGray,
-    marginTop: 20,
-  },
+  
+  
+  
   mediaContainer: {
     marginTop: 10,
     alignItems: 'center',
@@ -389,16 +437,99 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
   },
+  
+  
+  
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2E7D32', // PGA Dark Green
+    marginBottom: 5,
+  },
+  pickerContainer: {
+    backgroundColor: '#FFFFFF', // White background for dropdown
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#BDBDBD', // Light Gray Border
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
+  pickerSelect: {
+    fontSize: 16,
+    color: '#2E7D32', // PGA Dark Green
+  },
+  datePickerButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#BDBDBD', // Light Gray Border
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#2E7D32', // PGA Dark Green
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
+  filterButton: {
+    flex: 1,
+    backgroundColor: '#1976D2', // PGA Blue
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginHorizontal: 5,
+  },
+  applyButton: {
+    backgroundColor: '#2E7D32', // PGA Dark Green
+    borderRadius: 8,
+    paddingVertical: 12,
+    marginBottom: 15,
+  },
+  lessonCard: {
+    backgroundColor: '#FFFFFF', // White background for cards
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+    borderColor: '#BDBDBD', // Light gray border
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  lessonText: {
+    fontSize: 16,
+    color: '#333', // Dark gray for readability
+    marginBottom: 8,
+  },
+  lessonTextBold: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2E7D32', // PGA Dark Green
+  },
   pdfButton: {
-    backgroundColor: colors.textGreen,
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#2E7D32', // PGA Dark Green
+    padding: 12,
+    borderRadius: 8,
     marginTop: 10,
     alignItems: 'center',
   },
   pdfButtonText: {
-    color: '#FFF',
+    color: '#FFFFFF', // White text for visibility
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  emptyMessage: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#757575', // Medium gray
+    marginTop: 20,
   },
   
 });
