@@ -138,10 +138,13 @@ export default function ViewDrillResults({ navigation }: any) {
           <Text style={styles.label}>Lesson Area:</Text> {item.Lesson1.area}
         </Text>
       )}
+      {/*
       {item.media_url && (item.media_url.endsWith('.jpg') || item.media_url.endsWith('.png')) && (
         <Image source={{ uri: item.media_url }} style={styles.image} />
       )}
       {!item.media_url && <Text>Unsupported Media Type</Text>}
+      */}
+      <View style={{ borderBottomWidth: 1, borderBottomColor: '#E0E0E0', marginVertical: 10 }} />
     </View>
   );
 
@@ -228,23 +231,58 @@ const styles = StyleSheet.create({
   header: { fontSize: 24, fontWeight: 'bold', color: '#4CAF50', marginBottom: 20, textAlign: 'center' },
   loadingText: { textAlign: 'center', fontSize: 16, color: '#666' },
   noDataText: { textAlign: 'center', fontSize: 16, color: '#666', marginTop: 20 },
-  label: { fontWeight: 'bold', marginBottom: 5 },
-  datePickerButton: { padding: 10, borderWidth: 1, borderRadius: 8, borderColor: '#ccc', alignItems: 'center', marginBottom: 10 },
+  label: {
+    fontWeight: 'bold',
+    fontSize: 16, // Make it slightly larger
+    color: '#333', // Darker text for better readability
+    marginBottom: 3, // Adds breathing space
+  },
+  datePickerButton: {
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: '#ccc',
+    alignItems: 'center',
+    justifyContent: 'center', // Ensure text is centered
+    marginBottom: 12,
+    width: '90%', // Ensure consistent width
+    alignSelf: 'center', // Center align it
+  },
   dateText: { fontSize: 16 },
   button: { backgroundColor: '#4CAF50', borderRadius: 8, paddingVertical: 12, marginBottom: 15 },
   backButton: { backgroundColor: '#D32F2F', marginTop: 20 },
-  resultCard: { padding: 16, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#CCCCCC', borderRadius: 8, marginBottom: 10 },
-  resultText: { fontSize: 16, marginBottom: 5 },
+  resultCard: {
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10, // Round the corners
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    marginBottom: 12, // Space between cards
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // Elevation for Android shadow effect
+  },
+  resultText: {
+    fontSize: 15,
+    color: '#555', // Softer black
+    marginBottom: 5,
+  },
   image: { width: 200, height: 150, marginTop: 10, borderRadius: 8, borderWidth: 1, borderColor: '#CCCCCC' },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
+    gap: 10, // Adds spacing
     marginBottom: 10,
   },
   filterButton: {
     backgroundColor: '#2196F3',
-    borderRadius: 8,
-    paddingVertical: 10,
+    borderRadius: 10,
+    paddingVertical: 8, // Reduce height slightly
+    paddingHorizontal: 15, // Add padding for better spacing
+    minWidth: 120, // Consistent width
+    alignItems: 'center',
   },
 });
 
