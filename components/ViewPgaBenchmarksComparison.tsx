@@ -223,13 +223,17 @@ setProDrillData(formattedProDrills);
   const renderDrillItem = ({ item }: { item: Drill }) => { 
     let progress = 0;
     let differenceMessage = '';
-    const proStat = proDrillData.find((proItem) => proItem.drill_id === item.drill_id);
+     // Get PGA Pro data if a Tour Pro is selected
+    const proStat = selectedTourPro
+    ? proDrillData.find((proItem) => proItem.drill_id === item.drill_id)
+    : null;  // Null if no Tour Pro is selected
 
     const golferStat = item.golferValue ?? 'N/A';
     const proStatValue = proStat?.golferValue ?? 'N/A';
 
     const golferStatNum = Number(item.golferValue) || 0;
-    const proStatNum = Number(proStat?.golferValue) || 0;
+    //const proStatNum = Number(proStat?.golferValue) || 0;
+    const proStatNum = proStat ? Number(proStat.golferValue) || 0 : null;
     const pgaAverage = Number(item.goalValue) || 0;
 
     if (!pgaAverage || golferStatNum === 0) return null; // Ensure valid data
@@ -238,9 +242,15 @@ setProDrillData(formattedProDrills);
   
     
     const golferScore = isFeetMeasure ? golferStatNum : golferStatNum;
-    const proScore = isFeetMeasure ? proStatNum : proStatNum;
+    //const proScore = isFeetMeasure ? proStatNum : proStatNum;
+    const proScore = proStatNum ?? 0;
+    // If no Tour Pro is selected, default to comparing against PGA Tour Average only
+   // const maxScore = Math.max(golferScore, pgaAverage, proStatNum || 0) + 5;
+   const maxScore = selectedTourPro
+    ? Math.max(golferScore, pgaAverage, proScore) + 5
+    : Math.max(golferScore, pgaAverage) + 5;
   
-    const maxScore = Math.max(golferScore, proScore, pgaAverage) + 5;
+    //const maxScore = Math.max(golferScore, proScore, pgaAverage) + 5;
     
     if (!proStat) {
       console.warn(`No PGA Pro data found for drill_id: ${item.drill_id}. Check if it exists in 'tour_pros' table.`);
@@ -285,56 +295,60 @@ setProDrillData(formattedProDrills);
   
     return (
       <Card containerStyle={styles.card}>
-        {/* Drill Name */}
         <Text style={styles.drillName}>{item.name}</Text>
   
-        {/* PGA Standard vs Golfer Score */}
+        {/* PGA Tour Average vs Golfer Score */}
         <Text style={styles.metric}>
           <Text style={styles.boldText}>🎯 PGA Tour Average:</Text> {item.goalValue ?? 'N/A'} {item.unit}{"\n"}
-          <Text style={styles.boldText}>🏌️ This Golfer's Score:</Text> {item.golferValue ?? 'N/A'} {item.unit}
+          <Text style={styles.boldText}>🏌️ Golfer's Score:</Text> {item.golferValue ?? 'N/A'} {item.unit}
         </Text>
-
-        {/* Golfer vs PGA Pro Stats */}
-        <Text style={styles.metric}>
-          
-          <Text style={styles.boldText}>🏅 {selectedTourPro ?? 'PGA Pro'}'s average:</Text> {proStatValue} {item.unit}
-        </Text>
-
+  
+        {/* Only show Tour Pro stats if one is selected */}
+        {selectedTourPro && (
+          <Text style={styles.metric}>
+            <Text style={styles.boldText}>🏅 {selectedTourPro}'s Score:</Text> {proStatValue} {item.unit}
+          </Text>
+        )}
+  
         {/* Bar Chart Comparison */}
         <View>
-        <Text style={styles.chartTitle}>Golfer vs. PGA Pro</Text>
-        <BarChart
-          data={{
-            labels: ["Golfer", selectedTourPro ?? "PGA Pro"],
-            datasets: [{ data: [golferScore, proScore] }],
-          }}
-          width={screenWidth - 50}
-          height={220}
-          yAxisSuffix={` ${item.unit}`}
-          yAxisLabel=""
-          chartConfig={{
-            backgroundGradientFrom: "#fff",
-            backgroundGradientTo: "#fff",
-            decimalPlaces: 1,
-            color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-          }}
-          showValuesOnTopOfBars
-          fromZero
-          yAxisInterval={1} // Adjust step size
-        />
-      </View>
-           {/* Explanation Message */}
-            <Text style={styles.infoMessage}>
-              {isFeetMeasure
-                ? "🔹 Lower values indicate better performance (closer to the hole)."
-                : "🔹 Higher values indicate better performance."}
-            </Text>
-
+          <Text style={styles.chartTitle}>Comparison</Text>
+          <BarChart
+            data={{
+              labels: selectedTourPro ? ["Golfer", "PGA Average", selectedTourPro] : ["Golfer", "PGA Average"],
+              datasets: [{
+                data: selectedTourPro
+                  ? [golferScore, pgaAverage, proScore]
+                  : [golferScore, pgaAverage]
+              }],
+            }}
+            width={screenWidth - 50}
+            height={220}
+            yAxisLabel=" "
+            yAxisSuffix={` ${item.unit}`}
+            chartConfig={{
+              backgroundGradientFrom: "#fff",
+              backgroundGradientTo: "#fff",
+              decimalPlaces: 1,
+              color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            }}
+            showValuesOnTopOfBars
+            fromZero
+            yAxisInterval={1} 
+          />
+        </View>
+  
+        <Text style={styles.infoMessage}>
+          {isFeetMeasure
+            ? "🔹 Lower values indicate better performance (closer to the hole)."
+            : "🔹 Higher values indicate better performance."}
+        </Text>
+  
         {/* Difference Message */}
-                <Text style={[styles.progressText, { color: differenceMessage.includes("behind") ? "red" : "green" }]}>
+        <Text style={[styles.progressText, { color: differenceMessage.includes("behind") ? "red" : "green" }]}>
           {differenceMessage}
-        </Text>    
+        </Text>
       </Card>
     );
   };
@@ -362,11 +376,13 @@ setProDrillData(formattedProDrills);
         onValueChange={(value) => setSelectedTourPro(value)}
         style={styles.picker}
       >
-        <Picker.Item label="Select Tour Pro" value={null} />
+        {/* <Picker.Item label="Compare to PGA Tour Average (No Tour Pro Selected)" value={null} /> */}
+
         {tourPros.map((pro) => (
           <Picker.Item key={pro} label={pro} value={pro} />
         ))}
       </Picker>
+
       <FlatList
         data={drills}
         keyExtractor={(item) => item.drill_id}
