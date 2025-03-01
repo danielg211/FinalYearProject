@@ -27,6 +27,9 @@ import ViewPgaBenchmarksComparison from './components/ViewPgaBenchmarksCompariso
 import ViewPGABenchmarksComparisonGolfer from './components/ViewPGABenchmarksComparisonGolfer';
 import ChatScreen from './components/ChatScreen'
 
+import ProgressionHomeGolfer from './components/ProgressionHomeGolfer';
+
+
 // Define route param list for navigation
 export type RootStackParamList = {
   Homescreen: undefined;
@@ -51,6 +54,8 @@ export type RootStackParamList = {
   LessonImprovementPGA: undefined;
   ViewPgaBenchmarksComparison: undefined;
   ViewPGABenchmarksComparisonGolfer:undefined;
+  //ProfileManagementHomeGolfer: {session: Session }; 
+  ProgressionHomeGolfer: undefined;
   ChatScreen: {
     senderId: string;
     senderType: "golfer" | "pga";
@@ -122,6 +127,8 @@ export default function App() {
             <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} options={{ title: 'Upload Drill Result' }} />
             <Stack.Screen name="ViewProgressionGolfer" component={ViewProgressionGolfer} options={{ title: 'View Progression Golfer' }} />
             <Stack.Screen name="ViewPGABenchmarksComparisonGolfer" component={ViewPGABenchmarksComparisonGolfer} options={{ title: 'PGA Benchmarking' }} />
+            
+            <Stack.Screen name="ProgressionHomeGolfer" component={ProgressionHomeGolfer} options={{ title: 'Progress' }} />
 
             <Stack.Screen name="PGADashboard" component={PGADashboard} />
             <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Dashboard', headerLeft: () => null, headerShown: false }}/>
