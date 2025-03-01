@@ -23,12 +23,13 @@ export default function ProgressionHomePGA() {
         onPress={() => navigation.navigate('ViewProgressionPGA')}
       />
 
-      {/* Button to View Lesson-to-Improvement Ratio */}
+      {/* Button to View Lesson-to-Improvement Ratio 
       <Button
         title="📈 Lesson Improvement Analysis"
         buttonStyle={styles.button}
         onPress={() => navigation.navigate('LessonImprovementPGA')}
       />
+      */}
       <Button
         title="📈 PGA Tour Benchmark"
         buttonStyle={styles.button}

@@ -37,6 +37,8 @@ interface ProgressionData {
 export default function ViewProgressionPGA() {
   const [golfers, setGolfers] = useState<Golfer[]>([]);
   const [selectedGolfer, setSelectedGolfer] = useState<string | null>(null);
+   // Default to empty string
+
   const [drillAreas, setDrillAreas] = useState<string[]>([]);
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [drills, setDrills] = useState<Drill[]>([]);
@@ -82,10 +84,9 @@ export default function ViewProgressionPGA() {
   
   useEffect(() => {
   const fetchDrillAreas = async () => {
-    if (!selectedGolfer) {
-      Alert.alert('Error', 'Please select a golfer first.');
+    if (!selectedGolfer) 
       return;
-    }
+    
     try {
       console.log('Fetching drill areas for golfer:', selectedGolfer);
       const { data, error } = await supabase.from('Lesson1').select('area').eq('GolferID', selectedGolfer);
@@ -99,16 +100,13 @@ export default function ViewProgressionPGA() {
       Alert.alert('Error fetching drill areas', error.message || 'An unknown error occurred');
     }
   };
-  fetchDrillAreas();
+  if (selectedGolfer) fetchDrillAreas();
   }, [selectedGolfer]);
 
 
   useEffect(() => {
   const fetchDrills = async () => {
-    if (!selectedGolfer || !selectedArea) {
-      Alert.alert('Error', 'Please select a golfer and drill area first.');
-      return;
-    }
+    if (!selectedGolfer || !selectedArea) return;
   
     try {
       console.log('Fetching drills for area:', selectedArea);
@@ -133,7 +131,7 @@ export default function ViewProgressionPGA() {
       Alert.alert('Error fetching drills', error.message || 'An unknown error occurred');
     }
   };
-  fetchDrills();
+  if (selectedGolfer && selectedArea) fetchDrills();
 }, [selectedArea]);
   
 //Fetch Progression  ChatGPt formulas
@@ -144,10 +142,7 @@ export default function ViewProgressionPGA() {
 
 useEffect(() => {
 const fetchProgressionData = async () => {
-  if (!selectedGolfer || selectedDrill.length === 0) {
-    Alert.alert('Error', 'Please select a golfer and at least one drill.');
-    return;
-  }
+  if (!selectedGolfer || selectedDrill.length === 0) return;
 
   try {
     setLoading(true);
@@ -248,8 +243,14 @@ const fetchProgressionData = async () => {
     setLoading(false);
   }
 };
-fetchProgressionData();
+if (selectedGolfer && selectedDrill.length > 0) fetchProgressionData();
 }, [selectedDrill]);
+
+useEffect(() => {
+  if (golfers.length > 0 && !selectedGolfer) {
+    setSelectedGolfer(golfers[0].value);
+  }
+}, [golfers]);
 
   
 //Fetch Progression
@@ -257,38 +258,54 @@ fetchProgressionData();
 //Render
 return (
 <ScrollView keyboardShouldPersistTaps="handled">
+
+
+
   <View style={styles.container}>
     <Text style={styles.header}>View Golfer Progression</Text>
 
-    {/* Golfer Selection */}
-    <Picker selectedValue={selectedGolfer} onValueChange={(value) => setSelectedGolfer(value)} style={styles.picker}>
-      <Picker.Item label="Select Golfer" value={null} />
-      {golfers.map((golfer) => (
-        <Picker.Item key={golfer.value} label={golfer.label} value={golfer.value} />
-      ))}
-    </Picker>
+    <View style={{ width: '100%', alignItems: 'center' }}>
+
+    {golfers.length === 0 ? (
+  <Text style={styles.summaryText}>No golfers found. Check database or network connection.</Text>
+) : (
+  <View style={styles.pickerContainer}>
+  <Picker selectedValue={selectedGolfer} onValueChange={(value) => setSelectedGolfer(value)} style={styles.picker} mode="dropdown">
+    <Picker.Item label="Select Golfer" value={null} />
+    {golfers.map((golfer) => (
+      <Picker.Item key={golfer.value} label={golfer.label} value={golfer.value} />
+    ))}
+  </Picker>
+  </View>
+  
+)}
+
 
    
 
     {drillAreas.length > 0 && (
-      <Picker selectedValue={selectedArea} onValueChange={(value) => setSelectedArea(value)} style={styles.picker}>
+      <View style={styles.pickerContainer}>
+      <Picker selectedValue={selectedArea} onValueChange={(value) => setSelectedArea(value)} style={styles.picker} mode="dropdown">
         <Picker.Item label="Select Drill Area" value={null} />
         {drillAreas.map((area) => (
           <Picker.Item key={area} label={area} value={area} />
         ))}
       </Picker>
+      </View>
     )}
-
+    
+    </View>
    
 
     {drills.length > 0 && (
+      <View style={{ width: '90%' }}>
       <MultiSelect
         items={drills}
         uniqueKey="value"
         onSelectedItemsChange={setSelectedDrill}
         selectedItems={selectedDrill}
-        selectText="Search drills..."
-        searchInputPlaceholderText="Search drills..."
+        selectText="Select Drills"
+        searchInputPlaceholderText="Search..."
         tagRemoveIconColor="#4CAF50"
         tagBorderColor="#4CAF50"
         tagTextColor="#4CAF50"
@@ -298,8 +315,10 @@ return (
         displayKey="label"
         searchInputStyle={{ color: '#000' }}
         submitButtonColor="#4CAF50"
-        submitButtonText="Submit"
+        submitButtonText="Confirm"
       />
+    </View>
+    
     )}
 
     
@@ -384,10 +403,28 @@ const styles = StyleSheet.create({
     marginBottom: 20, 
     textAlign: 'center' 
   },
+  pickerContainer: {
+    width: '100%', // Ensure full width
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginVertical: 5,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
+    alignSelf: 'center', // Ensures it stays centered
+  },
   picker: { 
     height: 50, 
-    backgroundColor: 'white', 
-    marginVertical: 10 
+    color: '#000', // Ensure text is readable
+    fontSize: 16,
+  },
+
+  pickerPlaceholder: {
+    color: '#555', // Darker placeholder color
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center', // Ensure alignment consistency
   },
   button: { 
     backgroundColor: '#4CAF50', 
@@ -412,7 +449,8 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#E8F5E9',
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
+    elevation: 3,
 },
 summaryText: {
     fontSize: 16,
