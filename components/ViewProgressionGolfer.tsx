@@ -84,10 +84,9 @@ export default function ViewProgressionGolfer() {
   
   useEffect(() => {
   const fetchDrillAreas = async () => {
-    if (!golferID) {
-      Alert.alert('Error', '.');
+    if (!golferID) 
       return;
-    }
+    
   
     try {
       console.log('Fetching drill areas for golfer:', golferID);
@@ -102,15 +101,12 @@ export default function ViewProgressionGolfer() {
       Alert.alert('Error fetching drill areas', error.message || 'An unknown error occurred');
     }
   };
-  fetchDrillAreas();
+  if (golferID) fetchDrillAreas();
 }, [golferID]);
 
 useEffect(() => {
   const fetchDrills = async () => {
-    if (!golferID || !selectedArea) {
-      Alert.alert('Error', 'Please select a golfer and drill area first.');
-      return;
-    }
+    if (!golferID || !selectedArea) return;
   
     try {
       console.log('Fetching drills for area:', selectedArea);
@@ -134,16 +130,13 @@ useEffect(() => {
       Alert.alert('Error fetching drills', error.message || 'An unknown error occurred');
     }
   };
-  fetchDrills();
+  if (golferID && selectedArea) fetchDrills();
 }, [golferID, selectedArea]);
   
 //Fetch Progression
 useEffect(() => {
 const fetchProgressionData = async () => {
-  if (!golferID || selectedDrill.length === 0) {
-    Alert.alert('Error', 'Please select a golfer and at least one drill.');
-    return;
-  }
+  if (!golferID || selectedDrill.length === 0) return;
 
   try {
     setLoading(true);
@@ -244,7 +237,7 @@ const fetchProgressionData = async () => {
     setLoading(false);
   }
 };
-  fetchProgressionData();
+if (golferID && selectedDrill.length > 0) fetchProgressionData();
 }, [golferID, selectedDrill]);
 
 
