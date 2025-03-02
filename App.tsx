@@ -26,6 +26,7 @@ import LessonImprovementPGA from './components/LessonImprovementPGA';
 import ViewPgaBenchmarksComparison from './components/ViewPgaBenchmarksComparison';
 import ViewPGABenchmarksComparisonGolfer from './components/ViewPGABenchmarksComparisonGolfer';
 import ChatScreen from './components/ChatScreen'
+import ChangePasswordPGA from './components/ChangePasswordPGA';
 
 import ProgressionHomeGolfer from './components/ProgressionHomeGolfer';
 
@@ -48,6 +49,7 @@ export type RootStackParamList = {
   UploadDrillResult: undefined;
   ViewDrillResults: undefined;
   ChangePasswordGolfer: {session: Session }; 
+  ChangePasswordPGA: {session: Session};
   ViewProgressionPGA: undefined;
   ViewProgressionGolfer: undefined;
   ProgressionHomePGA: undefined;
@@ -132,7 +134,7 @@ export default function App() {
 
             <Stack.Screen name="PGADashboard" component={PGADashboard} options={{ title: 'Player Management' }} />
             <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Professional Hub', headerLeft: () => null, headerShown: false }}/>
-            
+            <Stack.Screen name="ChangePasswordPGA" component={ChangePasswordPGA} options={{ title: 'Change Password' }} />
             <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} options={{ title: 'Player Lessons' }}/>
             <Stack.Screen name="LogLesson" component={LogLesson} options={{ title: 'Log a New Lesson' }}/>
             <Stack.Screen name="CreateDrills" component={CreateDrills} options={{ title: 'Create New Drills' }}/>

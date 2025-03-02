@@ -8,6 +8,8 @@ import { supabase } from '../lib/supabase';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dimensions } from 'react-native';
+import { Session } from '@supabase/supabase-js';
+
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -23,6 +25,21 @@ export default function PGAHome() {
   const [lessonsCompleted, setLessonsCompleted] = useState<number>(0);
   const [drillsAssigned, setDrillsAssigned] = useState<number>(0);
   const [proId, setProId] = useState<string | null>(null);
+  const [topGolfers, setTopGolfers] = useState<{ name: string; improvement: number }[]>([]);
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const { data: sessionData, error } = await supabase.auth.getSession();
+      if (!error) {
+        setSession(sessionData.session);
+      }
+    };
+  
+    fetchSession();
+  }, []);
+
+
 
 useEffect(() => {
   const fetchPGAId = async () => {
@@ -107,6 +124,7 @@ useEffect(() => {
   }, []);
 
   
+  
     async function handleSignOut() {
       try {
         const { error } = await supabase.auth.signOut();
@@ -165,6 +183,8 @@ useEffect(() => {
           <Text style={styles.metricText}>📊 Drills Assigned: <Text style={styles.metricValue}>{drillsAssigned}</Text></Text>
         </View>
 
+       
+
         {/* Action Buttons */}
         <Button
   title="Manage Golfers"
@@ -204,14 +224,20 @@ useEffect(() => {
   buttonStyle={styles.primaryButton}
   onPress={() => navigation.navigate('ProgressionHomePGA')}
 />
-{/*
+
 <Button
   title="Change Password"
   icon={<FontAwesome5 name="lock-closed" size={18} color="white" />}
   buttonStyle={styles.primaryButton}
-  onPress={() => navigation.navigate('ChangePasswordGolfer')}
+  onPress={() => {
+    if (!session) {
+      Alert.alert("Error", "Session not found.");
+      return;
+    }
+    navigation.navigate('ChangePasswordPGA', { session });
+  }}
 />
-*/}
+
 {/* ✅ Sign Out Button */}
 <Button
   title="Log Out"
@@ -266,7 +292,18 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 4,
   },
-
+  topGolfersCard: {
+    width: '90%',
+    backgroundColor: '#FFF3E0', // Light orange
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  
   // 📌 Header Section
   header: {
     marginTop: 20,
