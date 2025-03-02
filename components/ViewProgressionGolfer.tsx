@@ -112,7 +112,8 @@ useEffect(() => {
       console.log('Fetching drills for area:', selectedArea);
       const { data, error } = await supabase.from('DrillResults1')
         .select('drill_id, drills!inner(name)')
-        .eq('GolferID', golferID);
+        .eq('GolferID', golferID)
+        .eq('drills.category', selectedArea);
   
       if (error) throw error;
   
