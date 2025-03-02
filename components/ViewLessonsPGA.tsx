@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert, TouchableOpacity, Button } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import { Button } from '@rneui/themed';
+//import { Button } from '@rneui/themed';
 import { supabase } from '../lib/supabase';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
@@ -376,8 +376,8 @@ const fetchLessons = async (golferId: string | null = null) => {
 
       {/* Quick Filters */}
       <View style={styles.buttonContainer}>
-        <Button title="Last 7 Days" onPress={() => filterByDateRange(7)} buttonStyle={styles.filterButton} />
-        <Button title="Last Month" onPress={() => filterByDateRange(30)} buttonStyle={styles.filterButton} />
+        <Button title="Last 7 Days" color="#1976D2" onPress={() => filterByDateRange(7)} />
+        <Button title="Last Month" color="#1976D2" onPress={() => filterByDateRange(30)} />
       </View>
 
       {loading ? (
