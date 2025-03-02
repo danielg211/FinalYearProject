@@ -167,7 +167,7 @@ useEffect(() => {
 
         {/* Action Buttons */}
         <Button
-  title="Golfer Management"
+  title="Manage Golfers"
   icon={<FontAwesome5 name="user-friends" size={18} color="white" />}
   buttonStyle={styles.primaryButton}
   onPress={() => navigation.navigate('PGADashboard')}
@@ -179,7 +179,7 @@ useEffect(() => {
   onPress={() => navigation.navigate('LogLesson')}
 />
 <Button
-  title="View Lessons"
+  title="Lesson History"
   icon={<FontAwesome5 name="book" size={18} color="white" />}
   buttonStyle={styles.primaryButton}
   onPress={() => navigation.navigate('ViewLessonsPGA')}
@@ -193,21 +193,28 @@ useEffect(() => {
 />
 */}
 <Button
-  title="View Drill Results"
+  title="Drill Performance"
   icon={<FontAwesome5 name="chart-bar" size={18} color="white" />}
   buttonStyle={styles.primaryButton}
   onPress={() => navigation.navigate('ViewDrillResults')}
 />
 <Button
-  title="View Progression"
+  title="Golfer Progress Insights"
   icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
   buttonStyle={styles.primaryButton}
   onPress={() => navigation.navigate('ProgressionHomePGA')}
 />
-
+{/*
+<Button
+  title="Change Password"
+  icon={<FontAwesome5 name="lock-closed" size={18} color="white" />}
+  buttonStyle={styles.primaryButton}
+  onPress={() => navigation.navigate('ChangePasswordGolfer')}
+/>
+*/}
 {/* ✅ Sign Out Button */}
 <Button
-  title="Sign Out"
+  title="Log Out"
   icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
   buttonStyle={[styles.primaryButton, styles.signOutButton]}
   onPress={handleSignOut}
@@ -312,7 +319,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#4CAF50', // Green PGA color
       borderRadius: 10,
       paddingVertical: 14,
-      width: '80%',   // ✅ Makes all buttons the same width
+         // ✅ Makes all buttons the same width
       maxWidth: 400,  // ✅ Prevents them from being too wide on large screens
       justifyContent: 'center',
       marginVertical: 8, // ✅ Ensures equal spacing between buttons

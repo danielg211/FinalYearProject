@@ -117,30 +117,30 @@ export default function App() {
         ) : (
           // Authenticated users go to their respective account and dashboards
           <>
-            <Stack.Screen name="PGAAccount" component={PGAAccount} initialParams={{ session }} />
-            <Stack.Screen name="GolferAccount" component={GolferAccount} initialParams={{ session }} />
-            <Stack.Screen name="ChangePasswordGolfer" component={ChangePasswordGolfer} initialParams={{ session }} />
+            <Stack.Screen name="PGAAccount" component={PGAAccount} initialParams={{ session }} options={{ title: 'PGA Professional Profile' }} />
+            <Stack.Screen name="GolferAccount" component={GolferAccount} initialParams={{ session }} options={{ title: 'Golfer Profile' }} />
+            <Stack.Screen name="ChangePasswordGolfer" component={ChangePasswordGolfer} initialParams={{ session }} options={{ title: 'Change Password' }} />
 
-            <Stack.Screen name="GolferDashboard" component={GolferDashboard} options={{ title: 'Golfer Dashboard', headerShown: false }} />
+            <Stack.Screen name="GolferDashboard" component={GolferDashboard} options={{ title: 'My Golf IQ Hub', headerShown: false }} />
             <Stack.Screen name="ViewLessonsGolfer" component={ViewLessonsGolfer}  options={{ title: 'Your Lessons' }}/>
             <Stack.Screen name="LessonDetailsGolfer" component={LessonDetailsGolfer} options={{ title: 'Lesson Details' }} />
-            <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} options={{ title: 'Upload Drill Result' }} />
-            <Stack.Screen name="ViewProgressionGolfer" component={ViewProgressionGolfer} options={{ title: 'View Progression Golfer' }} />
-            <Stack.Screen name="ViewPGABenchmarksComparisonGolfer" component={ViewPGABenchmarksComparisonGolfer} options={{ title: 'PGA Benchmarking' }} />
+            <Stack.Screen name="UploadDrillResult" component={UploadDrillResult} options={{ title: 'Upload Drill Performance' }} />
+            <Stack.Screen name="ViewProgressionGolfer" component={ViewProgressionGolfer} options={{ title: 'Your Progression' }} />
+            <Stack.Screen name="ViewPGABenchmarksComparisonGolfer" component={ViewPGABenchmarksComparisonGolfer} options={{ title: 'Compare to PGA Tour' }} />
             
-            <Stack.Screen name="ProgressionHomeGolfer" component={ProgressionHomeGolfer} options={{ title: 'Progress' }} />
+            <Stack.Screen name="ProgressionHomeGolfer" component={ProgressionHomeGolfer} options={{ title: 'Performance Insights' }} />
 
-            <Stack.Screen name="PGADashboard" component={PGADashboard} />
-            <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Dashboard', headerLeft: () => null, headerShown: false }}/>
+            <Stack.Screen name="PGADashboard" component={PGADashboard} options={{ title: 'Player Management' }} />
+            <Stack.Screen name="PGAHome" component={PGAHome} options={{ title: 'PGA Professional Hub', headerLeft: () => null, headerShown: false }}/>
             
-            <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} options={{ title: 'View Lessons' }}/>
-            <Stack.Screen name="LogLesson" component={LogLesson} options={{ title: 'Log Lesson' }}/>
-            <Stack.Screen name="CreateDrills" component={CreateDrills} options={{ title: 'Create Drills' }}/>
-            <Stack.Screen name="ViewDrillResults" component={ViewDrillResults} />
-            <Stack.Screen name="ViewProgressionPGA" component={ViewProgressionPGA} />
-            <Stack.Screen name="ProgressionHomePGA" component={ProgressionHomePGA} />
-            <Stack.Screen name="LessonImprovementPGA" component={LessonImprovementPGA} />
-            <Stack.Screen name="ViewPgaBenchmarksComparison" component={ViewPgaBenchmarksComparison} options={{ title: 'PGA Tour Analysis'}} />
+            <Stack.Screen name="ViewLessonsPGA" component={ViewLessonsPGA} options={{ title: 'Player Lessons' }}/>
+            <Stack.Screen name="LogLesson" component={LogLesson} options={{ title: 'Log a New Lesson' }}/>
+            <Stack.Screen name="CreateDrills" component={CreateDrills} options={{ title: 'Create New Drills' }}/>
+            <Stack.Screen name="ViewDrillResults" component={ViewDrillResults} options={{ title: 'Drill Performance Results' }} />
+            <Stack.Screen name="ViewProgressionPGA" component={ViewProgressionPGA} options={{ title: 'Player Progress Tracking' }}/>
+            <Stack.Screen name="ProgressionHomePGA" component={ProgressionHomePGA} options={{ title: 'Player Progress Overview' }} />
+            <Stack.Screen name="LessonImprovementPGA" component={LessonImprovementPGA} options={{ title: 'Lesson Performance Analysis' }} />
+            <Stack.Screen name="ViewPgaBenchmarksComparison" component={ViewPgaBenchmarksComparison} options={{ title: 'PGA Tour Benchmarks'}} />
 
             <Stack.Screen name="ChatScreen" component={ChatScreen} options={{ title: 'Chat'}} />
 

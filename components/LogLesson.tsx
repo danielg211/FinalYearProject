@@ -5,6 +5,11 @@ import { Input, Button, Slider, CheckBox } from '@rneui/themed';
 import RNPickerSelect from 'react-native-picker-select';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
+import { LogBox } from 'react-native';
+
+// Suppress VirtualizedLists inside ScrollView warning
+LogBox.ignoreLogs(["Slider: Support for defaultProps will be removed"]);
+
 
 // React-Native-Picker-Select reference: 
 // Learn to Use React-Native-Picker-Select in 5 Minutes! https://www.youtube.com/watch?v=9MhLUaHY6M4 by Technical Rajni

@@ -6,6 +6,11 @@ import { Picker } from '@react-native-picker/picker';
 import { LineChart } from 'react-native-chart-kit';
 import MultiSelect from 'react-native-multiple-select';
 import { BarChart } from 'react-native-chart-kit';
+import { LogBox } from 'react-native';
+
+// Suppress VirtualizedLists inside ScrollView warning
+LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
 
 
 // References

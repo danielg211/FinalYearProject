@@ -153,13 +153,13 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
               onPress={() => navigation.navigate('ViewLessonsGolfer')}
             />
             <Button
-              title="Update Profile"
+              title="Manage my Profile"
               icon={<MaterialIcons name="person" size={22} color="white" />}
               buttonStyle={styles.primaryButton}
               onPress={() => navigation.navigate('GolferAccount')}
             />
             <Button
-              title="Upload Drill Result"
+              title="Submit Drill Performance"
               icon={<FontAwesome5 name="upload" size={18} color="white" />}
               buttonStyle={styles.primaryButton}
               onPress={() => navigation.navigate('UploadDrillResult')}
@@ -171,14 +171,14 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
               onPress={() => navigation.navigate('ChangePasswordGolfer')}
             />
             <Button
-              title="View Progression"
+              title="My Performance Trends"
               icon={<FontAwesome5 name="chart-line" size={18} color="white" />}
               buttonStyle={styles.primaryButton}
               onPress={() => navigation.navigate('ProgressionHomeGolfer')}
             />
             
             <Button
-              title="Sign Out"
+              title="Log Out"
               icon={<MaterialIcons name="exit-to-app" size={22} color="white" />}
               buttonStyle={[styles.primaryButton, styles.signOutButton]}
               onPress={handleSignOut}
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50', 
     borderRadius: 10,
     paddingVertical: 14,
-    width: '80%',  
+    
     maxWidth: 400,  
     justifyContent: 'center',
     marginVertical: 8, 
