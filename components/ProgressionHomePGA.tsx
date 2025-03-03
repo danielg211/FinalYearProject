@@ -13,56 +13,57 @@ export default function ProgressionHomePGA() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Progression & Insights</Text>
-      <Text style={styles.subtitle}>Track golfer performance trends</Text>
-
-      {/* Button to View General Progression */}
-      <Button
-        title="📊 View Progression Data"
-        buttonStyle={styles.button}
-        onPress={() => navigation.navigate('ViewProgressionPGA')}
-      />
-
-      {/* Button to View Lesson-to-Improvement Ratio 
-      <Button
-        title="📈 Lesson Improvement Analysis"
-        buttonStyle={styles.button}
-        onPress={() => navigation.navigate('LessonImprovementPGA')}
-      />
-      */}
-      <Button
-        title="📈 PGA Tour Benchmark"
-        buttonStyle={styles.button}
-        onPress={() => navigation.navigate('ViewPgaBenchmarksComparison')}
-      />
+      <View style={styles.content}>
+        <Text style={styles.title}>Progression & Insights</Text>
+        <Text style={styles.subtitle}>Track golfer performance trends</Text>
+  
+        {/* Button to View General Progression */}
+        <Button
+          title="📊 View Progression Data"
+          buttonStyle={styles.button}
+          onPress={() => navigation.navigate('ViewProgressionPGA')}
+        />
+  
+        {/* Button to View PGA Tour Benchmark */}
+        <Button
+          title="📈 PGA Tour Benchmark"
+          buttonStyle={styles.button}
+          onPress={() => navigation.navigate('ViewPgaBenchmarksComparison')}
+        />
+      </View>
     </View>
   );
+  
 }
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1, 
+      justifyContent: 'center', // ✅ Centers everything vertically
+      alignItems: 'center', // ✅ Centers everything horizontally
+      padding: 20,
+      backgroundColor: '#F4F6F8',
+    },
+    content: {
+      width: '100%',  // ✅ Ensures the content area is well-sized
+      alignItems: 'center', // ✅ Centers the text & buttons horizontally
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#4CAF50',
+      marginBottom: 10,
+    },
+    subtitle: {
+      fontSize: 16,
+      color: '#2E7D32',
+      marginBottom: 20,
+      textAlign: 'center',
+    },
+    button: {
+      width: '80%', // ✅ Ensures button width is appropriate
+      marginVertical: 10, // ✅ Adds spacing between buttons
+      backgroundColor: '#4CAF50',
+      borderRadius: 8,
+    },
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#F4F6F8',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#2E7D32',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  button: {
-    width: '80%',
-    marginVertical: 10,
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-  },
-});

@@ -25,7 +25,7 @@ export default function GolferAccount({ route }: Props) {
 
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  //const [email, setEmail] = useState('');
   const [handicap, setHandicap] = useState('');
  // const [avatarUrl, setAvatarUrl] = useState('');
 
@@ -37,43 +37,78 @@ export default function GolferAccount({ route }: Props) {
   async function fetchGolferProfile() {
     try {
       setLoading(true);
+      console.log("Fetching golfer profile...");
       const { data, error } = await supabase
         .from('golfers1')
-        .select('name, email, handicap')
+        .select('name, handicap')
         .eq('GolferID', session.user.id)
         .single();
 
       if (error) throw error;
 
+      console.log("Golfer profile data:", data);
+
       setName(data.name || '');
-      setEmail(data.email || '');
-      setHandicap(data.handicap || '');
+      //setEmail(data.email || '');
+     // setHandicap(data.handicap || '');
+     setHandicap(data.handicap?.toString() || '');
+
       //setAvatarUrl(data.avatar_url || '');
     } catch (error) {
+      console.error("Error fetching golfer profile:", error);
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to fetch profile');
     } finally {
       setLoading(false);
     }
   }
 
+  function validateHandicap(value: string) {
+    // Remove non-numeric characters except "-" at the start
+    let sanitizedValue = value.replace(/[^0-9-]/g, '');
+
+    // Ensure negative sign only at the beginning
+    if (sanitizedValue.includes('-') && sanitizedValue.indexOf('-') !== 0) {
+      sanitizedValue = sanitizedValue.replace('-', '');
+    }
+
+    setHandicap(sanitizedValue);
+  }
+
   // Update Golfer Profile
   async function updateProfile() {
     try {
       setLoading(true);
+       // Convert handicap to number
+       const numericHandicap = parseInt(handicap, 10);
+
+       // Validate handicap range
+       if (isNaN(numericHandicap) || numericHandicap < -5 || numericHandicap > 54) {
+         Alert.alert('Invalid Handicap', 'Handicap must be a number between -5 and 54.');
+         setLoading(false);
+         return;
+       }
+
       const updates = {
-        id: session.user.id,
+        GolferID: session.user.id,
         name,
-        handicap,
+       // handicap,
+        handicap: numericHandicap,
+      //  email,
        // avatar_url: avatarUrl,
       };
+
+      console.log("Updating profile with:", updates);
 
       const { error } = await supabase.from('golfers1').upsert(updates);
 
       if (error) throw error;
 
+      console.log("Profile updated successfully");
       Alert.alert('Success', 'Profile updated successfully!');
       navigation.navigate('GolferDashboard'); // Navigate to Golfer Dashboard
     } catch (error) {
+      console.error("Error updating golfer profile:", error);
+
       Alert.alert('Error', error instanceof Error ? error.message : 'Failed to update profile');
     } finally {
       setLoading(false);
@@ -94,20 +129,21 @@ export default function GolferAccount({ route }: Props) {
           inputStyle={styles.input}
         />
 
-        {/* Email Display */}
+        {/* Email Display 
         <Input
           label="Email"
           value={email}
-          disabled
+          onChangeText={setEmail}
           labelStyle={styles.label}
           inputStyle={styles.input}
-        />
+        />*/}
 
         {/* Handicap Input */}
         <Input
           label="Handicap"
           value={handicap}
-          onChangeText={setHandicap}
+          onChangeText={validateHandicap}
+          keyboardType="numeric"
           labelStyle={styles.label}
           inputStyle={styles.input}
         />

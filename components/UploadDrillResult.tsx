@@ -197,13 +197,13 @@ export default function UploadDrillResult({ navigation }: any) {
         keyboardType="numeric"
       />
 
-      <Button title="Pick Media" onPress={pickMedia} buttonStyle={styles.button} />
+     {/* <Button title="Pick Media" onPress={pickMedia} buttonStyle={styles.button} /> */}
       <Button title="Upload Result" onPress={handleUploadResult} buttonStyle={styles.button} />
-      <Button
+      {/*<Button
         title="Back to Dashboard"
         onPress={() => navigation.navigate('GolferDashboard')}
         buttonStyle={[styles.button, styles.backButton]}
-      />
+      /> */}
     </View>
   );
 }
