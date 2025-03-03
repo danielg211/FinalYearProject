@@ -163,6 +163,7 @@ export default function UploadDrillResult({ navigation }: any) {
     }
   };
 
+  
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Upload Drill Result</Text>

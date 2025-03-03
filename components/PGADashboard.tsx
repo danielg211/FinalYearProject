@@ -218,6 +218,23 @@ export default function PGADashboard() {
     </ListItem>
   );
 
+  const handleHandicapChange = (value: string) => {
+    // Remove non-numeric characters (except '-')
+    let sanitizedValue = value.replace(/[^0-9-]/g, '');
+  
+    // Convert to a number
+    const numericValue = parseFloat(sanitizedValue);
+  
+    // Check if the number is within the valid range
+    if (isNaN(numericValue) || numericValue < -5 || numericValue > 54) {
+      Alert.alert("Invalid Handicap", "Handicap must be between -5 and 54.");
+      return;
+    }
+  
+    setHandicap(sanitizedValue);
+  };
+  
+
   return (
     // Linear gradient background
     
@@ -226,7 +243,7 @@ export default function PGADashboard() {
 
         {/* Input fields for golfer details */}
         <Input label="Name" value={name} onChangeText={setName} placeholder="Enter Name" containerStyle={styles.inputContainer} />
-        <Input label="Handicap" value={handicap} keyboardType="numeric" onChangeText={setHandicap} placeholder="Enter Handicap" containerStyle={styles.inputContainer} />
+        <Input label="Handicap" value={handicap} keyboardType="numeric" onChangeText={handleHandicapChange} placeholder="Enter Handicap" containerStyle={styles.inputContainer} />
        {/* <Input label="Progress" value={progress} onChangeText={setProgress} placeholder="Enter Progress" containerStyle={styles.inputContainer} /> */}
         <Input label="Email" value={email} onChangeText={setEmail} placeholder="Enter Golfer's Email" containerStyle={styles.inputContainer} />
        
@@ -291,7 +308,7 @@ const styles = StyleSheet.create({
     marginBottom: 15, // ✅ Consistent spacing
   },
 
-  // 📌 Primary Button (Same as PGA Home)
+  //  Primary Button (Same as PGA Home)
   primaryButton: {
     backgroundColor: "#4CAF50",  // ✅ PGA Green
     borderRadius: 10,
@@ -301,7 +318,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 
-  // 📌 Secondary Button (Gray Buttons)
+  //  Secondary Button (Gray Buttons)
   secondaryButton: {
     backgroundColor: "#E0E0E0",  // ✅ Light gray secondary button
     borderRadius: 10,
@@ -311,7 +328,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 
-  // 📌 Delete Button
+  //  Delete Button
   deleteButton: {
     backgroundColor: "#D32F2F",  // ✅ Red for delete
     borderRadius: 10,
