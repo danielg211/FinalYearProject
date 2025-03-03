@@ -81,7 +81,7 @@ export default function GolferAccount({ route }: Props) {
   }
 
   return (
-    <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         
 
@@ -127,12 +127,12 @@ export default function GolferAccount({ route }: Props) {
           buttonStyle={[styles.button, styles.signOutButton]}
         />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: "#f5f5f5",  },
   content: { flexGrow: 1, padding: 20, justifyContent: 'center' },
   label: { color: colors.textGreen, fontSize: 16 },
   input: { color: '#333333' },

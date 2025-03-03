@@ -96,6 +96,7 @@ export default function PGALogin() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{isSignUp ? 'Sign Up' : 'Sign In'}</Text>
+     
 
       {/* Conditional name input for sign-up */}
       {isSignUp && (

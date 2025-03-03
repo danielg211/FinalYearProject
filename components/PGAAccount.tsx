@@ -74,7 +74,7 @@ export default function PGAAccount({ route }: Props) {
   }
 
   return (
-    <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         {/* Name Input */}
         <Input
@@ -109,13 +109,13 @@ export default function PGAAccount({ route }: Props) {
           buttonStyle={[styles.button, styles.signOutButton]}
         />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { flexGrow: 1, padding: 20, justifyContent: 'center' },
+  content: { flexGrow: 1, padding: 20, justifyContent: 'center', backgroundColor: "#f5f5f5",  },
   label: { color: colors.textGreen, fontSize: 16 },
   input: { color: '#333333' },
   button: {

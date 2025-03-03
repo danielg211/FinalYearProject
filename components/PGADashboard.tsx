@@ -220,7 +220,7 @@ export default function PGADashboard() {
 
   return (
     // Linear gradient background
-    <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
+    
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <Text style={styles.title}>PGA Dashboard - Golfer Management</Text>
 
@@ -251,7 +251,7 @@ export default function PGADashboard() {
           scrollEnabled={false} // Disable FlatList scrolling to allow ScrollView to handle it
         />
       </ScrollView>
-    </LinearGradient>
+    
   );
 }
 
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#FFFFFF",  // ✅ Keeps the background white (like PGA Home)
+    backgroundColor: "#f5f5f5",  // ✅ Keeps the background white (like PGA Home)
   },
 
   // 📌 Header Section

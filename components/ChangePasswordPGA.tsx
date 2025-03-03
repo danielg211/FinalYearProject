@@ -106,7 +106,7 @@ export default function ChangePasswordPGA({ route }: Props) {
   };
 
   return (
-    <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Input
           label="Current Password"
@@ -145,13 +145,14 @@ export default function ChangePasswordPGA({ route }: Props) {
           disabled={loading}
         />
       </ScrollView>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f5f5f5", 
   },
   content: {
     flexGrow: 1,

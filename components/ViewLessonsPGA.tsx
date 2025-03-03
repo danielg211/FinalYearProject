@@ -343,7 +343,7 @@ const fetchLessons = async (golferId: string | null = null) => {
   
 
   return (
-    <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
+     <View style={styles.container}>
       <Text style={styles.header}>View Lessons</Text>
 
       {/* Golfer Picker */}
@@ -390,7 +390,7 @@ const fetchLessons = async (golferId: string | null = null) => {
         ListEmptyComponent={<Text style={styles.emptyMessage}>No lessons found.</Text>}
       />
       )}
-    </LinearGradient>
+    </View>
   );
 }
 
@@ -399,6 +399,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#f5f5f5", 
   },
   header: {
     fontSize: 24,
