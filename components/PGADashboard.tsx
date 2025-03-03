@@ -53,9 +53,20 @@ export default function PGADashboard() {
   async function fetchGolfers() {
     setLoading(true); // Set loading state to true
     try {
+      // Get the logged-in PGA professional's user ID
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !sessionData?.session?.user) {
+      throw new Error("Unable to retrieve authenticated PGA Professional. Please log in again.");
+    }
+
+    const PGAID = sessionData.session.user.id; // Get PGA professional's ID
+
+    console.log(`Fetching golfers for PGA Pro: ${PGAID}`);
+
       const { data, error } = await supabase
         .from('golfers1')
         .select('GolferID, name, handicap, created_at')
+        .eq('PGAID', PGAID)
         .order('created_at', { ascending: false }); // Order by most recent
 
       if (error) throw error; // Handle error if fetching fails
