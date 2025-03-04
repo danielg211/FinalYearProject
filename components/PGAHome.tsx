@@ -17,6 +17,8 @@ const screenHeight = Dimensions.get('window').height;
 // Define the navigation type for MainDashboard
 type PGAHomeNavigationProp = StackNavigationProp<RootStackParamList, 'PGAHome'>;
 
+
+
 // PGAHome component
 export default function PGAHome() {
   const navigation = useNavigation<PGAHomeNavigationProp>();
@@ -121,8 +123,17 @@ useEffect(() => {
     };
 
     fetchMetrics();
+    
   }, []);
 
+
+  
+  
+  
+  
+
+  
+  
   
   
     async function handleSignOut() {
@@ -138,6 +149,14 @@ useEffect(() => {
         Alert.alert('Error', 'Failed to sign out.');
       }
     }
+
+    const getGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour < 12) return "Good morning";
+      if (hour < 18) return "Good afternoon";
+      return "Good evening";
+    };
+    
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#F0F4F8' }}>
@@ -171,7 +190,9 @@ useEffect(() => {
     >
       <View style={styles.header}>
   <FontAwesome5 name="golf-ball" size={28} color="#1E88E5" style={{ marginBottom: 10 }} />
-  <Text style={styles.title}>Welcome, {proName}</Text>
+  <Text style={styles.dateText}>{new Date().toLocaleDateString()}</Text>
+
+  <Text style={styles.title}>{getGreeting()}, {proName}</Text>
   <Text style={styles.subtitle}>Manage your lessons, drills, and clients</Text>
 
 
@@ -183,8 +204,10 @@ useEffect(() => {
           <Text style={styles.metricText}>📊 Drills Assigned: <Text style={styles.metricValue}>{drillsAssigned}</Text></Text>
         </View>
 
-       
+        
 
+
+       
         {/* Action Buttons */}
         <Button
   title="Manage Golfers"
@@ -264,6 +287,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
+  topGolfersCard: {
+    width: '90%',
+    backgroundColor: '#FFF3E0', // Light orange background
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  leaderboardText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  dateText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 5,
+  },
+  
 
   // 📌 Top Bar (Chat Button on Right)
   topBar: {
@@ -292,17 +341,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 4,
   },
-  topGolfersCard: {
-    width: '90%',
-    backgroundColor: '#FFF3E0', // Light orange
-    padding: 16,
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-  },
+  
   
   // 📌 Header Section
   header: {
