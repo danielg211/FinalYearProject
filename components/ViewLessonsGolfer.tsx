@@ -7,6 +7,10 @@ import { colors } from '../colors';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import jsPDF from 'jspdf';
 import { Video, ResizeMode } from 'expo-av';
+import { Buffer } from 'buffer';
+import { shareAsync } from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+
 
 // FlatList reference:
 // React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
@@ -31,6 +35,7 @@ type Lesson = {
   area: string;
   beforeVideo: string | null;
   afterVideo: string | null;
+  GolferID: string;
 };
 
 export default function ViewLessonsGolfer() {
@@ -132,74 +137,85 @@ export default function ViewLessonsGolfer() {
     fetchLessons();
   }, []);
   
-  // PDF Generation
-  const generatePDF = (lesson: Lesson) => {
-    const doc = new jsPDF();
   
-    // Header Section
-    doc.setFillColor(76, 175, 80); // Green Background
-    doc.rect(0, 0, 210, 30, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(26); // Larger Title
-    doc.setFont('helvetica', 'bold');
-    doc.text('Golf IQ Pro - Lesson Report', 105, 20, { align: 'center' });
+  const generatePDF = async (lesson: Lesson) => {
+    try {
+      const doc = new jsPDF();
   
-    // Add some vertical spacing
-    let yPos = 50;
+      // ✅ Header Section - Styled Green Header
+      doc.setFillColor(76, 175, 80); // Green Background
+      doc.rect(0, 0, 210, 30, 'F'); // Full Width Rectangle
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(26); // Large Title
+      doc.setFont('helvetica', 'bold');
+      doc.text('Golf IQ Pro - Post-Lesson Report', 105, 20, { align: 'center' });
   
-    // Date
-    doc.setTextColor(51, 51, 51);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Date:`, 20, yPos);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`${new Date(lesson.created_at).toLocaleDateString()}`, 60, yPos);
-    yPos += 20;
+      let yPos = 50; // Initial position for content
   
-    // Lesson Area
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Area of Game:`, 20, yPos);
-    doc.setFont('helvetica', 'normal');
-    doc.text(lesson.area, 80, yPos);
-    yPos += 30;
+      // ✅ Date Section
+      doc.setTextColor(51, 51, 51);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Date:', 20, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${lesson.created_at ? new Date(lesson.created_at).toLocaleDateString() : 'Unknown Date'}`, 60, yPos);
+      yPos += 20;
   
-    // Section Divider
-    doc.setDrawColor(200, 200, 200);
-    doc.line(20, yPos, 190, yPos);
-    yPos += 20;
+      // ✅ Golfer Name
+      doc.setFont('helvetica', 'bold');
+      doc.text('Golfer Name:', 20, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${lesson.GolferID || 'Unknown Golfer'}`, 70, yPos);
+      yPos += 20;
   
-    // Drills Assigned
-    doc.setFontSize(22);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Assigned Drills:', 20, yPos);
-    yPos += 15;
+      // ✅ Lesson Area
+      doc.setFont('helvetica', 'bold');
+      doc.text('Lesson Area:', 20, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${lesson.area || 'N/A'}`, 70, yPos);
+      yPos += 20;
   
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'normal');
-    const drillText = lesson.drills.length > 0 ? lesson.drills.join(', ') : 'None';
-    doc.text(drillText, 20, yPos, { maxWidth: 170, align: 'left' });
-    yPos += 30;
+      // ✅ Feedback Section (Multiline)
+      doc.setFont('helvetica', 'bold');
+      doc.text('Feedback:', 20, yPos);
+      yPos += 10;
+      doc.setFont('helvetica', 'normal');
+      const feedbackText = lesson.feedback || 'No feedback provided';
+      doc.text(feedbackText, 20, yPos, { maxWidth: 170 });
+      yPos += 20;
   
-    // Feedback
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
-    doc.text('Coach Feedback:', 20, yPos);
-    yPos += 15;
+      // ✅ Drills Section (Multiline)
+      doc.setFont('helvetica', 'bold');
+      doc.text('Drills:', 20, yPos);
+      yPos += 10;
+      doc.setFont('helvetica', 'normal');
+      const drillsText = lesson.drills.length > 0 ? lesson.drills.join(', ') : 'No drills assigned';
+      doc.text(drillsText, 20, yPos, { maxWidth: 170 });
+      yPos += 20;
   
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'normal');
-    doc.text(lesson.feedback, 20, yPos, { maxWidth: 170, align: 'left' });
+      // ✅ Convert PDF to Base64
+      const pdfOutput = doc.output('arraybuffer');
+      const base64String = Buffer.from(pdfOutput).toString('base64');
   
-    yPos += 50;
+      // ✅ Define File Path
+      const pdfFileUri = FileSystem.documentDirectory + `Lesson_Report_${lesson.GolferID}.pdf`;
   
-    // Footer
-    doc.setFontSize(14);
-    doc.setTextColor(150, 150, 150);
-    doc.text('Generated by Golf IQ Pro', 20, 280);
+      // ✅ Write PDF to File
+      await FileSystem.writeAsStringAsync(pdfFileUri, base64String, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
   
-    // Save PDF
-    doc.save(`Lesson_${lesson.Lessonid}.pdf`);
+      // ✅ Share PDF
+      await shareAsync(pdfFileUri);
+  
+      Alert.alert('Success', 'PDF generated successfully!');
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred while generating the PDF.');
+      console.error('PDF Generation Error:', error);
+    }
   };
+  
+
   
 
   const renderLesson = ({ item }: { item: Lesson }) => (
@@ -210,12 +226,16 @@ export default function ViewLessonsGolfer() {
       <Text style={styles.drills}>
         Drills: {item.drills.length > 0 ? item.drills.join(', ') : 'None'}
       </Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => generatePDF(item)}
-      >
-        <Text style={styles.buttonText}>Download PDF</Text>
-      </TouchableOpacity>
+
+      {/*
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => generatePDF(item)}
+        >
+          <Text style={styles.buttonText}>Download PDF</Text>
+        </TouchableOpacity>
+*/}
+
       {/* Display Before Video if available */}
       {item.beforeVideo && (
                 <View style={styles.mediaContainer}>

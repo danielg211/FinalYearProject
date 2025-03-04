@@ -287,13 +287,14 @@ const fetchLessons = async (golferId: string | null = null) => {
         <Text style={styles.lessonText}>Competency Level: {item.competency}</Text>
         <Text style={styles.lessonText}>Confidence Level: {item.confidence}</Text>
         <Text style={styles.lessonText}>Date: {new Date(item.created_at).toLocaleDateString()}</Text>
-        
+        {/*
         <TouchableOpacity
         style={styles.pdfButton}
         onPress={() => generatePDF(item)}
       >
         <Text style={styles.pdfButtonText}>Create PDF</Text>
       </TouchableOpacity>
+      */}
 
         {/* Display Before Image if available */}
         {item.beforeImage && (
