@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Alert, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, Alert, FlatList, TouchableOpacity, TextInput, ScrollView} from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 import * as ImagePicker from 'expo-image-picker';
@@ -165,6 +165,7 @@ export default function UploadDrillResult({ navigation }: any) {
 
   
   return (
+    <ScrollView keyboardShouldPersistTaps="handled">
     <View style={styles.container}>
       <Text style={styles.header}>Upload Drill Result</Text>
 
@@ -206,6 +207,7 @@ export default function UploadDrillResult({ navigation }: any) {
         buttonStyle={[styles.button, styles.backButton]}
       /> */}
     </View>
+    </ScrollView>
   );
 }
 

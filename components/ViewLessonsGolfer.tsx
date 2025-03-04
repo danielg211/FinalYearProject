@@ -6,6 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '../colors';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import jsPDF from 'jspdf';
+import { Video, ResizeMode } from 'expo-av';
+
 // FlatList reference:
 // React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
 // CRUD Reference
@@ -27,6 +29,8 @@ type Lesson = {
   feedback: string;
   drills: string[];
   area: string;
+  beforeVideo: string | null;
+  afterVideo: string | null;
 };
 
 export default function ViewLessonsGolfer() {
@@ -91,7 +95,7 @@ export default function ViewLessonsGolfer() {
   
       const { data: lessonsData, error: lessonsError } = await supabase
         .from('Lesson1')
-        .select('Lessonid, created_at, feedback, area, drills:AssignedDrills(drill_id)')
+        .select('Lessonid, created_at, feedback, area, drills:AssignedDrills(drill_id), beforeVideo, afterVideo')
         .eq('GolferID', golferId)
         .order('created_at', { ascending: false });
   
@@ -212,6 +216,30 @@ export default function ViewLessonsGolfer() {
       >
         <Text style={styles.buttonText}>Download PDF</Text>
       </TouchableOpacity>
+      {/* Display Before Video if available */}
+      {item.beforeVideo && (
+                <View style={styles.mediaContainer}>
+                  <Text style={styles.mediaLabel}>Before Video:</Text>
+                  <Video
+                    source={{ uri: item.beforeVideo }}
+                    style={styles.video}
+                    useNativeControls
+                    resizeMode={ResizeMode.CONTAIN}
+                  />
+                </View>
+              )}
+                {item.afterVideo && (
+                  <View style={styles.mediaContainer}>
+                    <Text style={styles.mediaLabel}>After Video:</Text>
+                    <Video
+                      source={{ uri: item.afterVideo }}
+                      style={styles.video}
+                      useNativeControls
+                      resizeMode={ResizeMode.CONTAIN}
+                    />
+                  </View>
+                )}
+    
     </View>
   );
 
@@ -347,7 +375,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-    
+  
     
     label: {
       fontSize: 16,

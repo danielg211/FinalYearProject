@@ -91,6 +91,9 @@ export default function LogLesson() {
   const [beforeVideo, setBeforeVideo] = useState<string | null>(null);
   const [afterVideo, setAfterVideo] = useState<string | null>(null);
   const [pgaId, setPgaId] = useState('');
+  const [beforeVideoSuccess, setBeforeVideoSuccess] = useState(false);
+  const [afterVideoSuccess, setAfterVideoSuccess] = useState(false);
+
 
 
 
@@ -140,7 +143,8 @@ export default function LogLesson() {
     );
   }, [selectedCategory, availableDrills]);
 
-  //Video Option
+  //Video 
+  /*
   const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | null>>) => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -156,7 +160,26 @@ export default function LogLesson() {
       console.error('Error picking video:', error);
     }
   };
-  
+  */
+ // ✅ Pick a video and display a success message
+const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | null>>, setSuccess: React.Dispatch<React.SetStateAction<boolean>>) => {
+  try {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Videos, 
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets && result.assets[0].uri) {
+      setVideo(result.assets[0].uri);
+      setSuccess(true); // ✅ Show success message
+    }
+  } catch (error) {
+    Alert.alert('Error', 'Failed to pick video.');
+    console.error('Error picking video:', error);
+  }
+};
+
 
   // Select images
   const pickImage = async (setImage: React.Dispatch<React.SetStateAction<string | null>>) => {
@@ -310,12 +333,22 @@ export default function LogLesson() {
         {afterImage && <Text style={styles.imageText}>Image selected</Text>}
 
         <Text style={styles.label}>Before Video:</Text>
-        <Button title="Select Before Video" onPress={() => pickVideo(setBeforeVideo)} buttonStyle={styles.buttonSecondary}/>
-       
+
+        <Button 
+          title="Select Before Video" 
+          onPress={() => pickVideo(setBeforeVideo, setBeforeVideoSuccess)} 
+          buttonStyle={styles.buttonSecondary} 
+        />
+        {beforeVideoSuccess && <Text style={styles.successMessage}>Before video selected successfully!</Text>}
 
         <Text style={styles.label}>After Video:</Text>
-        <Button title="Select After Video" onPress={() => pickVideo(setAfterVideo)} buttonStyle={styles.buttonSecondary} />
-        
+        <Button 
+          title="Select After Video" 
+          onPress={() => pickVideo(setAfterVideo, setAfterVideoSuccess)} 
+          buttonStyle={styles.buttonSecondary} 
+        />
+        {afterVideoSuccess && <Text style={styles.successMessage}>After video selected successfully!</Text>}
+
 
 
         <Text style={styles.label}>Drill Category:</Text>
@@ -365,7 +398,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",  // ✅ Bold text for better readability
     marginBottom: 4,
   },
-
+  successMessage: {
+    color: "green",
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 5,
+  },
+  
   // 📌 Input Fields (Refined)
   inputContainer: {
     backgroundColor: "#F0F4F8",  // ✅ Light Gray for Contrast
