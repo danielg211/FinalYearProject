@@ -166,7 +166,7 @@ export default function GolferDashboard({ navigation }: { navigation: any }) {
             />
             <Button
               title="Change Password"
-              icon={<Ionicons name="lock-closed" size={20} color="white" />}
+              icon={<FontAwesome5 name="lock" size={20} color="white" />}
               buttonStyle={styles.primaryButton}
               onPress={() => navigation.navigate('ChangePasswordGolfer')}
             />

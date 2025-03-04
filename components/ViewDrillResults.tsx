@@ -37,6 +37,20 @@ export default function ViewDrillResults({ navigation }: any) {
     fetchGolfers();
   }, []);
 
+  useEffect(() => {
+    if (drillResults.length > 0) {
+      const formattedDate = selectedDate.toISOString().split('T')[0]; // Extract YYYY-MM-DD
+
+      const filtered = drillResults.filter(
+        (result) =>
+          (!selectedGolfer || result.golferName === selectedGolfer) &&
+          result.created_at.startsWith(formattedDate)
+      );
+
+      setFilteredResults(filtered);
+    }
+  }, [selectedGolfer, selectedDate, drillResults]);
+
   const fetchDrillResults = async () => {
     setLoading(true);
     try {
@@ -184,7 +198,7 @@ export default function ViewDrillResults({ navigation }: any) {
           <Button title="Last Month" onPress={() => filterResultsByDate(30)} buttonStyle={styles.filterButton} />
         </View>
 
-      <Button title="Apply Filters" onPress={filterResults} buttonStyle={styles.button} />
+      {/*<Button title="Apply Filters" onPress={filterResults} buttonStyle={styles.button} />*/}
 
       {loading ? (
         <Text style={styles.loadingText}>Loading...</Text>
@@ -194,7 +208,7 @@ export default function ViewDrillResults({ navigation }: any) {
         <Text style={styles.noDataText}>No drill results available.</Text>
       )}
 
-      <Button title="Back to Dashboard" onPress={() => navigation.navigate('PGADashboard')} buttonStyle={styles.backButton} />
+      {/* <Button title="Back to Dashboard" onPress={() => navigation.navigate('PGADashboard')} buttonStyle={styles.backButton} />*/}
     </View>
   );
 }

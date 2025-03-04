@@ -250,7 +250,7 @@ export default function PGADashboard() {
     // Linear gradient background
     
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <Text style={styles.title}>PGA Dashboard - Golfer Management</Text>
+        <Text style={styles.title}>Golfer Management</Text>
 
         {/* Input fields for golfer details */}
         <Input label="Name" value={name} onChangeText={setName} placeholder="Enter Name" containerStyle={styles.inputContainer} />

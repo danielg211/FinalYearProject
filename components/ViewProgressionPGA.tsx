@@ -64,8 +64,23 @@ export default function ViewProgressionPGA() {
   useEffect(() => {
     const fetchGolfers = async () => {
       try {
+        console.log('Fetching session...');
+
+         // Get the logged-in PGA professional's user ID
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData?.session?.user) {
+        throw new Error("Unable to retrieve authenticated PGA Professional. Please log in again.");
+      }
+
+      const PGAID = sessionData.session.user.id; // Get PGA professional's ID
+      console.log(`Fetching golfers for PGA Pro: ${PGAID}`);
+
+
         console.log('Fetching golfers...');
-        const { data, error } = await supabase.from('golfers1').select('GolferID, name');
+        const { data, error } = await supabase
+        .from('golfers1')
+        .select('GolferID, name')
+        .eq('PGAID', PGAID);
         if (error) throw error;
 
         console.log('Golfers fetched:', data);

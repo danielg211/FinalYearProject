@@ -227,7 +227,7 @@ useEffect(() => {
 
 <Button
   title="Change Password"
-  icon={<FontAwesome5 name="lock-closed" size={18} color="white" />}
+  icon={<FontAwesome5 name="lock" size={18} color="white" />}
   buttonStyle={styles.primaryButton}
   onPress={() => {
     if (!session) {
