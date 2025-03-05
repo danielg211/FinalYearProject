@@ -60,6 +60,8 @@ export default function ViewPgaBenchmarksComparison() {
   const proNames = tourPros.map((pro: string) => pro);
   const [proDrillData, setProDrillData] = useState<Drill[]>([]);
   const [showProComparison, setShowProComparison] = useState<boolean>(false);
+  const [selectedDrill, setSelectedDrill] = useState<string | null>(null);
+
   
   useEffect(() => {
     fetchGolfers();
@@ -136,6 +138,10 @@ useEffect(() => {
 console.log("Driving Drills in UI:", drills.map((d) => d.drill_id));
 
 }, [selectedTourPro, selectedCategory]);
+
+const filteredDrills = selectedDrill
+  ? drills.filter((drill) => drill.drill_id === selectedDrill)
+  : drills;
 
 
   async function fetchDrillsAndBenchmarks(golferId: string, category: string) {
@@ -392,6 +398,18 @@ setProDrillData(formattedProDrills);
       </Picker>
 
             <Picker
+        selectedValue={selectedDrill}
+        onValueChange={(value) => setSelectedDrill(value)}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select Drill" value={null} />
+        {drills.map((drill) => (
+          <Picker.Item key={drill.drill_id} label={drill.name} value={drill.drill_id} />
+        ))}
+      </Picker>
+
+
+            <Picker
         selectedValue={selectedTourPro}
         onValueChange={(value) => setSelectedTourPro(value)}
         style={styles.picker}
@@ -404,7 +422,7 @@ setProDrillData(formattedProDrills);
       </Picker>
 
       <FlatList
-        data={drills}
+        data={filteredDrills}
         keyExtractor={(item) => item.drill_id}
         renderItem={renderDrillItem}
         refreshing={loading}

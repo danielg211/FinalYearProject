@@ -104,7 +104,19 @@ export default function LogLesson() {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError) throw userError;
 
-        const { data: golfersData, error: golfersError } = await supabase.from('golfers1').select('GolferID, name');
+       
+
+      // ✅ Ensure user exists before proceeding
+      if (!user) {
+        throw new Error("User not found. Please log in again.");
+      }
+
+        const { data: golfersData, error: golfersError } = await supabase
+        .from('golfers1')
+        .select('GolferID, name')
+        .eq('PGAID', user.id);
+        
+
         if (golfersError) throw golfersError;
 
          // Check if user is null
@@ -323,7 +335,7 @@ const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | 
 
         
         <Text style={styles.sliderValue}>Confidence: {confidence}</Text>
-
+        {/*
         <Text style={styles.label}>Before Picture:</Text>
         <Button title="Select Before Picture" onPress={() => pickImage(setBeforeImage)} buttonStyle={styles.buttonSecondary} />
         {beforeImage && <Text style={styles.imageText}>Image selected</Text>}
@@ -331,7 +343,7 @@ const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | 
         <Text style={styles.label}>After Picture:</Text>
         <Button title="Select After Picture" onPress={() => pickImage(setAfterImage)} buttonStyle={styles.buttonSecondary}/>
         {afterImage && <Text style={styles.imageText}>Image selected</Text>}
-
+          */}
         <Text style={styles.label}>Before Video:</Text>
 
         <Button 

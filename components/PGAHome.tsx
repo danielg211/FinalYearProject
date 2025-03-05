@@ -13,6 +13,9 @@ import { Session } from '@supabase/supabase-js';
 
 const screenHeight = Dimensions.get('window').height;
 
+// Supabase Docs for JavaScript Select Queries https://supabase.com/docs/reference/javascript/select
+// Cooper Codes "Supabase Database Course - Fetch, Create, Modify, Delete Data (React / Supabase CRUD Tutorial)." YouTube, https://www.youtube.com/watch?v=4yVSwHO5QHU
+// https://reactnative.dev/docs/style
 
 // Define the navigation type for MainDashboard
 type PGAHomeNavigationProp = StackNavigationProp<RootStackParamList, 'PGAHome'>;

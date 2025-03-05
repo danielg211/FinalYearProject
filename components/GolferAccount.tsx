@@ -9,6 +9,15 @@ import { useNavigation, RouteProp } from '@react-navigation/native';
 import { colors } from '../colors';
 import { RootStackParamList } from '../App';
 
+
+// Auth Screen Implementation with Supabase and React Native
+// This code references concepts and patterns demonstrated in Supabase's tutorial 
+// on React Native Database & User Authentication available on their YouTube channel.
+// Supabase. "React Native Database & User Authentication." YouTube, https://www.youtube.com/watch?v=AE7dKIKMJy4&list=PL5S4mPUpp4OsrbRTx21k34aACOgpqQGlx
+// Adapted with UI design.
+// adapted to include radio buttons which let user go to next page.
+// also adapted fields to suit my data types what was was website now is user role
+
 // Navigation and Route types
 type NavigationProp = StackNavigationProp<RootStackParamList, 'GolferAccount'>;
 type RouteProps = RouteProp<RootStackParamList, 'GolferAccount'>;

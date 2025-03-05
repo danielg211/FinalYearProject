@@ -1,6 +1,11 @@
 import { supabase } from "../lib/supabase";
 
-// ✅ Define Message type
+
+// References
+// Coding Garden (2025). Building a Simple Real-Time Chat App with Supabase [YouTube Video]. Retrieved from https://www.youtube.com/watch?v=C29kMuMTmKQ
+// used chatgpt to help do coach to player logic 
+
+//  Define Message type
 export type Message = {
   id: string;
   sender_golfer_id?: string;
@@ -11,7 +16,7 @@ export type Message = {
   created_at: string;
 };
 
-// ✅ Fetch messages between a Golfer and PGA Professional
+//  Fetch messages between a Golfer and PGA Professional
 export const fetchMessages = async (
   senderId: string,
   senderType: "golfer" | "pga",
@@ -36,7 +41,7 @@ export const fetchMessages = async (
 
 
 
-// ✅ Send a message
+//  Send a message
 export const sendMessage = async (
   senderId: string,
   senderType: "golfer" | "pga",

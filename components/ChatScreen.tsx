@@ -5,6 +5,10 @@ import { RootStackParamList } from '../App';
 import { fetchMessages, sendMessage } from '../services/chatService';
 import { supabase } from '../lib/supabase';
 
+// References
+// Coding Garden (2025). Building a Simple Real-Time Chat App with Supabase [YouTube Video]. Retrieved from https://www.youtube.com/watch?v=C29kMuMTmKQ
+// React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge 
+
 // Props type using navigation params
 type ChatScreenProps = StackScreenProps<RootStackParamList, 'ChatScreen'>;
 
@@ -27,7 +31,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   const [golfers, setGolfers] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  console.log("📌 Route Params:", route.params);
+  console.log(" Route Params:", route.params);
 
   useEffect(() => {
     console.log(" useEffect started");
@@ -39,27 +43,33 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
         console.log(" Golfer detected, fetching PGA Pro...");
         await fetchAssignedPGAPro();
       } else if (senderType === 'pga' && !selectedReceiverId) {
-        console.log("👨‍💼 PGA detected, fetching golfers...");
+        console.log(" PGA detected, fetching golfers...");
         await fetchGolfers();
       } else if (selectedReceiverId) {
-        console.log("📨 Receiver ID available, loading messages...");
+        console.log(" Receiver ID available, loading messages...");
         await loadMessages();
       }
   
-      console.log("✅ Initialization complete");
+      console.log(" Initialization complete");
       setLoading(false);
     };
   
     initChat();
+
+    const unsubscribe = subscribeToMessages();
+
+    return () => {
+      unsubscribe();
+    };
   
-    // Subscription logic should remain unchanged
+    
   }, [senderType, selectedReceiverId]);
   
   
 
   const fetchAssignedPGAPro = async () => {
     setLoading(true);
-    console.log("🔍 Fetching PGA Pro for GolferID:", senderId);
+    console.log(" Fetching PGA Pro for GolferID:", senderId);
     
     const { data, error } = await supabase
       .from('golfers1')
@@ -68,20 +78,20 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
       .single();
   
     if (error) {
-      console.error("❌ Fetching PGA Pro Error:", error);
+      console.error(" Fetching PGA Pro Error:", error);
       Alert.alert('Error', 'Unable to load PGA Professional.');
       setLoading(false);
       return;
     }
   
     if (!data) {
-      console.warn("⚠️ No PGA Pro assigned for this Golfer.");
+      console.warn(" No PGA Pro assigned for this Golfer.");
       Alert.alert('Warning', 'No PGA Professional assigned.');
       setLoading(false);
       return;
     }
   
-    console.log("✅ PGA Pro ID found:", data.PGAID);
+    console.log(" PGA Pro ID found:", data.PGAID);
     setSelectedReceiverId(data.PGAID);
   };
   
@@ -100,34 +110,34 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
       return;
     }
 
-    console.log("✅ Golfers fetched:", data);
+    console.log(" Golfers fetched:", data);
     setGolfers(data);
     setLoading(false);
   };
 
   const loadMessages = async () => {
     const data = await fetchMessages(senderId, senderType, selectedReceiverId!, receiverType);
-    console.log("✅ Messages loaded:", data);
+    console.log(" Messages loaded:", data);
     setMessages(data);
     setLoading(false);
   };
 
   const subscribeToMessages = () => {
-    console.log("📡 Subscribing to real-time messages...");
+    console.log(" Subscribing to real-time messages...");
     const subscription = supabase
       .channel('realtime_chat')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
-          console.log("📩 New message:", payload.new);
+          console.log(" New message:", payload.new);
           setMessages((prev) => [...prev, payload.new as Message]);
         }
       )
       .subscribe();
 
     return () => {
-      console.log("🔌 Unsubscribing from real-time messages...");
+      console.log(" Unsubscribing from real-time messages...");
       supabase.removeChannel(subscription);
     };
   };
@@ -140,7 +150,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
   };
 
   if (loading) {
-    console.log("⏳ Loading indicator active...");
+    console.log(" Loading indicator active...");
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#4CAF50" />
@@ -159,7 +169,7 @@ const ChatScreen: React.FC<ChatScreenProps> = ({ route }) => {
             <TouchableOpacity
               style={styles.golferButton}
               onPress={() => {
-                console.log("🎯 Selected golfer:", item.GolferID);
+                console.log(" Selected golfer:", item.GolferID);
                 setSelectedReceiverId(item.GolferID);
               }}
             >

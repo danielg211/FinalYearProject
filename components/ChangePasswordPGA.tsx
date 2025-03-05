@@ -11,8 +11,10 @@ import { RootStackParamList } from '../App';
 
 
 
-
-// Supabase Password Documentation https://supabase.com/docs/guides/auth/passwords           
+// References
+// Supabase Password Documentation https://supabase.com/docs/guides/auth/passwords    
+// Kelvin Sowah: React Navigation Tutorial for Beginners - How to Pass Params (Expo) https://www.youtube.com/watch?v=6ghojgApo7A  
+// Chatgpt used to help style and integrate     
 
 // Navigation and Route types
 type NavigationProp = StackNavigationProp<RootStackParamList, 'ChangePasswordPGA'>;
