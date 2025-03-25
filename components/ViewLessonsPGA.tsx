@@ -10,6 +10,8 @@ import { Video, ResizeMode } from 'expo-av';
 import jsPDF from 'jspdf';
 import * as FileSystem from 'expo-file-system';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Picker } from '@react-native-picker/picker';
+
 
 // FlatList reference:
 // React Native Tutorial 10 - FlatList https://www.youtube.com/watch?v=TTvWoTKbZ3Y&list=PLS1QulWo1RIb_tyiPyOghZu_xSiCkB1h4&index=10 by Programming Knowledge
@@ -348,6 +350,7 @@ const fetchLessons = async (golferId: string | null = null) => {
       <Text style={styles.header}>View Lessons</Text>
 
       {/* Golfer Picker */}
+      {/*
       <RNPickerSelect
         onValueChange={(value) => setSelectedGolfer(value)}
         items={golfers.map((golfer) => ({
@@ -357,7 +360,21 @@ const fetchLessons = async (golferId: string | null = null) => {
         placeholder={{ label: 'Select Golfer', value: '' }}
         style={pickerSelectStyles}
         value={selectedGolfer}
+        useNativeAndroidPickerStyle={false} // Necessary for Android
+        doneText="Done" // iOS only: changes the button text
       />
+    
+      */}
+      <Picker
+        selectedValue={selectedGolfer}
+        onValueChange={(itemValue) => setSelectedGolfer(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="Select Golfer" value="" />
+        {golfers.map((golfer) => (
+          <Picker.Item key={golfer.GolferID} label={golfer.name} value={golfer.GolferID} />
+        ))}
+      </Picker>
        {/* Date Picker */}
        <Text style={styles.label}>Filter by Date</Text>
       <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
@@ -407,6 +424,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.textGreen,
     marginBottom: 20,
+  },
+  picker: {
+    width: '100%',
+    backgroundColor: '#FFF',
+    marginVertical: 10,
   },
   
   
@@ -547,6 +569,9 @@ const pickerSelectStyles = {
     color: colors.textGreen,
     marginBottom: 12,
     backgroundColor: '#FFFFFF',
+  },
+  placeholder: {
+    color: '#888', // Light grey for placeholder
   },
   inputAndroid: {
     fontSize: 16,

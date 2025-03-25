@@ -6,6 +6,8 @@ import RNPickerSelect from 'react-native-picker-select';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import { LogBox } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+
 
 // Suppress VirtualizedLists inside ScrollView warning
 LogBox.ignoreLogs(["Slider: Support for defaultProps will be removed"]);
@@ -287,12 +289,20 @@ const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | 
     <LinearGradient colors={[colors.backgroundGrayStart, colors.backgroundGrayEnd]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.formContainer}>
         <Text style={styles.label}>Select Golfer:</Text>
-        <RNPickerSelect
+        <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={golferId}
           onValueChange={(value) => setGolferId(value)}
-          items={golfers.map((golfer) => ({ label: golfer.name, value: golfer.GolferID }))}
-          placeholder={{ label: 'Select Golfer', value: null }}
-          style={pickerSelectStyles}
-        />
+          mode="dropdown"
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Golfer" value="" />
+          {golfers.map((golfer) => (
+            <Picker.Item key={golfer.GolferID} label={golfer.name} value={golfer.GolferID} />
+          ))}
+        </Picker>
+      </View>
+
 
         <Text style={styles.label}>Lesson Notes:</Text>
         <Input
@@ -306,20 +316,36 @@ const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | 
         />
 
         <Text style={styles.label}>Area of Game:</Text>
-        <RNPickerSelect
+        <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={area}
           onValueChange={(value) => setArea(value)}
-          items={categoryOptions}
-          placeholder={{ label: 'Select Area', value: null }}
-          style={pickerSelectStyles}
-        />
+          mode="dropdown"
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Area" value="" />
+          {categoryOptions.map((opt) => (
+            <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
+          ))}
+        </Picker>
+      </View>
+
 
         <Text style={styles.label}>Competency Level:</Text>
-        <RNPickerSelect
+        <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={competency}
           onValueChange={(value) => setCompetency(value)}
-          items={competencyOptions}
-          placeholder={{ label: 'Select Competency', value: null }}
-          style={pickerSelectStyles}
-        />
+          mode="dropdown"
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Competency" value="" />
+          {competencyOptions.map((opt) => (
+            <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
+          ))}
+        </Picker>
+      </View>
+
 
         <View style={styles.sliderContainer}>
           <Text style={styles.sliderText}>Confidence Level: {confidence}</Text>
@@ -364,12 +390,20 @@ const pickVideo = async (setVideo: React.Dispatch<React.SetStateAction<string | 
 
 
         <Text style={styles.label}>Drill Category:</Text>
-        <RNPickerSelect
-          onValueChange={(value) => setSelectedCategory(value)}
-          items={categoryOptions}
-          placeholder={{ label: 'Select Drill Category', value: null }}
-          style={pickerSelectStyles}
-        />
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedCategory}
+            onValueChange={(value) => setSelectedCategory(value)}
+            mode="dropdown"
+            style={styles.picker}
+          >
+            <Picker.Item label="Select Drill Category" value="" />
+            {categoryOptions.map((opt) => (
+              <Picker.Item key={opt.value} label={opt.label} value={opt.value} />
+            ))}
+          </Picker>
+        </View>
+
 
         <Text style={styles.label}>Available Drills:</Text>
         {filteredDrills.length > 0 ? (
@@ -510,7 +544,21 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     fontWeight: "bold",  // ✅ Bold Video Status
   },
-
+  pickerContainer: {
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+  },
+  
+  picker: {
+    
+    width: '100%',
+    color: '#2E7D32',
+  },
+  
   // 📌 Picker (Dropdown) Styling
   
 });

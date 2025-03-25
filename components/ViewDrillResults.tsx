@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Alert, FlatList, Image, TouchableOpacity } from
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
 import RNPickerSelect from 'react-native-picker-select';
+import { Picker } from '@react-native-picker/picker';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface DrillResult {
@@ -168,12 +170,19 @@ export default function ViewDrillResults({ navigation }: any) {
 
       {/* Golfer Picker */}
       <Text style={styles.label}>Filter by Golfer</Text>
-      <RNPickerSelect
+      <View style={styles.pickerContainer}>
+      <Picker
+        selectedValue={selectedGolfer}
         onValueChange={(value) => setSelectedGolfer(value)}
-        items={golfers.map((golfer) => ({ label: golfer.name, value: golfer.name }))}
-        placeholder={{ label: "Select a Golfer...", value: null }}
-        style={pickerSelectStyles}
-      />
+        mode="dropdown"
+        style={styles.picker}
+      >
+        <Picker.Item label="Select a Golfer..." value="" />
+        {golfers.map((golfer) => (
+          <Picker.Item key={golfer.id} label={golfer.name} value={golfer.name} />
+        ))}
+      </Picker>
+    </View>
       
       {/* Date Picker */}
       <Text style={styles.label}>Filter by Date</Text>
@@ -298,6 +307,22 @@ const styles = StyleSheet.create({
     minWidth: 120, // Consistent width
     alignItems: 'center',
   },
+  pickerContainer: {
+    width: '90%',
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    marginBottom: 12,
+    backgroundColor: '#fff',
+  },
+  
+  picker: {
+    
+    width: '100%',
+    color: '#000',
+  },
+  
 });
 
 

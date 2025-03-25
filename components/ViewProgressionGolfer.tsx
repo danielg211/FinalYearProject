@@ -8,6 +8,7 @@ import MultiSelect from 'react-native-multiple-select';
 import { BarChart } from 'react-native-chart-kit';
 import { LogBox } from 'react-native';
 
+
 // Suppress VirtualizedLists inside ScrollView warning
 LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 
@@ -373,7 +374,7 @@ const styles = StyleSheet.create({
     textAlign: 'center' 
   },
   picker: { 
-    height: 50, 
+    
     backgroundColor: 'white', 
     marginVertical: 10 
   },

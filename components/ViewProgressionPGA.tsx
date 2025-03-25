@@ -425,20 +425,14 @@ const styles = StyleSheet.create({
     textAlign: 'center' 
   },
   pickerContainer: {
-    width: '100%', // Ensure full width
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginVertical: 5,
-    paddingHorizontal: 10,
-    justifyContent: 'center',
-    alignSelf: 'center', // Ensures it stays centered
+    width: '100%',
+    backgroundColor: 'white',
+    marginVertical: 10,
   },
-  picker: { 
-    height: 50, 
-    color: '#000', // Ensure text is readable
-    fontSize: 16,
+  picker: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    color: '#000',
   },
 
   pickerPlaceholder: {
